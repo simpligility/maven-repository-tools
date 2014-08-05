@@ -1,0 +1,41 @@
+simpligility technologies inc. presents 
+
+= Maven Repository Provisioner
+
+== Introduction
+
+A tool to provision an artifact and all its transitive dependencies from
+a source Maven repository to a target Maven repository.
+
+== Usage
+
+
+----
+java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
+----
+
+== License
+
+Eclipse Public License - v 1.0
+
+For full text see LICENSE file or http://www.apache.org/licenses/LICENSE-2.0
+ 
+== Building 
+
+Run 
+
+----
+mvn clean install
+----
+
+and in the target folder you will find the jar-with-dependencies file for using the tool.
+
+== Contributions
+
+are very welcome. Send a pull request or report issues on GitHub. Even just a suggestion
+of a useful plugin in an issue is a welcome help. 
+
+== Contributors
+
+- Manfred Moser http://www.simpligility.com
+
