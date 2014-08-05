@@ -14,6 +14,16 @@ a source Maven repository to a target Maven repository.
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
 
+== Planned Changes
+
+* logback based logging
+* better handling of deployment to already populated repo
+* support for source jars
+* support for javadoc jars
+* support for non-jar artifacts (might already work)
+* logging to file and console
+* print of usage on invalid config
+
 == License
 
 Eclipse Public License - v 1.0
