@@ -17,12 +17,16 @@ java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
 == Planned Changes
 
 * logback based logging
-* better handling of deployment to already populated repo
+* better handling of deployment to already populated repo (avoid republishing 
+and errors due to that)
 * support for source jars
 * support for javadoc jars
 * support for non-jar artifacts (might already work)
 * logging to file and console
 * print of usage on invalid config
+* break up code in main class
+* clean up and streamline pom
+* release to Central Repository
 
 == License
 
@@ -38,12 +42,13 @@ Run
 mvn clean install
 ----
 
-and in the target folder you will find the jar-with-dependencies file for using the tool.
+and in the target folder you will find the jar-with-dependencies file for using 
+the tool.
 
 == Contributions
 
-are very welcome. Send a pull request or report issues on GitHub. Even just a suggestion
-of a useful plugin in an issue is a welcome help. 
+are very welcome. Send a pull request or report issues on GitHub. Even just a 
+spelling fix in the readme or anything else really is a welcome help. 
 
 == Contributors
 
