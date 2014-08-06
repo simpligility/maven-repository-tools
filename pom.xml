@@ -106,12 +106,17 @@
       <artifactId>jcommander</artifactId>
       <version>1.35</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.3.2</version>
+    </dependency>
   </dependencies>
-  
-  
+
+
   <build>
     <plugins>
-     <!--  executable jar with dependencies inside(!), note archive config -->
+      <!-- executable jar with dependencies inside(!), note archive config -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -135,6 +140,13 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
