@@ -5,17 +5,11 @@
 
   <parent>
     <groupId>com.simpligility.maven</groupId>
-    <artifactId>progressive-organization-pom</artifactId>
-    <version>1.5.1</version>
+    <artifactId>maven-repository-tools</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
   </parent>
-
   <artifactId>maven-repository-provisioner</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
 
-  <properties>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
-    <mavenVersion>3.1.0</mavenVersion>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
