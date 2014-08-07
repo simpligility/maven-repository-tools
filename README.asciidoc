@@ -27,6 +27,7 @@ and errors due to that)
 * break up code in main class
 * clean up and streamline pom
 * release to Central Repository
+* refactor to use same idea/codebase in a repository-provision-maven-plugin maybe
 
 == License
 
