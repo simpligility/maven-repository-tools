@@ -73,35 +73,6 @@
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.sisu</groupId>
-      <artifactId>org.eclipse.sisu.plexus</artifactId>
-      <version>0.1.1</version>
-      <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.enterprise</groupId>
-          <artifactId>cdi-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.sisu</groupId>
-      <artifactId>sisu-guice</artifactId>
-      <version>3.1.6</version>
-      <classifier>no_aop</classifier>
-      <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.code.findbugs</groupId>
-          <artifactId>jsr305</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.beust</groupId>
       <artifactId>jcommander</artifactId>
       <version>1.35</version>
@@ -111,6 +82,16 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.3.2</version>
     </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+    <dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpclient</artifactId>
+  <version>4.3.3</version>
+</dependency>
   </dependencies>
 
 
