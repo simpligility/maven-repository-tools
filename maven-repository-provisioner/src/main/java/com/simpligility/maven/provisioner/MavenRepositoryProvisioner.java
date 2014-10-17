@@ -75,6 +75,11 @@ public class MavenRepositoryProvisioner {
       } 
       else
       {
+        logger.info("Provisioning: " + config.getArtifactCoordinate());
+        logger.info("Source: " + config.getSourceUrl());
+        logger.info("Target: "  + config.getTargetUrl());
+        logger.info("Username: " + config.getUsername());
+        logger.info("Password: " + config.getPassword());
         List<ArtifactResult> artifactResults = getArtifactResults();
         deployArtifactResults(artifactResults);
       }
@@ -84,7 +89,7 @@ public class MavenRepositoryProvisioner {
   private static void deployArtifactResults(List<ArtifactResult> artifactResults) {
     if (artifactResults != null) {
       for (ArtifactResult artifactResult : artifactResults) {
-        System.out.println(artifactResult.getArtifact() + " resolved to "
+        logger.info(artifactResult.getArtifact() + " resolved to "
             + artifactResult.getArtifact().getFile());
         try
         {
@@ -92,15 +97,15 @@ public class MavenRepositoryProvisioner {
         } 
         catch (ArtifactTransferException ate)
         {
-          System.out.println("ate");
+          logger.info("ate");
         } 
         catch (HttpResponseException hre)
         {
-          System.out.println("hre");
+          logger.info("hre");
         } 
         catch (DeploymentException de)
         {
-          System.out.println("de");
+          logger.info("de");
         }
       }
     }
@@ -133,7 +138,7 @@ public class MavenRepositoryProvisioner {
       // TODO log error
       e.printStackTrace();
     }
-    return null;
+    return artifactResults;
   }
 
   private static void deployArtifactResult(ArtifactResult artifactResult)
