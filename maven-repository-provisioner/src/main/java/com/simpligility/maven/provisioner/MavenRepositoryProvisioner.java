@@ -54,21 +54,30 @@ public class MavenRepositoryProvisioner {
     
     JCommander jcommander = null;
     Boolean validConfig = false;
+    StringBuilder usage = new StringBuilder()
+    .append("\n\nMaven Repository Provisioner\nsimpligility technologies inc.\n\n");
     
     config = new Configuration();
     try {
-      jcommander = new JCommander(config, args);
+      jcommander = new JCommander(config);
+      jcommander.usage(usage);
+      jcommander.parse(args);
       validConfig = true;
-      
-    } catch (Exception e) {
-      jcommander.usage();
+    } catch (Exception error) {
+      logger.info(usage.toString());
     }
     
     if (validConfig) {
       
-      List<ArtifactResult> artifactResults = getArtifactResults();
-
-      deployArtifactResults(artifactResults);
+      if ( config.getHelp())
+      {
+        logger.info(usage.toString());
+      } 
+      else
+      {
+        List<ArtifactResult> artifactResults = getArtifactResults();
+        deployArtifactResults(artifactResults);
+      }
     }
   }
 
@@ -77,13 +86,20 @@ public class MavenRepositoryProvisioner {
       for (ArtifactResult artifactResult : artifactResults) {
         System.out.println(artifactResult.getArtifact() + " resolved to "
             + artifactResult.getArtifact().getFile());
-        try {
+        try
+        {
           deployArtifactResult(artifactResult);
-        } catch (ArtifactTransferException ate) {
+        } 
+        catch (ArtifactTransferException ate)
+        {
           System.out.println("ate");
-        } catch (HttpResponseException hre) {
+        } 
+        catch (HttpResponseException hre)
+        {
           System.out.println("hre");
-        } catch (DeploymentException de) {
+        } 
+        catch (DeploymentException de)
+        {
           System.out.println("de");
         }
       }
