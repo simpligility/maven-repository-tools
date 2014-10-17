@@ -9,6 +9,7 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>maven-repository-provisioner</artifactId>
+  <packaging>takari-jar</packaging>
 
   <dependencyManagement>
     <dependencies>
@@ -82,10 +83,10 @@
       <version>1.1.2</version>
     </dependency>
     <dependency>
-  <groupId>org.apache.httpcomponents</groupId>
-  <artifactId>httpclient</artifactId>
-  <version>4.3.3</version>
-</dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3.3</version>
+    </dependency>
   </dependencies>
 
 
@@ -117,7 +118,9 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <extensions>true</extensions>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
