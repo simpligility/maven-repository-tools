@@ -6,25 +6,25 @@ import com.beust.jcommander.Parameter;
 
 public class Configuration {
   
-  @Parameter(names = "-help", help = true)
+  @Parameter(names = {"-h", "-help"}, help = true,
+              description = "Display the help information.")
   private boolean help;
-
   
   @Parameter(names = {"-s", "-sourceUrl" },
              description = "URL for the source repository from which artifacts "
                  + "are resolved, defaults to https://repo1.maven.org/maven2, "
                  + "example for a Nexus isntall is "
-                 + "http://localhost:8081/nexus/content/groups/public  "
+                 + "http://localhost:8081/content/groups/public  "
              )
   private String sourceUrl = "https://repo1.maven.org/maven2";
 
   @Parameter(names = {"-t", "-targetUrl"}, 
              description = "Folder or URL for the target repository e.g. dist-repo "
-                 + "or http://localhost:8081/nexus/content/repositories/release", 
+                 + "or http://localhost:8081/content/repositories/release",
              required = true)
   private String targetUrl; 
 
-  @Parameter(names = {"-a", "-artifactCoordinates"}, 
+  @Parameter(names = {"-a", "-artifactCoordinates"},
              description = "GAV coordinate of the desired artifact in the "
                  + "syntax groupId:artifactId:version e.g. "
                  + "org.apache.commons:commons-lang3:3.3.2",
@@ -38,6 +38,10 @@ public class Configuration {
   @Parameter(names = {"-p", "-password"},
   description = "Password for the deployment, if required.")
   private String password;
+
+  public boolean getHelp() {
+    return help;
+  }
 
   public String getSourceUrl() {
     return sourceUrl;
@@ -59,7 +63,7 @@ public class Configuration {
   public String getUsername() {
     return username;
   }
-  
+
   public String getPassword() {
     return password;
   }
