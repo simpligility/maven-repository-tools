@@ -27,9 +27,9 @@ public class Configuration {
   private String targetUrl; 
 
   @Parameter(names = {"-a", "-artifactCoordinates"},
-             description = "GAV coordinate of the desired artifact in the "
-                 + "syntax groupId:artifactId:version e.g. "
-                 + "org.apache.commons:commons-lang3:3.3.2",
+             description = "GAV coordinates of the desired artifacts in the "
+                 + "syntax groupId:artifactId:version|groupId:artifactId:version e.g. "
+                 + "org.apache.commons:commons-lang3:3.3.2|junit:junit:4.11",
              required = true) 
   private String artifactCoordinate;
   
