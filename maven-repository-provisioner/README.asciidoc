@@ -9,10 +9,13 @@ a source Maven repository to a target Maven repository.
 
 == Usage
 
+The command 
 
 ----
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
+
+will show all the required command line parameters. 
 
 == Planned Changes
 
