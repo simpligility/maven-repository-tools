@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpResponseException;
+import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -28,7 +28,6 @@ import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import com.beust.jcommander.JCommander;
 public class MavenRepositoryProvisioner {
 
   private static RepositorySystem system;
-  private static RepositorySystemSession session;
+  private static DefaultRepositorySystemSession session;
 
   private static Configuration config;
 

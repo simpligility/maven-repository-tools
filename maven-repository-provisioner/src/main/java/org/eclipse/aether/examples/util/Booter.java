@@ -18,6 +18,7 @@ import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.examples.guice.GuiceRepositorySystemFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 
@@ -29,10 +30,7 @@ public class Booter
 
     public static RepositorySystem newRepositorySystem()
     {
-        // return org.eclipse.aether.examples.manual.ManualRepositorySystemFactory.newRepositorySystem();
-        return org.eclipse.aether.examples.guice.GuiceRepositorySystemFactory.newRepositorySystem();
-        // return org.eclipse.aether.examples.sisu.SisuRepositorySystemFactory.newRepositorySystem();
-        // return org.eclipse.aether.examples.plexus.PlexusRepositorySystemFactory.newRepositorySystem();
+        return GuiceRepositorySystemFactory.newRepositorySystem();
     }
 
     public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system )
