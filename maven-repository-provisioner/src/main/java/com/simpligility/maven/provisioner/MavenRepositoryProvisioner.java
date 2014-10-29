@@ -4,6 +4,7 @@
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -114,28 +115,34 @@ public class MavenRepositoryProvisioner {
     system = Booter.newRepositorySystem();
     session = Booter.newRepositorySystemSession(system);
 
-    Artifact artifact = new DefaultArtifact(config.getArtifactCoordinate());
+    List<Artifact> artifacts = new ArrayList<Artifact>();
+    List<String> artifactCoordinates = config.getArtifactCoordinates();
+    for (String artifactCoordinate : artifactCoordinates) {
+      artifacts.add(new DefaultArtifact(artifactCoordinate));
+    }
 
-    RemoteRepository repo = new RemoteRepository.Builder("central", "default",
-        config.getSourceUrl()).build();
+    List<ArtifactResult> artifactResults = new ArrayList<ArtifactResult>();
+    for (Artifact artifact : artifacts) {
+      RemoteRepository repo = new RemoteRepository.Builder("central", "default",
+          config.getSourceUrl()).build();
 
-    DependencyFilter depFilter = DependencyFilterUtils
-        .classpathFilter(JavaScopes.COMPILE);
+      DependencyFilter depFilter = DependencyFilterUtils
+          .classpathFilter(JavaScopes.COMPILE);
 
-    CollectRequest collectRequest = new CollectRequest();
-    collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-    collectRequest.addRepository(repo);
+      CollectRequest collectRequest = new CollectRequest();
+      collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
+      collectRequest.addRepository(repo);
 
-    DependencyRequest dependencyRequest = new DependencyRequest(collectRequest,
-        depFilter);
+      DependencyRequest dependencyRequest = new DependencyRequest(collectRequest,
+          depFilter);
 
-    List<ArtifactResult> artifactResults = null;
-    try {
-      artifactResults = system.resolveDependencies(session, dependencyRequest)
-          .getArtifactResults();
-    } catch (DependencyResolutionException e) {
-      // TODO log error
-      e.printStackTrace();
+      try {
+        artifactResults.addAll(system.resolveDependencies(session, dependencyRequest)
+            .getArtifactResults());
+      } catch (DependencyResolutionException e) {
+        // TODO log error
+        e.printStackTrace();
+      }
     }
     return artifactResults;
   }

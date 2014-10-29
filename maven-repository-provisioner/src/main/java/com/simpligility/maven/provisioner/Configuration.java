@@ -1,6 +1,8 @@
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 
@@ -39,6 +41,26 @@ public class Configuration {
   description = "Password for the deployment, if required.")
   private String password;
 
+  public void setSourceUrl(String sourceUrl) {
+    this.sourceUrl = sourceUrl;
+  }
+
+  public void setTargetUrl(String targetUrl) {
+    this.targetUrl = targetUrl;
+  }
+
+  public void setArtifactCoordinate(String artifactCoordinate) {
+    this.artifactCoordinate = artifactCoordinate;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
   public boolean getHelp() {
     return help;
   }
@@ -54,7 +76,6 @@ public class Configuration {
     } else {
       return targetUrl;
     }
-    
   }
   public String getArtifactCoordinate() {
     return artifactCoordinate;
@@ -66,5 +87,10 @@ public class Configuration {
 
   public String getPassword() {
     return password;
+  }
+
+  public List<String> getArtifactCoordinates() {
+    List<String> coords = Arrays.asList(artifactCoordinate.split("\\|"));
+    return coords;
   }
 }
