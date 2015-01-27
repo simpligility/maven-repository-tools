@@ -4,6 +4,7 @@
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,10 @@ import com.beust.jcommander.JCommander;
  */
 public class MavenRepositoryProvisioner {
 
+  private static final String DASH  = "-";
+  private static final String DOT  = ".";
+  private static final String POM  = "pom";
+  
   private static RepositorySystem system;
   private static DefaultRepositorySystemSession session;
 
@@ -150,11 +155,24 @@ public class MavenRepositoryProvisioner {
   private static void deployArtifactResult(ArtifactResult artifactResult)
       throws HttpResponseException, ArtifactTransferException,
       DeploymentException {
-    Artifact jarArtifact = artifactResult.getArtifact();
+    Artifact mainArtifact = artifactResult.getArtifact();
 
-    Artifact pomArtifact = new SubArtifact(jarArtifact, "", "pom");
-    pomArtifact = pomArtifact.setFile(new File("pom.xml"));
-
+    Artifact pomArtifact = new SubArtifact(mainArtifact, "", POM);
+    String separator = FileSystems.getDefault().getSeparator(); // TBD maybe change to check actual file system used? 
+    String pomPath = new StringBuilder()
+      .append(mainArtifact.getFile().getParent())
+      .append(separator)
+      .append(mainArtifact.getArtifactId())
+      .append(DASH)
+      .append(mainArtifact.getVersion())
+      .append(DOT)
+      .append(POM)
+      .toString();
+    File pomFile = new File(pomPath);
+    if (pomFile.exists()) {
+      pomArtifact = pomArtifact.setFile(pomFile);
+    }
+    
     Authentication auth = null;
     String username = config.getUsername();
     String password = config.getPassword();
@@ -162,14 +180,17 @@ public class MavenRepositoryProvisioner {
       auth = new AuthenticationBuilder().addUsername(username)
           .addPassword(password).build();
     }
-    
 
     RemoteRepository distRepo = new RemoteRepository.Builder(
         "repositoryIdentifier", "default", config.getTargetUrl())
         .setAuthentication(auth).build();
 
     DeployRequest deployRequest = new DeployRequest();
-    deployRequest.addArtifact(jarArtifact).addArtifact(pomArtifact);
+    deployRequest.addArtifact(mainArtifact);
+    if (pomArtifact.getFile() !=null) 
+    { 
+      deployRequest.addArtifact(pomArtifact);
+    }
     deployRequest.setRepository(distRepo);
 
     system.deploy(session, deployRequest);
