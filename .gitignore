@@ -6,4 +6,4 @@ release.properties
 .classpath
 .settings
 .project
-dist-repo
+local-repo
