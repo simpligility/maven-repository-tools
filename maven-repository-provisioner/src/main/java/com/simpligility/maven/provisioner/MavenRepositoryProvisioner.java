@@ -85,7 +85,9 @@ public class MavenRepositoryProvisioner {
         localRepo = new File("local-repo");
    
         ArtifactRetriever retriever = new ArtifactRetriever( localRepo );
-        retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl() );
+        boolean includeSources = true;
+        boolean includeJavadoc = true;
+        retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), includeSources, includeJavadoc);
         
         MavenRepositoryHelper helper = new MavenRepositoryHelper( localRepo );
         helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());

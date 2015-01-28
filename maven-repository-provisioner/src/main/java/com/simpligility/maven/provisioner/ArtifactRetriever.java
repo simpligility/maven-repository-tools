@@ -37,7 +37,6 @@ public class ArtifactRetriever
   public ArtifactRetriever(File localRepo) {
     this.localRepo = localRepo;
     initialize();
-
   }
   
   private void initialize() {
@@ -45,45 +44,49 @@ public class ArtifactRetriever
     session = Booter.newRepositorySystemSession( system, localRepo );
   }
 
-  public void retrieve(List<String> artifactCoordinates, String sourceUrl) {
+  public void retrieve(List<String> artifactCoordinates, String sourceUrl, boolean includeSources, boolean includeJavadoc) {
     sourceRepository = new RemoteRepository.Builder( "central", "default", sourceUrl ).build();
     
     List<ArtifactResult> artifactResults = getArtifactResults( artifactCoordinates);
     
-    // make configurable
-    boolean addSources = true;
-    if ( addSources )
+    if ( includeSources )
     {
-      getSources(artifactResults);
+      getSources( artifactResults );
+    }
+    if ( includeJavadoc) 
+    {
+      getJavadoc( artifactResults );
     }
     
   }
 
   private  void getSources(List<ArtifactResult> artifactResults) {
-    if (artifactResults != null) {
-      for (ArtifactResult artifactResult : artifactResults) {
-        logger.info(artifactResult.getArtifact() + " resolved to "
-            + artifactResult.getArtifact().getFile());
-          getSources(artifactResult);
-      }
-    }
+    getArtifactsWithClassifier( artifactResults, "sources");
   }
 
-  private void getSources(ArtifactResult artifactResult) {
-    Artifact mainArtifact = artifactResult.getArtifact();
-    Artifact sourceArtifact = new DefaultArtifact(
-        mainArtifact.getGroupId(), mainArtifact.getArtifactId(), "sources", "jar", mainArtifact.getVersion());
+  private void getJavadoc(List<ArtifactResult> artifactResults) {
+    getArtifactsWithClassifier( artifactResults, "javadoc");
+  }
 
-    ArtifactRequest sourceRequest = new ArtifactRequest();
-    sourceRequest.setArtifact( sourceArtifact );
-    sourceRequest.setRepositories( Booter.newRepositories( system, session ) );
+  private void getArtifactsWithClassifier(List<ArtifactResult> artifactResults, String classifier) {
+    if (artifactResults != null) {
+      for (ArtifactResult artifactResult : artifactResults) {
+          Artifact mainArtifact = artifactResult.getArtifact();
+          Artifact classifierArtifact = new DefaultArtifact(
+              mainArtifact.getGroupId(), mainArtifact.getArtifactId(), classifier, "jar", mainArtifact.getVersion());
 
-    try {
-      ArtifactResult sourceResult = system.resolveArtifact( session, sourceRequest );
-      logger.info("Retrieved " + sourceResult.getArtifact().getFile());
-    }
-    catch (ArtifactResolutionException e) {
-      logger.info("ArtifactResolutionException when retrieving source");
+          ArtifactRequest classifierRequest = new ArtifactRequest();
+          classifierRequest.setArtifact( classifierArtifact );
+          classifierRequest.setRepositories( Booter.newRepositories( system, session ) );
+
+          try {
+            ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
+            logger.info("Retrieved " + classifierResult.getArtifact().getFile());
+          }
+          catch (ArtifactResolutionException e) {
+            logger.info("ArtifactResolutionException when retrieving " + classifier);
+          }
+      }
     }
   }
 
