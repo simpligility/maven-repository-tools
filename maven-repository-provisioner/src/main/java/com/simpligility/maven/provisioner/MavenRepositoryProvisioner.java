@@ -22,6 +22,8 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
@@ -45,9 +47,13 @@ public class MavenRepositoryProvisioner {
   private static final String DASH  = "-";
   private static final String DOT  = ".";
   private static final String POM  = "pom";
+  private static final String SOURCES = "sources";
+  private static final String JAR = "jar";
   
   private static RepositorySystem system;
   private static DefaultRepositorySystemSession session;
+  private static Authentication auth = null;
+  private static RemoteRepository sourceRepository;
 
   private static Configuration config;
 
@@ -85,9 +91,63 @@ public class MavenRepositoryProvisioner {
         logger.info("Target: "  + config.getTargetUrl());
         logger.info("Username: " + config.getUsername());
         logger.info("Password: " + config.getPassword());
+        
+        initialize();
         List<ArtifactResult> artifactResults = getArtifactResults();
+        
+        boolean addSources = true;
+        if ( addSources ) 
+        {
+          getSources(artifactResults);
+        }
+        
         deployArtifactResults(artifactResults);
       }
+    }
+  }
+
+  private static void initialize() {
+    system = Booter.newRepositorySystem();
+    session = Booter.newRepositorySystemSession(system);
+    
+    String username = config.getUsername();
+    String password = config.getPassword();
+    if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
+      auth = new AuthenticationBuilder().addUsername(username)
+          .addPassword(password).build();
+    }
+    
+    sourceRepository = new RemoteRepository.Builder("central", "default",
+        config.getSourceUrl()).build();
+
+  }
+
+  private static void getSources(List<ArtifactResult> artifactResults) {
+    if (artifactResults != null) {
+      for (ArtifactResult artifactResult : artifactResults) {
+        logger.info(artifactResult.getArtifact() + " resolved to "
+            + artifactResult.getArtifact().getFile());
+          getSources(artifactResult);
+      }
+    }
+  }
+
+  private static void getSources(ArtifactResult artifactResult) {
+    // TODO Auto-generated method stub
+    Artifact mainArtifact = artifactResult.getArtifact();
+    Artifact sourceArtifact = new DefaultArtifact(
+        mainArtifact.getGroupId(), mainArtifact.getArtifactId(), SOURCES, JAR, mainArtifact.getVersion());
+
+    ArtifactRequest sourceRequest = new ArtifactRequest();
+    sourceRequest.setArtifact( sourceArtifact );
+    sourceRequest.setRepositories( Booter.newRepositories( system, session ) );
+
+    try {
+      ArtifactResult sourceResult = system.resolveArtifact( session, sourceRequest );
+      logger.info("Retrieved " + sourceResult.getArtifact().getFile());
+    }
+    catch (ArtifactResolutionException e) {
+      logger.info("ArtifactResolutionException when retrieving source");
     }
   }
 
@@ -102,23 +162,21 @@ public class MavenRepositoryProvisioner {
         } 
         catch (ArtifactTransferException ate)
         {
-          logger.info("ate");
+          logger.info("ArtifactTransferException");
         } 
         catch (HttpResponseException hre)
         {
-          logger.info("hre");
+          logger.info("HttpResponseException");
         } 
         catch (DeploymentException de)
         {
-          logger.info("de");
+          logger.info("DeploymentException");
         }
       }
     }
   }
 
   private static List<ArtifactResult> getArtifactResults() {
-    system = Booter.newRepositorySystem();
-    session = Booter.newRepositorySystemSession(system);
 
     List<Artifact> artifacts = new ArrayList<Artifact>();
     List<String> artifactCoordinates = config.getArtifactCoordinates();
@@ -128,15 +186,12 @@ public class MavenRepositoryProvisioner {
 
     List<ArtifactResult> artifactResults = new ArrayList<ArtifactResult>();
     for (Artifact artifact : artifacts) {
-      RemoteRepository repo = new RemoteRepository.Builder("central", "default",
-          config.getSourceUrl()).build();
-
-      DependencyFilter depFilter = DependencyFilterUtils
+       DependencyFilter depFilter = DependencyFilterUtils
           .classpathFilter(JavaScopes.COMPILE);
 
       CollectRequest collectRequest = new CollectRequest();
       collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-      collectRequest.addRepository(repo);
+      collectRequest.addRepository(sourceRepository);
 
       DependencyRequest dependencyRequest = new DependencyRequest(collectRequest,
           depFilter);
@@ -149,6 +204,7 @@ public class MavenRepositoryProvisioner {
         e.printStackTrace();
       }
     }
+    
     return artifactResults;
   }
 
@@ -172,13 +228,22 @@ public class MavenRepositoryProvisioner {
     if (pomFile.exists()) {
       pomArtifact = pomArtifact.setFile(pomFile);
     }
-    
-    Authentication auth = null;
-    String username = config.getUsername();
-    String password = config.getPassword();
-    if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-      auth = new AuthenticationBuilder().addUsername(username)
-          .addPassword(password).build();
+
+    Artifact sourcesArtifact = new SubArtifact(mainArtifact, SOURCES, JAR);
+    String sourcesPath = new StringBuilder()
+      .append(mainArtifact.getFile().getParent())
+      .append(separator)
+      .append(mainArtifact.getArtifactId())
+      .append(DASH)
+      .append(mainArtifact.getVersion())
+      .append(DASH)
+      .append(SOURCES)
+      .append(DOT)
+      .append(JAR)
+      .toString();
+    File sourcesFile = new File(sourcesPath);
+    if (sourcesFile.exists()) {
+      sourcesArtifact = sourcesArtifact.setFile(sourcesFile);
     }
 
     RemoteRepository distRepo = new RemoteRepository.Builder(
@@ -187,9 +252,12 @@ public class MavenRepositoryProvisioner {
 
     DeployRequest deployRequest = new DeployRequest();
     deployRequest.addArtifact(mainArtifact);
-    if (pomArtifact.getFile() !=null) 
+    if ( pomArtifact.getFile() !=null ) 
     { 
       deployRequest.addArtifact(pomArtifact);
+    }
+    if ( sourcesArtifact.getFile() != null ) {
+      deployRequest.addArtifact(sourcesArtifact);
     }
     deployRequest.setRepository(distRepo);
 
