@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.aether.examples.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +34,11 @@ public class Booter
         return GuiceRepositorySystemFactory.newRepositorySystem();
     }
 
-    public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system )
+    public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, File localRepoPath)
     {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository( "local-repo" );
+        LocalRepository localRepo = new LocalRepository( localRepoPath );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
         session.setTransferListener( new ConsoleTransferListener() );

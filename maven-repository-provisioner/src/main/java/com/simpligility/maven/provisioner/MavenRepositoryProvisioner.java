@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpResponseException;
+import org.apache.maven.repository.internal.ArtifactDescriptorUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -27,6 +28,7 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.transfer.ArtifactTransferException;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.artifact.SubArtifact;
@@ -58,6 +60,7 @@ public class MavenRepositoryProvisioner {
   private static Configuration config;
 
   private static Logger logger; 
+  static File localRepo;
   
   public static void main(String[] args) {
 
@@ -101,14 +104,18 @@ public class MavenRepositoryProvisioner {
           getSources(artifactResults);
         }
         
-        deployArtifactResults(artifactResults);
+        //deployArtifactResults(artifactResults);
+        
+        MavenRepositoryHelper helper = new MavenRepositoryHelper(localRepo);
+        helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());
       }
     }
   }
 
   private static void initialize() {
+    localRepo = new File("local-repo");
     system = Booter.newRepositorySystem();
-    session = Booter.newRepositorySystemSession(system);
+    session = Booter.newRepositorySystemSession( system, localRepo );
     
     String username = config.getUsername();
     String password = config.getPassword();
@@ -196,12 +203,14 @@ public class MavenRepositoryProvisioner {
       DependencyRequest dependencyRequest = new DependencyRequest(collectRequest,
           depFilter);
 
-      try {
-        artifactResults.addAll(system.resolveDependencies(session, dependencyRequest)
-            .getArtifactResults());
-      } catch (DependencyResolutionException e) {
-        // TODO log error
-        e.printStackTrace();
+      try 
+      {
+        DependencyResult resolvedDependencies = system.resolveDependencies(session, dependencyRequest);
+        artifactResults.addAll( resolvedDependencies.getArtifactResults() );
+      } 
+      catch ( DependencyResolutionException e ) 
+      {
+        logger.info( "DependencyResolutionException ");
       }
     }
     
