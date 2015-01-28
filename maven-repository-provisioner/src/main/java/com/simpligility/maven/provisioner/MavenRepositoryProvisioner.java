@@ -54,7 +54,6 @@ public class MavenRepositoryProvisioner {
   
   private static RepositorySystem system;
   private static DefaultRepositorySystemSession session;
-  private static Authentication auth = null;
   private static RemoteRepository sourceRepository;
 
   private static Configuration config;
@@ -104,8 +103,6 @@ public class MavenRepositoryProvisioner {
           getSources(artifactResults);
         }
         
-        //deployArtifactResults(artifactResults);
-        
         MavenRepositoryHelper helper = new MavenRepositoryHelper(localRepo);
         helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());
       }
@@ -116,13 +113,6 @@ public class MavenRepositoryProvisioner {
     localRepo = new File("local-repo");
     system = Booter.newRepositorySystem();
     session = Booter.newRepositorySystemSession( system, localRepo );
-    
-    String username = config.getUsername();
-    String password = config.getPassword();
-    if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-      auth = new AuthenticationBuilder().addUsername(username)
-          .addPassword(password).build();
-    }
     
     sourceRepository = new RemoteRepository.Builder("central", "default",
         config.getSourceUrl()).build();
@@ -140,7 +130,6 @@ public class MavenRepositoryProvisioner {
   }
 
   private static void getSources(ArtifactResult artifactResult) {
-    // TODO Auto-generated method stub
     Artifact mainArtifact = artifactResult.getArtifact();
     Artifact sourceArtifact = new DefaultArtifact(
         mainArtifact.getGroupId(), mainArtifact.getArtifactId(), SOURCES, JAR, mainArtifact.getVersion());
@@ -155,31 +144,6 @@ public class MavenRepositoryProvisioner {
     }
     catch (ArtifactResolutionException e) {
       logger.info("ArtifactResolutionException when retrieving source");
-    }
-  }
-
-  private static void deployArtifactResults(List<ArtifactResult> artifactResults) {
-    if (artifactResults != null) {
-      for (ArtifactResult artifactResult : artifactResults) {
-        logger.info(artifactResult.getArtifact() + " resolved to "
-            + artifactResult.getArtifact().getFile());
-        try
-        {
-          deployArtifactResult(artifactResult);
-        } 
-        catch (ArtifactTransferException ate)
-        {
-          logger.info("ArtifactTransferException");
-        } 
-        catch (HttpResponseException hre)
-        {
-          logger.info("HttpResponseException");
-        } 
-        catch (DeploymentException de)
-        {
-          logger.info("DeploymentException");
-        }
-      }
     }
   }
 
@@ -216,61 +180,4 @@ public class MavenRepositoryProvisioner {
     
     return artifactResults;
   }
-
-  private static void deployArtifactResult(ArtifactResult artifactResult)
-      throws HttpResponseException, ArtifactTransferException,
-      DeploymentException {
-    Artifact mainArtifact = artifactResult.getArtifact();
-
-    Artifact pomArtifact = new SubArtifact(mainArtifact, "", POM);
-    String separator = FileSystems.getDefault().getSeparator(); // TBD maybe change to check actual file system used? 
-    String pomPath = new StringBuilder()
-      .append(mainArtifact.getFile().getParent())
-      .append(separator)
-      .append(mainArtifact.getArtifactId())
-      .append(DASH)
-      .append(mainArtifact.getVersion())
-      .append(DOT)
-      .append(POM)
-      .toString();
-    File pomFile = new File(pomPath);
-    if (pomFile.exists()) {
-      pomArtifact = pomArtifact.setFile(pomFile);
-    }
-
-    Artifact sourcesArtifact = new SubArtifact(mainArtifact, SOURCES, JAR);
-    String sourcesPath = new StringBuilder()
-      .append(mainArtifact.getFile().getParent())
-      .append(separator)
-      .append(mainArtifact.getArtifactId())
-      .append(DASH)
-      .append(mainArtifact.getVersion())
-      .append(DASH)
-      .append(SOURCES)
-      .append(DOT)
-      .append(JAR)
-      .toString();
-    File sourcesFile = new File(sourcesPath);
-    if (sourcesFile.exists()) {
-      sourcesArtifact = sourcesArtifact.setFile(sourcesFile);
-    }
-
-    RemoteRepository distRepo = new RemoteRepository.Builder(
-        "repositoryIdentifier", "default", config.getTargetUrl())
-        .setAuthentication(auth).build();
-
-    DeployRequest deployRequest = new DeployRequest();
-    deployRequest.addArtifact(mainArtifact);
-    if ( pomArtifact.getFile() !=null ) 
-    { 
-      deployRequest.addArtifact(pomArtifact);
-    }
-    if ( sourcesArtifact.getFile() != null ) {
-      deployRequest.addArtifact(sourcesArtifact);
-    }
-    deployRequest.setRepository(distRepo);
-
-    system.deploy(session, deployRequest);
-  }
-
 }
