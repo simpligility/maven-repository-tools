@@ -46,25 +46,13 @@ import com.beust.jcommander.JCommander;
  */
 public class MavenRepositoryProvisioner {
 
-  private static final String DASH  = "-";
-  private static final String DOT  = ".";
-  private static final String POM  = "pom";
-  private static final String SOURCES = "sources";
-  private static final String JAR = "jar";
-  
-  private static RepositorySystem system;
-  private static DefaultRepositorySystemSession session;
-  private static RemoteRepository sourceRepository;
-
   private static Configuration config;
 
-  private static Logger logger; 
+  private static Logger logger = LoggerFactory.getLogger("MavenRepositoryProvisioner");; 
   static File localRepo;
   
   public static void main(String[] args) {
 
-    logger = LoggerFactory.getLogger("MavenRepositoryProvisioner");
-    
     JCommander jcommander = null;
     Boolean validConfig = false;
     StringBuilder usage = new StringBuilder()
@@ -94,90 +82,14 @@ public class MavenRepositoryProvisioner {
         logger.info("Username: " + config.getUsername());
         logger.info("Password: " + config.getPassword());
         
-        initialize();
-        List<ArtifactResult> artifactResults = getArtifactResults();
+        localRepo = new File("local-repo");
+   
+        ArtifactRetriever retriever = new ArtifactRetriever( localRepo );
+        retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl() );
         
-        boolean addSources = true;
-        if ( addSources ) 
-        {
-          getSources(artifactResults);
-        }
-        
-        MavenRepositoryHelper helper = new MavenRepositoryHelper(localRepo);
+        MavenRepositoryHelper helper = new MavenRepositoryHelper( localRepo );
         helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());
       }
     }
-  }
-
-  private static void initialize() {
-    localRepo = new File("local-repo");
-    system = Booter.newRepositorySystem();
-    session = Booter.newRepositorySystemSession( system, localRepo );
-    
-    sourceRepository = new RemoteRepository.Builder("central", "default",
-        config.getSourceUrl()).build();
-
-  }
-
-  private static void getSources(List<ArtifactResult> artifactResults) {
-    if (artifactResults != null) {
-      for (ArtifactResult artifactResult : artifactResults) {
-        logger.info(artifactResult.getArtifact() + " resolved to "
-            + artifactResult.getArtifact().getFile());
-          getSources(artifactResult);
-      }
-    }
-  }
-
-  private static void getSources(ArtifactResult artifactResult) {
-    Artifact mainArtifact = artifactResult.getArtifact();
-    Artifact sourceArtifact = new DefaultArtifact(
-        mainArtifact.getGroupId(), mainArtifact.getArtifactId(), SOURCES, JAR, mainArtifact.getVersion());
-
-    ArtifactRequest sourceRequest = new ArtifactRequest();
-    sourceRequest.setArtifact( sourceArtifact );
-    sourceRequest.setRepositories( Booter.newRepositories( system, session ) );
-
-    try {
-      ArtifactResult sourceResult = system.resolveArtifact( session, sourceRequest );
-      logger.info("Retrieved " + sourceResult.getArtifact().getFile());
-    }
-    catch (ArtifactResolutionException e) {
-      logger.info("ArtifactResolutionException when retrieving source");
-    }
-  }
-
-  private static List<ArtifactResult> getArtifactResults() {
-
-    List<Artifact> artifacts = new ArrayList<Artifact>();
-    List<String> artifactCoordinates = config.getArtifactCoordinates();
-    for (String artifactCoordinate : artifactCoordinates) {
-      artifacts.add(new DefaultArtifact(artifactCoordinate));
-    }
-
-    List<ArtifactResult> artifactResults = new ArrayList<ArtifactResult>();
-    for (Artifact artifact : artifacts) {
-       DependencyFilter depFilter = DependencyFilterUtils
-          .classpathFilter(JavaScopes.COMPILE);
-
-      CollectRequest collectRequest = new CollectRequest();
-      collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-      collectRequest.addRepository(sourceRepository);
-
-      DependencyRequest dependencyRequest = new DependencyRequest(collectRequest,
-          depFilter);
-
-      try 
-      {
-        DependencyResult resolvedDependencies = system.resolveDependencies(session, dependencyRequest);
-        artifactResults.addAll( resolvedDependencies.getArtifactResults() );
-      } 
-      catch ( DependencyResolutionException e ) 
-      {
-        logger.info( "DependencyResolutionException ");
-      }
-    }
-    
-    return artifactResults;
   }
 }
