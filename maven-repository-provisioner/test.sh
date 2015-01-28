@@ -17,4 +17,6 @@ function deploy {
 
 # deploy "junit:junit:4.11|junit:junit:3.8.1:com.squareup.assertj:assertj-android:aar:1.0.0""
 
-deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
+# deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
+
+deploy "org.apache.commons:commons-lang3:jar:3.3.2"
