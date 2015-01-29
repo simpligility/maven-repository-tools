@@ -60,8 +60,15 @@ public class MavenRepositoryProvisioner {
         retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), 
             config.getIncludeSources(), config.getIncludeJavadoc());
         
+        logger.info("--------------------------------------------");
+        logger.info("Artifact retrieval completed.");
+        logger.info("--------------------------------------------");
+        
         MavenRepositoryHelper helper = new MavenRepositoryHelper( localRepo );
         helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());
+        logger.info("--------------------------------------------");
+        logger.info("Artifact deployment completed.");
+        logger.info("--------------------------------------------");
       }
     }
   }
