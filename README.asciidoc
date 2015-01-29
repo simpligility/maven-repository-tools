@@ -14,7 +14,7 @@ Repository Provisioner Maven Plugin:: a maven plugin for the same task.. tbd
 
 == Download
 
-Everything is distributed to the Central Repository:
+Everything will be distributed to the Central Repository. For now we have to build it .. 
 
 * Maven Repository Provisioner - download the
 +*-jar-with-dependencies.jar+ of the latest version available from
