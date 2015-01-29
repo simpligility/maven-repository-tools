@@ -92,29 +92,40 @@ public class MavenRepositoryHelper
           extension = FilenameUtils.getExtension(file.getName());
         }
         
+        String baseFileName = gav.getFilenameStart() + "." + extension;
+        String fileName = file.getName();
+        String g = gav.getGroupdId();
+        String a = gav.getArtifactId();
+        String v = gav.getVersion();
+        
         Artifact artifact = null;
-        if ( gav.getPomFilename().equals( file.getName() ) )
+        if ( gav.getPomFilename().equals( fileName ) )
         {
-          artifact = new DefaultArtifact(gav.getGroupdId(), gav.getArtifactId(), "pom" , gav.getVersion());
+          artifact = new DefaultArtifact(g, a, "pom" , v);
         } 
-        else if ( gav.getJarFilename().equals( file.getName() ) ) 
+        else if ( gav.getJarFilename().equals( fileName ) ) 
         {
-          artifact = new DefaultArtifact(gav.getGroupdId(), gav.getArtifactId(), "jar" , gav.getVersion());
+          artifact = new DefaultArtifact(g, a, "jar" , v);
         } 
-        else if ( gav.getSourceFilename().equals( file.getName() ) ) 
+        else if ( gav.getSourceFilename().equals( fileName ) ) 
         {
-          artifact = new DefaultArtifact(gav.getGroupdId(), gav.getArtifactId(), "sources", "jar" , gav.getVersion());
+          artifact = new DefaultArtifact(g, a, "sources", "jar" , v);
         } 
-        else if ( gav.getJavadocFilename().equals( file.getName() ) ) 
+        else if ( gav.getJavadocFilename().equals( fileName ) ) 
         {
-          artifact = new DefaultArtifact(gav.getGroupdId(), gav.getArtifactId(), "javadoc", "jar" , gav.getVersion());
+          artifact = new DefaultArtifact(g, a, "javadoc", "jar" , v);
         } 
+        else if ( baseFileName.equals( fileName ) )
+        {
+          artifact = new DefaultArtifact(g, a, extension, v);
+        }
         else 
         {
           String classifier = file.getName().substring( 
               gav.getFilenameStart().length(), file.getName().length() - extension.length()
               );
           System.out.println( "classifier " + classifier );
+          // TBD
         }
         
         if (artifact != null) 

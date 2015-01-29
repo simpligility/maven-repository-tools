@@ -28,8 +28,8 @@ public class Configuration {
 
   @Parameter(names = {"-a", "-artifactCoordinates"},
              description = "GAV coordinates of the desired artifacts in the "
-                 + "syntax groupId:artifactId[:extension]:version|groupId:artifactId[:extension]:version e.g. "
-                 + "org.apache.commons:commons-lang3:3.3.2|junit:junit:4.11",
+                 + "syntax groupId:artifactId[:extension][:classifier]:version|groupId:artifactId[:extension][:classifier]:version e.g. "
+                 + "org.apache.commons:commons-lang3:3.3.2|junit:junit:4.11|com.google.inject:guice:jar:no_aop:3.0",
              required = true) 
   private String artifactCoordinate;
   
