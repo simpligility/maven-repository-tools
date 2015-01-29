@@ -18,15 +18,12 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.deployment.DeployRequest;
-import org.eclipse.aether.deployment.DeploymentException;
 import org.eclipse.aether.examples.util.Booter;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.transfer.ArtifactTransferException;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
 
 public class MavenRepositoryHelper
 {
