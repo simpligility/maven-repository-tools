@@ -42,11 +42,11 @@ public class Configuration {
   private String password;
 
   @Parameter(names = {"-is", "-includeSources"},
-  description = "Flag to enable/disable download of sources artifacts. Defaults to true.")
+  description = "Flag to enable/disable download of sources artifacts. Defaults to true.", arity = 1)
   private Boolean includeSources = true;
 
   @Parameter(names = {"-ij", "-includeJavadoc"},
-  description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.")
+  description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.", arity = 1)
   private Boolean includeJavadoc = true;
   
   public void setSourceUrl(String sourceUrl) {
@@ -117,6 +117,4 @@ public class Configuration {
     List<String> coords = Arrays.asList(artifactCoordinate.split("\\|"));
     return coords;
   }
-  
-  
 }

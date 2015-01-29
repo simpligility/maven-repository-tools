@@ -82,13 +82,13 @@ public class MavenRepositoryProvisioner {
         logger.info("Username: " + config.getUsername());
         logger.info("Password: " + config.getPassword());
         logger.info("IncludeSources:" + config.getIncludeSources());
-        logger.info("IncludeSources:" + config.getIncludeJavadoc());
+        logger.info("IncludeJavadoc:" + config.getIncludeJavadoc());
         
         localRepo = new File("local-repo");
    
         ArtifactRetriever retriever = new ArtifactRetriever( localRepo );
         retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), 
-            config.getIncludeSources(), config.getIncludeSources());
+            config.getIncludeSources(), config.getIncludeJavadoc());
         
         MavenRepositoryHelper helper = new MavenRepositoryHelper( localRepo );
         helper.deployToRemote(config.getTargetUrl(), config.getUsername(), config.getPassword());
