@@ -41,6 +41,14 @@ public class Configuration {
   description = "Password for the deployment, if required.")
   private String password;
 
+  @Parameter(names = {"-is", "-includeSources"},
+  description = "Flag to enable/disable download of sources artifacts. Defaults to true.")
+  private Boolean includeSources = true;
+
+  @Parameter(names = {"-ij", "-includeJavadoc"},
+  description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.")
+  private Boolean includeJavadoc = true;
+  
   public void setSourceUrl(String sourceUrl) {
     this.sourceUrl = sourceUrl;
   }
@@ -59,6 +67,14 @@ public class Configuration {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void setIncludeSources(Boolean includeSources) {
+    this.includeSources = includeSources;
+  }
+
+  public void setIncludeJavadoc(Boolean includeJavadoc) {
+    this.includeJavadoc = includeJavadoc;
   }
 
   public boolean getHelp() {
@@ -89,8 +105,18 @@ public class Configuration {
     return password;
   }
 
+  public Boolean getIncludeSources() {
+    return includeSources;
+  }
+
+  public Boolean getIncludeJavadoc() {
+    return includeJavadoc;
+  }
+
   public List<String> getArtifactCoordinates() {
     List<String> coords = Arrays.asList(artifactCoordinate.split("\\|"));
     return coords;
   }
+  
+  
 }
