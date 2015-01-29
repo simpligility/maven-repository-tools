@@ -16,13 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simplistic repository listener that logs events to the console.
+ * A simplistic repository listener that logs events to the log.
  */
 public class LoggingRepositoryListener
     extends AbstractRepositoryListener
 {
 
-  private static Logger logger = LoggerFactory.getLogger("Slf4jRepositoryListener");;
+  private static Logger logger = LoggerFactory.getLogger("LoggingRepositoryListener");;
 
   public LoggingRepositoryListener() {
   }

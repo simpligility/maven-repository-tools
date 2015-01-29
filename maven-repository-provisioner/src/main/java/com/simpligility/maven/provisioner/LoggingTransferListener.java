@@ -24,13 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simplistic transfer listener that logs uploads/downloads to the console.
+ * A simplistic transfer listener that logs uploads/downloads to the log.
  */
 public class LoggingTransferListener
     extends AbstractTransferListener
 {
 
-  private static Logger logger = LoggerFactory.getLogger("Slf4jRepositoryListener");;
+  private static Logger logger = LoggerFactory.getLogger("LoggingTransferListener");;
 
   private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
 
@@ -121,7 +121,7 @@ public class LoggingTransferListener
     transferCompleted(event);
 
     if (!(event.getException() instanceof MetadataNotFoundException)) {
-      logger.info(event.getException().getStackTrace().toString());
+      logger.info( event.getException().getMessage() );
     }
   }
 
@@ -135,7 +135,7 @@ public class LoggingTransferListener
   }
 
   public void transferCorrupted(TransferEvent event) {
-    logger.info(event.getException().getStackTrace().toString());
+    logger.info( event.getException().getMessage() );
   }
 
   protected long toKB(long bytes) {
