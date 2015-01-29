@@ -122,9 +122,9 @@ public class MavenRepositoryHelper
         else 
         {
           String classifier = file.getName().substring( 
-              gav.getFilenameStart().length(), file.getName().length() - extension.length()
+              gav.getFilenameStart().length() + 1, file.getName().length() - ("." + extension).length() 
               );
-          System.out.println( "classifier " + classifier );
+          artifact = new DefaultArtifact(g, a, classifier, extension, v);
           // TBD
         }
         
