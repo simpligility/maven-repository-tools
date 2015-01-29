@@ -8,14 +8,13 @@
  * Contributors:
  *    Sonatype, Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.aether.examples.util;
+package com.simpligility.maven.provisioner;
 
 import java.io.File;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.examples.guice.GuiceRepositorySystemFactory;
 import org.eclipse.aether.repository.LocalRepository;
 
 /**
@@ -36,8 +35,8 @@ public class Booter
         LocalRepository localRepo = new LocalRepository( localRepoPath );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
-        session.setTransferListener( new ConsoleTransferListener() );
-        session.setRepositoryListener( new ConsoleRepositoryListener() );
+        session.setTransferListener( new LoggingTransferListener() );
+        session.setRepositoryListener( new LoggingRepositoryListener() );
 
         return session;
     }

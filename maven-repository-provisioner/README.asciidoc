@@ -7,6 +7,16 @@ simpligility technologies inc. presents
 A tool to provision an artifact and all its transitive dependencies from
 a source Maven repository to a target Maven repository.
 
+The source repository can be the Central Repository or any other
+repository. Typically it can also be the a repository group available
+from a repository manager like Sonatype Nexus.
+
+The target repository can be a file-system repository, however
+typically it is a repository on a repository manager. The artifacts
+are also available for inspection in a temporary local repository
+folder. By default it is named +local-repo+.
+
+
 == Usage
 
 The command 
@@ -17,33 +27,7 @@ java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
 
 will show all the required command line parameters. 
 
-== Planned Changes
+See the +test.sh+ for a number of example invocations. that can be
+used after building the project.
 
-Please check out the https://github.com/simpligility/maven-repository-tools/issues[issues list].
-
-== License
-
-Eclipse Public License - v 1.0
-
-For full text see LICENSE file or http://www.apache.org/licenses/LICENSE-2.0
- 
-== Building 
-
-Run 
-
-----
-mvn clean install
-----
-
-and in the target folder you will find the jar-with-dependencies file for using 
-the tool.
-
-== Contributions
-
-are very welcome. Send a pull request or report issues on GitHub. Even just a 
-spelling fix in the readme or anything else really is a welcome help. 
-
-== Contributors
-
-- Manfred Moser http://www.simpligility.com
 

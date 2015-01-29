@@ -8,30 +8,19 @@ A tool collection of tools to work with Maven repositories.
 
 Maven Repository Provisioner::  a command line tool to provision an artifact 
 and all its transitive dependencies from a source Maven repository to a target 
-Maven repository.
+Maven repository. See more in the 
 
 Repository Provisioner Maven Plugin:: a maven plugin for the same task.. tbd
 
 == Planned Changes
 
-* logback based logging
-* better handling of deployment to already populated repo (avoid republishing 
-and errors due to that)
-* support for source jars
-* support for javadoc jars
-* support for non-jar artifacts (might already work)
-* logging to file and console
-* print of usage on invalid config
-* break up code in main class
-* clean up and streamline pom
-* release to Central Repository
-* refactor to use same idea/codebase in a repository-provision-maven-plugin maybe
+Please check out the https://github.com/simpligility/maven-repository-tools/issues[issues list].
 
 == License
 
 Eclipse Public License - v 1.0
 
-For full text see LICENSE file or http://www.apache.org/licenses/LICENSE-2.0
+For full text see LICENSE file or https://www.eclipse.org/legal/epl-v10.html
  
 == Building 
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    Sonatype, Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.aether.examples.guice;
+package com.simpligility.maven.provisioner;
 
 import org.eclipse.aether.RepositorySystem;
 
