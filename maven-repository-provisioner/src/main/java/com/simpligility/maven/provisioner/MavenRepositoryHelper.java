@@ -22,11 +22,16 @@ import org.eclipse.aether.deployment.DeploymentException;
 import org.eclipse.aether.examples.util.Booter;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.transfer.ArtifactTransferException;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 
 public class MavenRepositoryHelper
 {
-
+  private static Logger logger = LoggerFactory.getLogger("MavenRepositoryHelper");; 
+  
   private File repositoryPath;
 
   public MavenRepositoryHelper(File repositoryPath) {
@@ -57,8 +62,6 @@ public class MavenRepositoryHelper
       int repoAbsolutePathLength = repositoryPath.getAbsoluteFile().toString().length();
       String leafRepoPath = leafAbsolutePath.substring(repoAbsolutePathLength + 1, leafAbsolutePath.length());
       
-      
-      System.out.println( " leafRepoPath " + leafRepoPath);
       Gav gav = GavUtil.getGavFromRepositoryPath(leafRepoPath);
 
       // only interested in files using the artifactId-version* pattern
@@ -82,7 +85,6 @@ public class MavenRepositoryHelper
       deployRequest.setRepository(distRepo);
       for ( File file : artifacts) 
       {
-        System.out.println( "Processing file " + file.getAbsolutePath());
         String extension;
         if ( file.getName().endsWith("tar.gz") )
         {
@@ -129,9 +131,9 @@ public class MavenRepositoryHelper
       try {
         system.deploy(session, deployRequest);
       }
-      catch (DeploymentException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      catch (Exception e) 
+      {
+        logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already.");
       }
     }
   }
@@ -143,7 +145,8 @@ public class MavenRepositoryHelper
    */
   private boolean isLeafVersionDirectory(File subDirectory) 
   {
-    Collection<File> subDirectories = FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE);
+    Collection<File> subDirectories = FileUtils.listFilesAndDirs( 
+        subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE);
     // it finds at least itself... 
     if ( subDirectories.size() > 1 ) {
       return false;

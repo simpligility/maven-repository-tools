@@ -15,10 +15,6 @@ public class GavUtil
     String gPath = gaPath.substring( 0 , gaStartSlash );
     String groupId = gPath.replace( '/', '.' );
     
-    //String artifactId = leafRepoPath.substring( gEndPos + 1, aEndPos );
-    System.out.println( " groupId " + groupId);
-    System.out.println( " artifactId " + artifactId);
-    System.out.println( " version " + version);
     return new Gav(groupId, artifactId, version);
   }
 

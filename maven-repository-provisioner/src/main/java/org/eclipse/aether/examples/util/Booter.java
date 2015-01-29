@@ -44,20 +44,6 @@ public class Booter
         session.setTransferListener( new ConsoleTransferListener() );
         session.setRepositoryListener( new ConsoleRepositoryListener() );
 
-        // uncomment to generate dirty trees
-        // session.setDependencyGraphTransformer( null );
-
         return session;
     }
-
-    public static List<RemoteRepository> newRepositories( RepositorySystem system, RepositorySystemSession session )
-    {
-        return new ArrayList<RemoteRepository>( Arrays.asList( newCentralRepository() ) );
-    }
-
-    public static RemoteRepository newCentralRepository()
-    {
-        return new RemoteRepository.Builder( "central", "default", "http://central.maven.org/maven2/" ).build();
-    }
-
 }

@@ -77,7 +77,7 @@ public class ArtifactRetriever
 
           ArtifactRequest classifierRequest = new ArtifactRequest();
           classifierRequest.setArtifact( classifierArtifact );
-          classifierRequest.setRepositories( Booter.newRepositories( system, session ) );
+          classifierRequest.addRepository( sourceRepository );
 
           try {
             ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
