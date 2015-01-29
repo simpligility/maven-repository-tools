@@ -12,6 +12,15 @@ Maven repository. See more in the readme file of the module.
 
 Repository Provisioner Maven Plugin:: a maven plugin for the same task.. tbd
 
+== Download
+
+Everything is distributed to the Central Repository:
+
+* Maven Repository Provisioner - download the
++*-jar-with-dependencies.jar+ of the latest version available from
+http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisioner/
+
+
 == Planned Changes
 
 Please check out the https://github.com/simpligility/maven-repository-tools/issues[issues list].
