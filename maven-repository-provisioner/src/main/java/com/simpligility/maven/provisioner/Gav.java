@@ -2,45 +2,56 @@ package com.simpligility.maven.provisioner;
 
 public final class Gav
 {
-  private final String groupdId;
-  private final String artifactId;
-  private final String version;
+    private final String groupdId;
 
-  public Gav(String groupId, String artifactId, String version) {
-    this.groupdId = groupId;
-    this.artifactId = artifactId;
-    this.version = version;
-  }
+    private final String artifactId;
 
-  public String getGroupdId() {
-    return groupdId;
-  }
+    private final String version;
 
-  public String getArtifactId() {
-    return artifactId;
-  }
+    public Gav( String groupId, String artifactId, String version )
+    {
+        this.groupdId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+    }
 
-  public String getVersion() {
-    return version;
-  }
+    public String getGroupdId()
+    {
+        return groupdId;
+    }
 
-  public String getPomFilename() {
-    return getFilenameStart() + ".pom";
-  }
+    public String getArtifactId()
+    {
+        return artifactId;
+    }
 
-  public String getJarFilename() {
-    return getFilenameStart() + ".jar";
-  }
+    public String getVersion()
+    {
+        return version;
+    }
 
-  public String getFilenameStart() {
-    return artifactId + "-" + version;
-  }
+    public String getPomFilename()
+    {
+        return getFilenameStart() + ".pom";
+    }
 
-  public String getSourceFilename() {
-    return getFilenameStart() + "-sources.jar";
-  }
+    public String getJarFilename()
+    {
+        return getFilenameStart() + ".jar";
+    }
 
-  public String getJavadocFilename() {
-    return getFilenameStart() + "-javadoc.jar";
-  }
+    public String getFilenameStart()
+    {
+        return artifactId + "-" + version;
+    }
+
+    public String getSourceFilename()
+    {
+        return getFilenameStart() + "-sources.jar";
+    }
+
+    public String getJavadocFilename()
+    {
+        return getFilenameStart() + "-javadoc.jar";
+    }
 }

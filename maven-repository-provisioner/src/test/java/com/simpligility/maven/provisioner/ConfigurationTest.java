@@ -10,12 +10,13 @@ import org.junit.Test;
 public class ConfigurationTest
 {
 
-  @Test
-  public void testCoordinatesParsing() {
-    Configuration configuration = new Configuration();
-    configuration.setArtifactCoordinate("a|b|c");
-    
-    List<String> coordinates = configuration.getArtifactCoordinates();
-    assertEquals(3, coordinates.size());
-  }
+    @Test
+    public void testCoordinatesParsing()
+    {
+        Configuration configuration = new Configuration();
+        configuration.setArtifactCoordinate( "a|b|c" );
+
+        List<String> coordinates = configuration.getArtifactCoordinates();
+        assertEquals( 3, coordinates.size() );
+    }
 }

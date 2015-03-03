@@ -26,144 +26,145 @@ import org.slf4j.Logger;
 
 public class MavenRepositoryHelper
 {
-  private static Logger logger = LoggerFactory.getLogger("MavenRepositoryHelper");; 
-  
-  private File repositoryPath;
+    private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryHelper" );;
 
-  public MavenRepositoryHelper(File repositoryPath) {
-    this.repositoryPath = repositoryPath;
-  }
+    private File repositoryPath;
 
-  public void deployToRemote(String targetUrl, String username, String password) {
-    // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
-    // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
-    // not yet though.. 
-    
-    RepositorySystem system = Booter.newRepositorySystem();
-    DefaultRepositorySystemSession session = Booter.newRepositorySystemSession( system, repositoryPath );
-    
-    Collection<File> subDirectories = FileUtils.listFilesAndDirs( repositoryPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE);
-    Collection<File> leafDirectories = new ArrayList<File>();
-    for ( File subDirectory : subDirectories ) 
+    public MavenRepositoryHelper( File repositoryPath )
     {
-      if ( isLeafVersionDirectory(subDirectory) )
-      {
-        
-        leafDirectories.add( subDirectory );
-      }
+        this.repositoryPath = repositoryPath;
     }
-    for ( File leafDirectory : leafDirectories )
+
+    public void deployToRemote( String targetUrl, String username, String password )
     {
-      String leafAbsolutePath = leafDirectory.getAbsoluteFile().toString();
-      int repoAbsolutePathLength = repositoryPath.getAbsoluteFile().toString().length();
-      String leafRepoPath = leafAbsolutePath.substring(repoAbsolutePathLength + 1, leafAbsolutePath.length());
-      
-      Gav gav = GavUtil.getGavFromRepositoryPath(leafRepoPath);
+        // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
+        // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
+        // not yet though..
 
-      // only interested in files using the artifactId-version* pattern
-      // don't bother with .sha1 files
-      IOFileFilter fileFilter = 
-          new AndFileFilter(
-              new WildcardFileFilter(gav.getArtifactId() + "-" + gav.getVersion() + "*"),
-              new NotFileFilter(new SuffixFileFilter("sha1"))
-          );
-      Collection<File> artifacts = FileUtils.listFiles(leafDirectory, fileFilter, null);
-      
-      Authentication auth = new AuthenticationBuilder().addUsername(username)
-            .addPassword(password).build();
-      
-      RemoteRepository distRepo = new RemoteRepository.Builder(
-          "repositoryIdentifier", "default", targetUrl)
-          .setAuthentication(auth).build();
+        RepositorySystem system = Booter.newRepositorySystem();
+        DefaultRepositorySystemSession session = Booter.newRepositorySystemSession( system, repositoryPath );
 
+        Collection<File> subDirectories =
+            FileUtils.listFilesAndDirs( repositoryPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
+                                        TrueFileFilter.INSTANCE );
+        Collection<File> leafDirectories = new ArrayList<File>();
+        for ( File subDirectory : subDirectories )
+        {
+            if ( isLeafVersionDirectory( subDirectory ) )
+            {
 
-      DeployRequest deployRequest = new DeployRequest();
-      deployRequest.setRepository(distRepo);
-      for ( File file : artifacts) 
-      {
-        String extension;
-        if ( file.getName().endsWith("tar.gz") )
-        {
-          extension = "tar.gz";
+                leafDirectories.add( subDirectory );
+            }
         }
-        else 
+        for ( File leafDirectory : leafDirectories )
         {
-          extension = FilenameUtils.getExtension(file.getName());
-        }
-        
-        String baseFileName = gav.getFilenameStart() + "." + extension;
-        String fileName = file.getName();
-        String g = gav.getGroupdId();
-        String a = gav.getArtifactId();
-        String v = gav.getVersion();
-        
-        Artifact artifact = null;
-        if ( gav.getPomFilename().equals( fileName ) )
-        {
-          artifact = new DefaultArtifact(g, a, "pom" , v);
-        } 
-        else if ( gav.getJarFilename().equals( fileName ) ) 
-        {
-          artifact = new DefaultArtifact(g, a, "jar" , v);
-        } 
-        else if ( gav.getSourceFilename().equals( fileName ) ) 
-        {
-          artifact = new DefaultArtifact(g, a, "sources", "jar" , v);
-        } 
-        else if ( gav.getJavadocFilename().equals( fileName ) ) 
-        {
-          artifact = new DefaultArtifact(g, a, "javadoc", "jar" , v);
-        } 
-        else if ( baseFileName.equals( fileName ) )
-        {
-          artifact = new DefaultArtifact(g, a, extension, v);
-        }
-        else 
-        {
-          String classifier = file.getName().substring( 
-              gav.getFilenameStart().length() + 1, file.getName().length() - ("." + extension).length() 
-              );
-          artifact = new DefaultArtifact(g, a, classifier, extension, v);
-          // TBD
-        }
-        
-        if (artifact != null) 
-        {
-          artifact = artifact.setFile(file);
-          deployRequest.addArtifact(artifact);
-        }
+            String leafAbsolutePath = leafDirectory.getAbsoluteFile().toString();
+            int repoAbsolutePathLength = repositoryPath.getAbsoluteFile().toString().length();
+            String leafRepoPath = leafAbsolutePath.substring( repoAbsolutePathLength + 1, leafAbsolutePath.length() );
 
-      }
-      
-      try {
-        system.deploy(session, deployRequest);
-      }
-      catch (Exception e) 
-      {
-        logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already.");
-      }
+            Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
+
+            // only interested in files using the artifactId-version* pattern
+            // don't bother with .sha1 files
+            IOFileFilter fileFilter =
+                new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
+                                   new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+            Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
+
+            Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password ).build();
+
+            RemoteRepository distRepo =
+                new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl ).setAuthentication( auth ).build();
+
+            DeployRequest deployRequest = new DeployRequest();
+            deployRequest.setRepository( distRepo );
+            for ( File file : artifacts )
+            {
+                String extension;
+                if ( file.getName().endsWith( "tar.gz" ) )
+                {
+                    extension = "tar.gz";
+                }
+                else
+                {
+                    extension = FilenameUtils.getExtension( file.getName() );
+                }
+
+                String baseFileName = gav.getFilenameStart() + "." + extension;
+                String fileName = file.getName();
+                String g = gav.getGroupdId();
+                String a = gav.getArtifactId();
+                String v = gav.getVersion();
+
+                Artifact artifact = null;
+                if ( gav.getPomFilename().equals( fileName ) )
+                {
+                    artifact = new DefaultArtifact( g, a, "pom", v );
+                }
+                else if ( gav.getJarFilename().equals( fileName ) )
+                {
+                    artifact = new DefaultArtifact( g, a, "jar", v );
+                }
+                else if ( gav.getSourceFilename().equals( fileName ) )
+                {
+                    artifact = new DefaultArtifact( g, a, "sources", "jar", v );
+                }
+                else if ( gav.getJavadocFilename().equals( fileName ) )
+                {
+                    artifact = new DefaultArtifact( g, a, "javadoc", "jar", v );
+                }
+                else if ( baseFileName.equals( fileName ) )
+                {
+                    artifact = new DefaultArtifact( g, a, extension, v );
+                }
+                else
+                {
+                    String classifier =
+                        file.getName().substring( gav.getFilenameStart().length() + 1,
+                                                  file.getName().length() - ( "." + extension ).length() );
+                    artifact = new DefaultArtifact( g, a, classifier, extension, v );
+                    // TBD
+                }
+
+                if ( artifact != null )
+                {
+                    artifact = artifact.setFile( file );
+                    deployRequest.addArtifact( artifact );
+                }
+
+            }
+
+            try
+            {
+                system.deploy( session, deployRequest );
+            }
+            catch ( Exception e )
+            {
+                logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
+            }
+        }
     }
-  }
 
-  /**
-   * Determine if it is a leaf directory with artifacts in it. Criteria used is that there is no subdirectory.
-   * @param subDirectory
-   * @return
-   */
-  private boolean isLeafVersionDirectory(File subDirectory) 
-  {
-    Collection<File> subDirectories = FileUtils.listFilesAndDirs( 
-        subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY, TrueFileFilter.INSTANCE);
-    // it finds at least itself... 
-    if ( subDirectories.size() > 1 ) {
-      return false;
-    }
-    else 
+    /**
+     * Determine if it is a leaf directory with artifacts in it. Criteria used is that there is no subdirectory.
+     * 
+     * @param subDirectory
+     * @return
+     */
+    private boolean isLeafVersionDirectory( File subDirectory )
     {
-      return true;
+        Collection<File> subDirectories =
+            FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
+                                        TrueFileFilter.INSTANCE );
+        // it finds at least itself...
+        if ( subDirectories.size() > 1 )
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
-  }
-
 
 }
-
