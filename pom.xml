@@ -39,6 +39,22 @@
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+            <configLocation>config/maven_checks.xml</configLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>process-sources</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
