@@ -25,7 +25,7 @@ The command
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
 
-will show all the required command line parameters. A full example
+will show full help documentation. A full example invocation
 could look like this:
 
 ----
