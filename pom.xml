@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>maven-repository-tools</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.0</version>
   <packaging>pom</packaging>
 
   <description>A collection of tools for working with Maven repositories.</description>
@@ -26,6 +26,7 @@
     <connection>scm:git:git://github.com/simpligility/maven-repository-tools.git</connection>
     <developerConnection>scm:git:git@github.com:simpligility/maven-repository-tools.git</developerConnection>
     <url>http://github.com/simpligility/maven-repository-tools</url>
+    <tag>0.2.0</tag>
   </scm>
   <issueManagement>
     <system>Github</system>
