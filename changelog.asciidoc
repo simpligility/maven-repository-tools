@@ -1,0 +1,6 @@
+= Changelog
+
+== Maven Repository Tools 0.2.0 - released 2015-03-04
+
+* first release available on the Central Repository
+* fully functioning Maven Repository Provisioner command line application
