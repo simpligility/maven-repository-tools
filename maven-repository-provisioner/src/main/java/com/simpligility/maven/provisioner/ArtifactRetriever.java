@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -35,6 +36,14 @@ import org.slf4j.LoggerFactory;
  */
 public class ArtifactRetriever
 {
+
+    private static final String JAVADOC = "javadoc";
+
+    private static final String SOURCES = "sources";
+
+    private static final String POM = "pom";
+
+    private static final String JAR = "jar";
 
     private static Logger logger = LoggerFactory.getLogger( "ArtifactRetriever" );
 
@@ -78,40 +87,68 @@ public class ArtifactRetriever
 
     private void getSources( List<ArtifactResult> artifactResults )
     {
-        getArtifactsWithClassifier( artifactResults, "sources" );
+        getArtifactsWithClassifier( artifactResults, SOURCES );
     }
 
     private void getJavadoc( List<ArtifactResult> artifactResults )
     {
-        getArtifactsWithClassifier( artifactResults, "javadoc" );
+        getArtifactsWithClassifier( artifactResults, JAVADOC );
     }
 
     private void getArtifactsWithClassifier( List<ArtifactResult> artifactResults, String classifier )
     {
-        if ( artifactResults != null )
+        if ( artifactResults != null && StringUtils.isNotBlank( classifier ) )
         {
             for ( ArtifactResult artifactResult : artifactResults )
             {
                 Artifact mainArtifact = artifactResult.getArtifact();
-                Artifact classifierArtifact =
-                    new DefaultArtifact( mainArtifact.getGroupId(), mainArtifact.getArtifactId(), classifier, "jar",
-                                         mainArtifact.getVersion() );
-
-                ArtifactRequest classifierRequest = new ArtifactRequest();
-                classifierRequest.setArtifact( classifierArtifact );
-                classifierRequest.addRepository( sourceRepository );
-
-                try
+                if ( isValidRequest( mainArtifact, classifier ) )
                 {
-                    ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
-                    logger.info( "Retrieved " + classifierResult.getArtifact().getFile() );
-                }
-                catch ( ArtifactResolutionException e )
-                {
-                    logger.info( "ArtifactResolutionException when retrieving " + classifier );
+                    Artifact classifierArtifact =
+                        new DefaultArtifact( mainArtifact.getGroupId(), mainArtifact.getArtifactId(), classifier, JAR,
+                                             mainArtifact.getVersion() );
+
+                    ArtifactRequest classifierRequest = new ArtifactRequest();
+                    classifierRequest.setArtifact( classifierArtifact );
+                    classifierRequest.addRepository( sourceRepository );
+
+                    try
+                    {
+                        ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
+                        logger.info( "Retrieved " + classifierResult.getArtifact().getFile() );
+                    }
+                    catch ( ArtifactResolutionException e )
+                    {
+                        logger.info( "ArtifactResolutionException when retrieving " + classifier );
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Determine if a request for a classifier artifact is valid. E.g. javadoc and source for extension pom is deemed 
+     * not valid, but default is valid.
+     * @param mainArtifact
+     * @param classifier
+     * @return
+     */
+    private boolean isValidRequest( Artifact mainArtifact, String classifier )
+    {
+        boolean isValidRequest = true;
+        String extension = mainArtifact.getExtension();
+        
+        if ( POM.equalsIgnoreCase( extension ) && classifier.endsWith( JAVADOC ) )
+        {
+            isValidRequest = false;
+            logger.info( "Skipping retrieval of javadoc for pom extension" );
+        } 
+        else if ( POM.equalsIgnoreCase( extension ) && classifier.endsWith( SOURCES ) )
+        {
+            isValidRequest = false;
+            logger.info( "Skipping retrieval of sources for pom extension" );
+        }
+        return isValidRequest;
     }
 
     private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates )
