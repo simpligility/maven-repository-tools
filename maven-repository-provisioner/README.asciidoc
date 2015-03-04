@@ -25,9 +25,18 @@ The command
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
 
-will show all the required command line parameters. 
+will show all the required command line parameters. A full example
+could look like this:
 
-See the +test.sh+ for a number of example invocations. that can be
-used after building the project.
+----
+java - jar maven-repository-provisioner-*-jar-with-dependencies.jar 
+     -a "com.simpligility.maven:progressive-organization-pom:pom:2.3.0"
+     -t "http://localhost:8081/nexus/content/repositories/test"
+     -u admin
+     -p admin123
+     -s "http://localhost:8081/nexus/content/groups/public/"
+----
+
+See the +test.sh+ script for a number of example invocations.
 
 
