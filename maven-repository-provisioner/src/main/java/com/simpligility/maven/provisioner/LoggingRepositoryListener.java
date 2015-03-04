@@ -22,7 +22,7 @@ public class LoggingRepositoryListener
     extends AbstractRepositoryListener
 {
 
-    private static Logger logger = LoggerFactory.getLogger( "LoggingRepositoryListener" );;
+    private static Logger logger = LoggerFactory.getLogger( "LoggingRepositoryListener" );
 
     public LoggingRepositoryListener()
     {

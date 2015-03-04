@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 
 public class MavenRepositoryHelper
 {
-    private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryHelper" );;
+    private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryHelper" );
 
     private File repositoryPath;
 
@@ -157,18 +157,13 @@ public class MavenRepositoryHelper
      */
     private boolean isLeafVersionDirectory( File subDirectory )
     {
+        boolean isLeafVersionDirectory;
         Collection<File> subDirectories =
             FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
                                         TrueFileFilter.INSTANCE );
-        // it finds at least itself...
-        if ( subDirectories.size() > 1 )
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        // it finds at least itself so have to check for > 1
+        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
+        return isLeafVersionDirectory;
     }
 
 }

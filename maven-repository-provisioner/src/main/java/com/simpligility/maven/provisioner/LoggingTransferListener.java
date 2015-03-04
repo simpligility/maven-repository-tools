@@ -26,7 +26,7 @@ public class LoggingTransferListener
     extends AbstractTransferListener
 {
 
-    private static Logger logger = LoggerFactory.getLogger( "LoggingTransferListener" );;
+    private static Logger logger = LoggerFactory.getLogger( "LoggingTransferListener" );
 
     private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
 

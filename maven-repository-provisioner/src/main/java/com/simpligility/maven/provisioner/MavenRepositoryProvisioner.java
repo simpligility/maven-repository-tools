@@ -29,8 +29,8 @@ public class MavenRepositoryProvisioner
 
         JCommander jcommander = null;
         Boolean validConfig = false;
-        StringBuilder usage =
-            new StringBuilder().append( "\n\nMaven Repository Provisioner\nsimpligility technologies inc.\nhttp://www.simpligility.com\n\n" );
+        StringBuilder usage = new StringBuilder().append( "\n\nMaven Repository Provisioner)" )
+            .append( "\nsimpligility technologies inc.\nhttp://www.simpligility.com\n\n" );
 
         config = new Configuration();
         try
