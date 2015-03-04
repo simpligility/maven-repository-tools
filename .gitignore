@@ -7,3 +7,4 @@ release.properties
 .settings
 .project
 local-cache
+maven-repository-provisioner.log
