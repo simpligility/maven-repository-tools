@@ -5,6 +5,9 @@
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,16 +25,20 @@ public class MavenRepositoryProvisioner
 
     private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryProvisioner" );
 
-    static File localRepo;
+    static File cacheDirectory;
 
     public static void main( String[] args )
     {
 
         JCommander jcommander = null;
         Boolean validConfig = false;
-        StringBuilder usage = new StringBuilder().append( "\n\nMaven Repository Provisioner)" )
-            .append( "\nsimpligility technologies inc.\nhttp://www.simpligility.com\n\n" );
-
+        logger.info( "-----------------------------------" );
+        logger.info( " Maven Repository Provisioner      " );
+        logger.info( " simpligility technologies inc.    " );
+        logger.info( " http://www.simpligility.com       " );
+        logger.info( "-----------------------------------" );
+        
+        StringBuilder usage = new StringBuilder();
         config = new Configuration();
         try
         {
@@ -61,10 +68,26 @@ public class MavenRepositoryProvisioner
                 logger.info( "Password: " + config.getPassword() );
                 logger.info( "IncludeSources:" + config.getIncludeSources() );
                 logger.info( "IncludeJavadoc:" + config.getIncludeJavadoc() );
+                logger.info( "Local cache directory: " + config.getCacheDirectory() );
 
-                localRepo = new File( "local-repo" );
+                cacheDirectory = new File( config.getCacheDirectory() );
+                if ( cacheDirectory.exists() && cacheDirectory.isDirectory() ) 
+                {
+                    logger.info( "Detected local cache directory '" + config.getCacheDirectory() 
+                                 + "' from prior execution." );
+                    try
+                    {
+                        FileUtils.deleteDirectory( cacheDirectory );
+                        logger.info( config.getCacheDirectory() + " deleted." );
+                    }
+                    catch ( IOException e )
+                    {
+                        logger.info( config.getCacheDirectory() + " deletion failed" );
+                    }
+                    cacheDirectory = new File( config.getCacheDirectory() );
+                }
 
-                ArtifactRetriever retriever = new ArtifactRetriever( localRepo );
+                ArtifactRetriever retriever = new ArtifactRetriever( cacheDirectory );
                 retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), config.getIncludeSources(),
                                     config.getIncludeJavadoc() );
 
@@ -72,7 +95,7 @@ public class MavenRepositoryProvisioner
                 logger.info( "Artifact retrieval completed." );
                 logger.info( "--------------------------------------------" );
 
-                MavenRepositoryHelper helper = new MavenRepositoryHelper( localRepo );
+                MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
                 helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword() );
                 logger.info( "--------------------------------------------" );
                 logger.info( "Artifact deployment completed." );
