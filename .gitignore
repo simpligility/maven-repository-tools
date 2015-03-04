@@ -6,4 +6,4 @@ release.properties
 .classpath
 .settings
 .project
-local-repo
+local-cache

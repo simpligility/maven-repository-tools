@@ -12,7 +12,6 @@ import com.beust.jcommander.Parameter;
 
 public class Configuration
 {
-
     @Parameter( names = { "-h", "-help" }, help = true, description = "Display the help information." )
     private boolean help;
 
@@ -48,6 +47,11 @@ public class Configuration
                 arity = 1 )
     private Boolean includeJavadoc = true;
 
+    @Parameter( names = { "-cd", "-cacheDirectory" },
+                description = "Local directory used as a cache between resolving and deploying, default is local-cache,"
+                )
+    private String cacheDirectory = "local-cache";
+    
     public void setSourceUrl( String sourceUrl )
     {
         this.sourceUrl = sourceUrl;
@@ -81,6 +85,11 @@ public class Configuration
     public void setIncludeJavadoc( Boolean includeJavadoc )
     {
         this.includeJavadoc = includeJavadoc;
+    }
+    
+    public void setCacheDirectory( String cacheDirectory )
+    {
+        this.cacheDirectory = cacheDirectory;
     }
 
     public boolean getHelp()
@@ -131,6 +140,13 @@ public class Configuration
     {
         return includeJavadoc;
     }
+    
+
+    public String getCacheDirectory()
+    {
+        return cacheDirectory;
+    }
+
 
     public List<String> getArtifactCoordinates()
     {
