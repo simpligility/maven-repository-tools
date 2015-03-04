@@ -1,3 +1,7 @@
+/** 
+ * Copyright simpligility technologies inc. http://www.simpligility.com
+ * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
+ */
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
@@ -21,9 +25,10 @@ public class Configuration
         + "or http://localhost:8081/content/repositories/release", required = true )
     private String targetUrl;
 
-    @Parameter( names = { "-a", "-artifactCoordinates" }, description = "GAV coordinates of the desired artifacts in the "
-        + "syntax groupId:artifactId[:extension][:classifier]:version|groupId:artifactId[:extension][:classifier]:version e.g. "
-        + "org.apache.commons:commons-lang3:3.3.2|junit:junit:4.11|com.google.inject:guice:jar:no_aop:3.0", required = true )
+    @Parameter( names = { "-a", "-artifactCoordinates" }, description = "GAV coordinates of the desired artifacts in "
+        + "the syntax groupId:artifactId[:extension][:classifier]:version|groupId:artifactId[:extension][:classifier]"
+        + ":version e.g. org.apache.commons:commons-lang3:3.3.2|junit:junit:4.11|com.google.inject:guice:jar:no_aop:3.0"
+        , required = true )
     private String artifactCoordinate;
 
     @Parameter( names = { "-u", "-username" }, description = "Username for the deployment, if required." )

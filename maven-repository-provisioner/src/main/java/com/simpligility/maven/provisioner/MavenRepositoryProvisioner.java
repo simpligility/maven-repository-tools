@@ -1,5 +1,6 @@
-/**
- * 
+/** 
+ * Copyright simpligility technologies inc. http://www.simpligility.com
+ * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
  */
 package com.simpligility.maven.provisioner;
 
@@ -19,7 +20,7 @@ public class MavenRepositoryProvisioner
 
     private static Configuration config;
 
-    private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryProvisioner" );;
+    private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryProvisioner" );
 
     static File localRepo;
 
@@ -29,7 +30,7 @@ public class MavenRepositoryProvisioner
         JCommander jcommander = null;
         Boolean validConfig = false;
         StringBuilder usage =
-            new StringBuilder().append( "\n\nMaven Repository Provisioner\nsimpligility technologies inc.\n\n" );
+            new StringBuilder().append( "\n\nMaven Repository Provisioner\nsimpligility technologies inc.\nhttp://www.simpligility.com\n\n" );
 
         config = new Configuration();
         try

@@ -1,13 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2010, 2013 Sonatype, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Sonatype, Inc. - initial API and implementation
- *******************************************************************************/
+/** 
+ * Copyright simpligility technologies inc. http://www.simpligility.com
+ * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
+ */
 package com.simpligility.maven.provisioner;
 
 import java.text.DecimalFormat;
@@ -25,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simplistic transfer listener that logs uploads/downloads to the log.
+ * 
+ * @author Manfred Moser <manfred@simpligility.com>
  */
 public class LoggingTransferListener
     extends AbstractTransferListener
@@ -158,7 +154,7 @@ public class LoggingTransferListener
 
     protected long toKB( long bytes )
     {
-        return ( bytes + 1023 ) / 1024;
+        return ( bytes + 1024 - 1 ) / 1024;
     }
 
 }

@@ -28,7 +28,8 @@ public class Booter
         return GuiceRepositorySystemFactory.newRepositorySystem();
     }
 
-    public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, File localRepoPath )
+    public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
+                                                                             File localRepoPath )
     {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 

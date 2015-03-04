@@ -1,5 +1,6 @@
-/**
- * 
+/** 
+ * Copyright simpligility technologies inc. http://www.simpligility.com
+ * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
  */
 package com.simpligility.maven.provisioner;
 
@@ -26,6 +27,12 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ArtifactRetriever can resolve a depenedencies and all transitive dependencies and upstream parent pom's 
+ * for a given GAV coordinate and fill a directory with the respective Maven repository containing those components.
+ * 
+ * @author Manfred Moser <manfred@simpligility.com>
+ */
 public class ArtifactRetriever
 {
 

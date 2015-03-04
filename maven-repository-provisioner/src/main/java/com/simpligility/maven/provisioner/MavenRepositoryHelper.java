@@ -1,3 +1,7 @@
+/** 
+ * Copyright simpligility technologies inc. http://www.simpligility.com
+ * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
+ */
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
@@ -73,8 +77,8 @@ public class MavenRepositoryHelper
 
             Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password ).build();
 
-            RemoteRepository distRepo =
-                new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl ).setAuthentication( auth ).build();
+            RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
+                    .setAuthentication( auth ).build();
 
             DeployRequest deployRequest = new DeployRequest();
             deployRequest.setRepository( distRepo );

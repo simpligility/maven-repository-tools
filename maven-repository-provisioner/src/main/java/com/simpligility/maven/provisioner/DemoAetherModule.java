@@ -37,14 +37,16 @@ class DemoAetherModule
     {
         install( new MavenAetherModule() );
         // alternatively, use the Guice Multibindings extensions
-        bind( RepositoryConnectorFactory.class ).annotatedWith( Names.named( "basic" ) ).to( BasicRepositoryConnectorFactory.class );
+        bind( RepositoryConnectorFactory.class ).annotatedWith( Names.named( "basic" ) )
+            .to( BasicRepositoryConnectorFactory.class );
         bind( TransporterFactory.class ).annotatedWith( Names.named( "file" ) ).to( FileTransporterFactory.class );
         bind( TransporterFactory.class ).annotatedWith( Names.named( "http" ) ).to( HttpTransporterFactory.class );
     }
 
     @Provides
     @Singleton
-    Set<RepositoryConnectorFactory> provideRepositoryConnectorFactories( @Named( "basic" ) RepositoryConnectorFactory basic )
+    Set<RepositoryConnectorFactory> provideRepositoryConnectorFactories( 
+                                                                 @Named( "basic" ) RepositoryConnectorFactory basic )
     {
         Set<RepositoryConnectorFactory> factories = new HashSet<RepositoryConnectorFactory>();
         factories.add( basic );
