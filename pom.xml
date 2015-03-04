@@ -9,8 +9,28 @@
   </parent>
 
   <artifactId>maven-repository-tools</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <description>A collection of tools for working with Maven repositories.</description>
+  <url>http://github.com/simpligility/maven-repository-tools/</url>
+  <inceptionYear>2014</inceptionYear>
+  <licenses>
+    <license>
+      <name>Eclipse Public License - v 1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/simpligility/maven-repository-tools.git</connection>
+    <developerConnection>scm:git:git@github.com:simpligility/maven-repository-tools.git</developerConnection>
+    <url>http://github.com/simpligility/maven-repository-tools</url>
+  </scm>
+  <issueManagement>
+    <system>Github</system>
+    <url>http://github.com/simpligility/maven-repository-tools/</url>
+  </issueManagement>
 
   <properties>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
@@ -20,9 +40,6 @@
   <modules>
     <module>maven-repository-provisioner</module>
   </modules>
-  <scm>
-    <tag>0.2.0</tag>
-  </scm>
 
   <build>
     <pluginManagement>
