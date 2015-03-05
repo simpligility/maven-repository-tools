@@ -1,6 +1,9 @@
 = Changelog
 
+List of the releases and their changes follows below. For detailed changed check out the https://github.com/simpligility/maven-repository-tools/commits/master[commit history].
+
 == Maven Repository Tools 0.2.0 - released 2015-03-04
 
 * first release available on the Central Repository
 * fully functioning Maven Repository Provisioner command line application
+* see documentation on the site regarding features and more

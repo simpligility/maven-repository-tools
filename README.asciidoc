@@ -10,26 +10,31 @@ Maven Repository Provisioner::  a command line tool to provision an artifact
 and all its transitive dependencies from a source Maven repository to a target 
 Maven repository. See more in the https://github.com/simpligility/maven-repository-tools/tree/master/maven-repository-provisioner[readme file of the module].
 
-Repository Provisioner Maven Plugin:: a maven plugin for the same task.. TBD
+Repository Provisioner Maven Plugin:: a maven plugin for the same
+task - to be done.
 
 == Download
 
-Everything will be distributed to the Central Repository. For now you have to build it .. 
+Everything is available from the Central Repository in the
+simpligility space:
 
-* Maven Repository Provisioner - download the
-+*-jar-with-dependencies.jar+ of the latest version available from
-http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisioner/
+* http://repo1.maven.org/maven2/com/simpligility/maven/
 
 
-== Planned Changes
+== Roadmap, Issues, Changes
 
-Please check out the https://github.com/simpligility/maven-repository-tools/issues[issues list].
+Please check out the
+https://github.com/simpligility/maven-repository-tools/issues[issues
+list] for upcoming changes, existing problems and so on.
+
+For past releases and already implemented changes, see the https://github.com/simpligility/maven-repository-tools/blob/master/changelog.asciidoc[changelog] as
+well as the https://github.com/simpligility/maven-repository-tools/commits/master[commit history].
 
 == License
 
 Eclipse Public License - v 1.0
 
-For full text see LICENSE file or https://www.eclipse.org/legal/epl-v10.html
+For full text see `LICENSE` file or https://www.eclipse.org/legal/epl-v10.html
  
 == Building 
 
@@ -37,6 +42,12 @@ Run
 
 ----
 mvn clean install
+----
+
+Release with the usual 
+
+----
+mvn release:prepare release:perform
 ----
 
 

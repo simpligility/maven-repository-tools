@@ -16,7 +16,7 @@ public class Configuration
     private boolean help;
 
     @Parameter( names = { "-s", "-sourceUrl" }, description = "URL for the source repository from which artifacts "
-        + "are resolved, defaults to https://repo1.maven.org/maven2, " + "example for a Nexus isntall is "
+        + "are resolved, defaults to https://repo1.maven.org/maven2, example for a Nexus isntall is "
         + "http://localhost:8081/content/groups/public  " )
     private String sourceUrl = "https://repo1.maven.org/maven2";
 

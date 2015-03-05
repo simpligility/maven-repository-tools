@@ -4,18 +4,46 @@ simpligility technologies inc. presents
 
 == Introduction
 
-A tool to provision an artifact and all its transitive dependencies from
-a source Maven repository to a target Maven repository.
+A command line tool and library from
+https://github.com/simpligility/maven-repository-tools[the Maven
+Repository Tools project] to provision from a component and all its transitive
+dependencies from a source Maven repository to a target Maven
+repository.
 
 The source repository can be the Central Repository or any other
 repository. Typically it can also be the a repository group available
 from a repository manager like Sonatype Nexus.
 
 The target repository can be a file-system repository, however
-typically it is a repository on a repository manager. The artifacts
-are also available for inspection in a temporary local repository
-folder. By default it is named +local-repo+.
+typically it is a repository on a repository manager.
 
+== Use Cases
+
+* Provision a repository to contain only "approved" components
+* Create a repository that contains a product and all its dependencies
+  for archival, software escrow, auditing or similar compliance
+  related reasons
+* Transfer components and all needed dependencies between repositories
+  or repository managers without using migration tools
+
+== Features
+
+* Command line tool with built-in help
+* Resolves specified component including transitive dependencies and parent
+  pom's required
+* All coordinates can be used to specify component - groupId,
+  artifactId, version, classifier, packaging/extension
+* Allows processing of multiple components in one run
+* Includes javadoc and sources jars to included 
+* Target repository can be a file location or a repository manager
+* Authentication for repository manager deployment can be configured
+* Temporary cache directory on local disk for inspection `local-cache`
+* Logging to stdout as well as log file `maven-repository-provisioner.log`
+
+== Download
+
+Get the `*-jar-with-dependencies.jar` of the latest version available from
+http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisioner/
 
 == Usage
 
@@ -25,7 +53,7 @@ The command
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
 
-will show full help documentation. A full example invocation
+shows the documentation. A full example invocation
 could look like this:
 
 ----
@@ -37,6 +65,6 @@ java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -s "http://localhost:8081/nexus/content/groups/public/"
 ----
 
-See the +test.sh+ script for a number of example invocations.
+See the +test.sh+ script for a number of furhter examples.
 
 
