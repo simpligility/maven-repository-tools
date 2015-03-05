@@ -13,6 +13,10 @@ Maven repository. See more in the https://github.com/simpligility/maven-reposito
 Repository Provisioner Maven Plugin:: a maven plugin for the same
 task - to be done.
 
+== Requirememts
+
+All tools require Java 7 or higher. 
+
 == Download
 
 Everything is available from the Central Repository in the

@@ -43,6 +43,8 @@ http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisione
 
 == Usage
 
+Java 7 or higher is required.
+
 The command 
 
 ----
