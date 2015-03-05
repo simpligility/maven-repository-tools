@@ -6,16 +6,9 @@ simpligility technologies inc. presents
 
 A command line tool and library from
 https://github.com/simpligility/maven-repository-tools[the Maven
-Repository Tools project] to provision from a component and all its transitive
+Repository Tools project] to provision a component and all its transitive
 dependencies from a source Maven repository to a target Maven
 repository.
-
-The source repository can be the Central Repository or any other
-repository. Typically it can also be the a repository group available
-from a repository manager like Sonatype Nexus.
-
-The target repository can be a file-system repository, however
-typically it is a repository on a repository manager.
 
 == Use Cases
 
@@ -35,10 +28,13 @@ typically it is a repository on a repository manager.
   artifactId, version, classifier, packaging/extension
 * Allows processing of multiple components in one run
 * Includes javadoc and sources jars to included 
-* Target repository can be a file location or a repository manager
+* Source repository defaults to the Central Repository, but can be
+  configured 
+* Target repository can be a file location or a repository manager repository
 * Authentication for repository manager deployment can be configured
 * Temporary cache directory on local disk for inspection `local-cache`
-* Logging to stdout as well as log file `maven-repository-provisioner.log`
+* Logging to stdout as well as log file
+  `maven-repository-provisioner.log`
 
 == Download
 
