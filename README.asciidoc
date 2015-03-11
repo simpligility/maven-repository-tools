@@ -61,5 +61,9 @@ spelling fix in the readme or anything else really is a welcome help.
 
 == Contributors
 
-- Manfred Moser http://www.simpligility.com
+- Manfred Moser http://www.simpligility.com - project management and
+  all coding
+- Jason van Zyl https://github.com/jvanzyl - Maven and Aether help
+- Igor Fedorenko https://github.com/ifedorenko - Maven and Aether help
+- Ian Williams - initial discussion around concept
 
