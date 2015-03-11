@@ -65,7 +65,7 @@ public class MavenRepositoryProvisioner
                 logger.info( "Source: " + config.getSourceUrl() );
                 logger.info( "Target: " + config.getTargetUrl() );
                 logger.info( "Username: " + config.getUsername() );
-                logger.info( "Password: " + config.getPassword() );
+                logger.info( "Password: " + config.getPassword().replaceAll( ".", "***" ) );
                 logger.info( "IncludeSources:" + config.getIncludeSources() );
                 logger.info( "IncludeJavadoc:" + config.getIncludeJavadoc() );
                 logger.info( "Local cache directory: " + config.getCacheDirectory() );
