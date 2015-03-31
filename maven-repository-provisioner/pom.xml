@@ -134,6 +134,7 @@
         <artifactId>takari-lifecycle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
+          <proc>proc</proc>
           <source>1.7</source>
           <target>1.7</target>
         </configuration>
