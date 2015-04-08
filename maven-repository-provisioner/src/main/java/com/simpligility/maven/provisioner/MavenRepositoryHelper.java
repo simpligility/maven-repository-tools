@@ -34,9 +34,20 @@ public class MavenRepositoryHelper
 
     private File repositoryPath;
 
+    private RepositorySystem system;
+
+    private DefaultRepositorySystemSession session;
+    
     public MavenRepositoryHelper( File repositoryPath )
     {
         this.repositoryPath = repositoryPath;
+        initialize();
+    }
+    
+    private void initialize()
+    {
+        system = RepositoryHandler.getRepositorySystem();
+        session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
 
     public void deployToRemote( String targetUrl, String username, String password )
@@ -44,11 +55,7 @@ public class MavenRepositoryHelper
         // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
         // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
         // not yet though..
-
-        RepositorySystem system = Booter.newRepositorySystem();
-        DefaultRepositorySystemSession session = Booter.newRepositorySystemSession( system, repositoryPath );
-
-        Collection<File> subDirectories =
+       Collection<File> subDirectories =
             FileUtils.listFilesAndDirs( repositoryPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
                                         TrueFileFilter.INSTANCE );
         Collection<File> leafDirectories = new ArrayList<File>();
@@ -127,7 +134,6 @@ public class MavenRepositoryHelper
                         file.getName().substring( gav.getFilenameStart().length() + 1,
                                                   file.getName().length() - ( "." + extension ).length() );
                     artifact = new DefaultArtifact( g, a, classifier, extension, v );
-                    // TBD
                 }
 
                 if ( artifact != null )

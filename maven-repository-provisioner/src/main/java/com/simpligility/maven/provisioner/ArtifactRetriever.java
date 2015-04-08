@@ -51,20 +51,20 @@ public class ArtifactRetriever
 
     private DefaultRepositorySystemSession session;
 
-    private File localRepo;
+    private File repositoryPath;
 
     private RemoteRepository sourceRepository;
 
-    public ArtifactRetriever( File localRepo )
+    public ArtifactRetriever( File repositoryPath )
     {
-        this.localRepo = localRepo;
+        this.repositoryPath = repositoryPath;
         initialize();
     }
 
     private void initialize()
     {
-        system = Booter.newRepositorySystem();
-        session = Booter.newRepositorySystemSession( system, localRepo );
+        system = RepositoryHandler.getRepositorySystem();
+        session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
 
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
