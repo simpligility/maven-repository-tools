@@ -20,12 +20,37 @@ import org.eclipse.aether.repository.LocalRepository;
 /**
  * A helper to boot the repository system and a repository system session.
  */
-public class Booter
+public class RepositoryHandler
 {
+    private static RepositorySystem system;
 
+    private static DefaultRepositorySystemSession session; 
+    
+    private static LoggingTransferListener transferListener = new LoggingTransferListener();
+    
+    private static LoggingRepositoryListener repositoryListener = new LoggingRepositoryListener();
+    
+    public static RepositorySystem getRepositorySystem()
+    {
+        if ( system == null ) 
+        {
+            system = newRepositorySystem();
+        }
+        return system;
+    }
     public static RepositorySystem newRepositorySystem()
     {
         return GuiceRepositorySystemFactory.newRepositorySystem();
+    }
+    
+    public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system, 
+                                                                             File localRepoPath )
+    {
+        if ( session == null )
+        {
+            session = newRepositorySystemSession( system, localRepoPath );
+        }
+        return session;
     }
 
     public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
@@ -36,8 +61,8 @@ public class Booter
         LocalRepository localRepo = new LocalRepository( localRepoPath );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
-        session.setTransferListener( new LoggingTransferListener() );
-        session.setRepositoryListener( new LoggingRepositoryListener() );
+        session.setTransferListener( transferListener );
+        session.setRepositoryListener( repositoryListener );
 
         return session;
     }
