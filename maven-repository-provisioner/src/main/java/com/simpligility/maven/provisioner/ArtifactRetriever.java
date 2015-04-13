@@ -180,7 +180,11 @@ public class ArtifactRetriever
             }
             catch ( DependencyResolutionException e )
             {
-                logger.info( "DependencyResolutionException " );
+                logger.info( "DependencyResolutionException ", e );
+            }
+            catch ( NullPointerException npe )
+            {
+                logger.info( "NullPointerException resolving dependencies ", npe );
             }
         }
 
