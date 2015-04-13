@@ -140,7 +140,7 @@
         <version>1.11.3</version>
         <extensions>true</extensions>
         <configuration>
-          <proc>proc</proc>
+          <proc>none</proc>
           <source>1.7</source>
           <target>1.7</target>
         </configuration>
