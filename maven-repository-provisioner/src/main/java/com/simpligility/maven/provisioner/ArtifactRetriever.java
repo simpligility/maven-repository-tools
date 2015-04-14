@@ -70,8 +70,8 @@ public class ArtifactRetriever
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
                           boolean includeJavadoc )
     {
-        RemoteRepository.Builder builder = new RemoteRepository.Builder("central", "default", sourceUrl);
-        builder.setProxy(ProxyHelper.getProxy(sourceUrl));
+        RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
+        builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         sourceRepository = builder.build();
 
         List<ArtifactResult> artifactResults = getArtifactResults( artifactCoordinates );
