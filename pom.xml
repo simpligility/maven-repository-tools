@@ -22,6 +22,10 @@
     </license>
   </licenses>
 
+  <modules>
+    <module>maven-repository-provisioner</module>
+  </modules>
+
   <scm>
     <connection>scm:git:git://github.com/simpligility/maven-repository-tools.git</connection>
     <developerConnection>scm:git:git@github.com:simpligility/maven-repository-tools.git</developerConnection>
@@ -37,10 +41,6 @@
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <mavenVersion>3.1.0</mavenVersion>
   </properties>
-
-  <modules>
-    <module>maven-repository-provisioner</module>
-  </modules>
 
   <build>
     <pluginManagement>
@@ -75,5 +75,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
 </project>
