@@ -6,10 +6,10 @@ set -u
 
 # for my local Nexus
 source=http://localhost:8081/nexus/content/groups/public
-target=http://localhost:8081/nexus/content/repositories/test
+target=http://localhost:8081/nexus/content/repositories/tmp
 # for my local Nexus 3
 #source=http://localhost:9081/content/groups/public
-#target=http://localhost:9081/content/repositories/test
+#target=http://localhost:9081/content/repositories/tmp
 
 function deploy {
   java -jar target/maven-reposito*-with-dependencies.jar -s $source  -t $target -u admin -p admin123 -a $1
