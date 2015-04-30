@@ -5,7 +5,11 @@ A list of the releases and their changes follows below. Check out the https://gi
 == Maven Repository Tools 0.x.y - upcoming
 
 * added masking of password in log for repository provisioner
-** fixes https://github.com/simpligility/maven-repository-tools/issues/19
+** fixes
+   https://github.com/simpligility/maven-repository-tools/issues/19
+* added proxy support
+** see https://github.com/simpligility/maven-repository-tools/pull/20
+** contributed by Romaon Zabini https://github.com/rzabini
 
 
 == Maven Repository Tools 0.2.0 - released 2015-03-04
