@@ -30,6 +30,7 @@ public class LoggingTransferListener
 
     private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
 
+
     private int lastLength;
 
     public LoggingTransferListener()
@@ -156,5 +157,6 @@ public class LoggingTransferListener
     {
         return ( bytes + 1024 - 1 ) / 1024;
     }
+
 
 }

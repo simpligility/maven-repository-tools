@@ -113,4 +113,6 @@ public class LoggingRepositoryListener
     {
         logger.info( "Resolving metadata " + event.getMetadata() + " from " + event.getRepository() );
     }
+    
+    
 }

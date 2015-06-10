@@ -103,6 +103,20 @@ public class MavenRepositoryProvisioner
                 logger.info( "--------------------------------------------" );
                 logger.info( "Artifact deployment completed." );
                 logger.info( "--------------------------------------------" );
+                
+
+                logger.info( "--------------------------------------------" );
+                logger.info( "Retrieval Summary:" );
+                logger.info( "--------------------------------------------" );
+                logger.info( "Successful Transfers "  + retriever.listSucessfulTransfers() );
+                logger.info( "Failed Transfers " + retriever.listFailedTransfers() );
+
+                logger.info( "--------------------------------------------" );
+                logger.info( "Deployment Summary:" );
+                logger.info( "--------------------------------------------" );
+                logger.info( "Successful Deployments "  + helper.listSucessfulDeployments() );
+                logger.info( "Failed Deployments " + helper.listFailedDeployments() );
+
             }
         }
     }

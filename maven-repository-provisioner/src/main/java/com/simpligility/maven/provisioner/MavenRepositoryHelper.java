@@ -7,6 +7,7 @@ package com.simpligility.maven.provisioner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -38,6 +39,8 @@ public class MavenRepositoryHelper
 
     private DefaultRepositorySystemSession session;
     
+    private final TreeSet<String> successfulDeploys = new TreeSet<String>();
+
     public MavenRepositoryHelper( File repositoryPath )
     {
         this.repositoryPath = repositoryPath;
@@ -147,6 +150,10 @@ public class MavenRepositoryHelper
             try
             {
                 system.deploy( session, deployRequest );
+                for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                {
+                    successfulDeploys.add( artifact.toString() );
+                }
             }
             catch ( Exception e )
             {
@@ -170,6 +177,24 @@ public class MavenRepositoryHelper
         // it finds at least itself so have to check for > 1
         isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
         return isLeafVersionDirectory;
+    }
+
+    public String listSucessfulDeployments()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "listSucessfulDeployments" );
+        for ( String artifact : successfulDeploys ) 
+        {
+            builder.append( artifact + "\n" );
+        }
+        return builder.toString();
+    }
+
+    public String listFailedDeployments()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "listFailedDeployments" );
+        return builder.toString();
     }
 
 }

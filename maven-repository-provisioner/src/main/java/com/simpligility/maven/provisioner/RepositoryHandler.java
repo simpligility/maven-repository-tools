@@ -38,7 +38,8 @@ public class RepositoryHandler
         }
         return system;
     }
-    public static RepositorySystem newRepositorySystem()
+    
+    private static RepositorySystem newRepositorySystem()
     {
         return GuiceRepositorySystemFactory.newRepositorySystem();
     }
@@ -53,7 +54,7 @@ public class RepositoryHandler
         return session;
     }
 
-    public static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
+    private static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
                                                                              File localRepoPath )
     {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
@@ -61,9 +62,14 @@ public class RepositoryHandler
         LocalRepository localRepo = new LocalRepository( localRepoPath );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
 
-        session.setTransferListener( transferListener );
+        session.setTransferListener( getTransferListener() );
         session.setRepositoryListener( repositoryListener );
 
         return session;
+    }
+
+    public static LoggingTransferListener getTransferListener()
+    {
+        return transferListener;
     }
 }

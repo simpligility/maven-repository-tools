@@ -191,4 +191,18 @@ public class ArtifactRetriever
         return artifactResults;
     }
 
+    public String listSucessfulTransfers()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "listSucessfulTransfers" );
+        
+        return builder.toString();
+    }
+
+    public String listFailedTransfers()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "listFailedTransfers" );
+        return builder.toString();
+    }
 }
