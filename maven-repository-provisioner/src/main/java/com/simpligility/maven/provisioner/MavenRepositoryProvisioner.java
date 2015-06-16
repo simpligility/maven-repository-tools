@@ -105,12 +105,12 @@ public class MavenRepositoryProvisioner
                 logger.info( DASH_LINE );
                 logger.info( "\nProcessing Completed.\n" ); 
                 logger.info( "\nRetrieval Summary:\n\n"
-                                + retriever.listSucessfulRetrievals()
-                                + retriever.listFailedTransfers() );
+                                + retriever.listSucessfulRetrievals() + "\n"
+                                + retriever.listFailedTransfers() + "\n");
 
                 logger.info( "\nDeployment Summary:\n\n"
-                                + helper.listSucessfulDeployments()
-                                + helper.listFailedDeployments() );
+                                + helper.listSucessfulDeployments() + "\n"
+                                + helper.listFailedDeployments() + "\n" );
 
             }
         }

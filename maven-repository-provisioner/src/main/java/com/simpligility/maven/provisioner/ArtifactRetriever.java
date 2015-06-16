@@ -124,10 +124,13 @@ public class ArtifactRetriever
                     {
                         ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
                         logger.info( "Retrieved " + classifierResult.getArtifact().getFile() );
+                        
+                        successfulRetrievals.add( classifierArtifact.toString() );
                     }
                     catch ( ArtifactResolutionException e )
                     {
                         logger.info( "ArtifactResolutionException when retrieving " + classifier );
+                     // TBD add to logging
                     }
                 }
             }
@@ -183,14 +186,24 @@ public class ArtifactRetriever
             {
                 DependencyResult resolvedDependencies = system.resolveDependencies( session, dependencyRequest );
                 artifactResults.addAll( resolvedDependencies.getArtifactResults() );
+                for ( ArtifactResult result : resolvedDependencies.getArtifactResults() )
+                {
+                    successfulRetrievals.add( result.toString() );
+                }
+            
+            
             }
             catch ( DependencyResolutionException e )
             {
                 logger.info( "DependencyResolutionException ", e );
+                // TBD hook up logging 
+                //failedRetrievals.add( e );
             }
             catch ( NullPointerException npe )
             {
                 logger.info( "NullPointerException resolving dependencies ", npe );
+                // TBD hook up logging 
+                //failedRetrievals.add( e );
             }
         }
 
