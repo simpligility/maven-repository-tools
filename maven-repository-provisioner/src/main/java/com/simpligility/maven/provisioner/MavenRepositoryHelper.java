@@ -38,8 +38,10 @@ public class MavenRepositoryHelper
     private RepositorySystem system;
 
     private DefaultRepositorySystemSession session;
-    
+
     private final TreeSet<String> successfulDeploys = new TreeSet<String>();
+
+    private final TreeSet<String> failedDeploys = new TreeSet<String>();
 
     public MavenRepositoryHelper( File repositoryPath )
     {
@@ -158,6 +160,11 @@ public class MavenRepositoryHelper
             catch ( Exception e )
             {
                 logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
+                for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                {
+                    failedDeploys.add( artifact.toString() );
+                }
+
             }
         }
     }
@@ -182,8 +189,8 @@ public class MavenRepositoryHelper
     public String listSucessfulDeployments()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append( "listSucessfulDeployments" );
-        for ( String artifact : successfulDeploys ) 
+        builder.append( "Sucessful Deployments:\n\n" );
+        for ( String artifact : successfulDeploys )
         {
             builder.append( artifact + "\n" );
         }
@@ -193,7 +200,12 @@ public class MavenRepositoryHelper
     public String listFailedDeployments()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append( "listFailedDeployments" );
+        builder.append( "Failed Deployments:\n\n" );
+        for ( String artifact : failedDeploys )
+        {
+            builder.append( artifact + "\n" );
+        }
+
         return builder.toString();
     }
 

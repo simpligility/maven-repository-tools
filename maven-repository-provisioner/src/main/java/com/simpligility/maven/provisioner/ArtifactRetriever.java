@@ -7,6 +7,7 @@ package com.simpligility.maven.provisioner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -54,6 +55,11 @@ public class ArtifactRetriever
     private File repositoryPath;
 
     private RemoteRepository sourceRepository;
+    
+    private final TreeSet<String> successfulRetrievals = new TreeSet<String>();
+
+    private final TreeSet<String> failedRetrievals = new TreeSet<String>();
+
 
     public ArtifactRetriever( File repositoryPath )
     {
@@ -191,18 +197,25 @@ public class ArtifactRetriever
         return artifactResults;
     }
 
-    public String listSucessfulTransfers()
+    public String listSucessfulRetrievals()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append( "listSucessfulTransfers" );
-        
+        builder.append( "Sucessful Retrievals:\n\n" );
+        for ( String artifact : successfulRetrievals ) 
+        {
+            builder.append( artifact + "\n" );
+        }
         return builder.toString();
     }
 
     public String listFailedTransfers()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append( "listFailedTransfers" );
+        builder.append( "Failed Retrievals:\n\n" );
+        for ( String artifact : failedRetrievals ) 
+        {
+            builder.append( artifact + "\n" );
+        }
         return builder.toString();
     }
 }

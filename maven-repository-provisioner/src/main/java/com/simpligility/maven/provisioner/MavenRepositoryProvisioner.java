@@ -20,6 +20,7 @@ import com.beust.jcommander.JCommander;
  */
 public class MavenRepositoryProvisioner
 {
+    private static final String DASH_LINE = "-----------------------------------";
 
     private static Configuration config;
 
@@ -32,11 +33,11 @@ public class MavenRepositoryProvisioner
 
         JCommander jcommander = null;
         Boolean validConfig = false;
-        logger.info( "-----------------------------------" );
+        logger.info( DASH_LINE );
         logger.info( " Maven Repository Provisioner      " );
         logger.info( " simpligility technologies inc.    " );
         logger.info( " http://www.simpligility.com       " );
-        logger.info( "-----------------------------------" );
+        logger.info( DASH_LINE );
         
         StringBuilder usage = new StringBuilder();
         config = new Configuration();
@@ -94,28 +95,22 @@ public class MavenRepositoryProvisioner
                 retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), config.getIncludeSources(),
                                     config.getIncludeJavadoc() );
 
-                logger.info( "--------------------------------------------" );
-                logger.info( "Artifact retrieval completed." );
-                logger.info( "--------------------------------------------" );
+                logger.info( DASH_LINE + "\nArtifact retrieval completed." );
 
                 MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
                 helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword() );
-                logger.info( "--------------------------------------------" );
-                logger.info( "Artifact deployment completed." );
-                logger.info( "--------------------------------------------" );
+                logger.info( DASH_LINE + "\nArtifact deployment completed." );
                 
 
-                logger.info( "--------------------------------------------" );
-                logger.info( "Retrieval Summary:" );
-                logger.info( "--------------------------------------------" );
-                logger.info( "Successful Transfers "  + retriever.listSucessfulTransfers() );
-                logger.info( "Failed Transfers " + retriever.listFailedTransfers() );
+                logger.info( DASH_LINE );
+                logger.info( "\nProcessing Completed.\n" ); 
+                logger.info( "\nRetrieval Summary:\n\n"
+                                + retriever.listSucessfulRetrievals()
+                                + retriever.listFailedTransfers() );
 
-                logger.info( "--------------------------------------------" );
-                logger.info( "Deployment Summary:" );
-                logger.info( "--------------------------------------------" );
-                logger.info( "Successful Deployments "  + helper.listSucessfulDeployments() );
-                logger.info( "Failed Deployments " + helper.listFailedDeployments() );
+                logger.info( "\nDeployment Summary:\n\n"
+                                + helper.listSucessfulDeployments()
+                                + helper.listFailedDeployments() );
 
             }
         }
