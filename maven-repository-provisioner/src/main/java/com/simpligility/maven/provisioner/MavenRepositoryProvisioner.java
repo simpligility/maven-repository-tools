@@ -106,7 +106,7 @@ public class MavenRepositoryProvisioner
                 logger.info( "\nProcessing Completed.\n" ); 
                 logger.info( "\nRetrieval Summary:\n\n"
                                 + retriever.listSucessfulRetrievals() + "\n"
-                                + retriever.listFailedTransfers() + "\n");
+                                + retriever.listFailedTransfers() + "\n" );
 
                 logger.info( "\nDeployment Summary:\n\n"
                                 + helper.listSucessfulDeployments() + "\n"
