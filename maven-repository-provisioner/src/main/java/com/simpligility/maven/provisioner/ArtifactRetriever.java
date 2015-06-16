@@ -130,7 +130,7 @@ public class ArtifactRetriever
                     catch ( ArtifactResolutionException e )
                     {
                         logger.info( "ArtifactResolutionException when retrieving " + classifier );
-                     // TBD add to logging
+                        failedRetrievals.add( e.getMessage() );
                     }
                 }
             }
@@ -196,14 +196,12 @@ public class ArtifactRetriever
             catch ( DependencyResolutionException e )
             {
                 logger.info( "DependencyResolutionException ", e );
-                // TBD hook up logging 
-                //failedRetrievals.add( e );
+                failedRetrievals.add( e.getMessage() );
             }
             catch ( NullPointerException npe )
             {
                 logger.info( "NullPointerException resolving dependencies ", npe );
-                // TBD hook up logging 
-                //failedRetrievals.add( e );
+                failedRetrievals.add( npe.getMessage() );
             }
         }
 

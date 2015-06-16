@@ -95,22 +95,20 @@ public class MavenRepositoryProvisioner
                 retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), config.getIncludeSources(),
                                     config.getIncludeJavadoc() );
 
-                logger.info( DASH_LINE + "\nArtifact retrieval completed." );
+                logger.info( "Artifact retrieval completed." );
 
                 MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
                 helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword() );
-                logger.info( DASH_LINE + "\nArtifact deployment completed." );
-                
+                logger.info( "Artifact deployment completed." );
 
-                logger.info( DASH_LINE );
-                logger.info( "\nProcessing Completed.\n" ); 
-                logger.info( "\nRetrieval Summary:\n\n"
-                                + retriever.listSucessfulRetrievals() + "\n"
-                                + retriever.listFailedTransfers() + "\n" );
+                logger.info( "Processing Completed." );
 
-                logger.info( "\nDeployment Summary:\n\n"
-                                + helper.listSucessfulDeployments() + "\n"
-                                + helper.listFailedDeployments() + "\n" );
+                logger.info( "\nProcessing Summary\n"
+                             + DASH_LINE
+                             + retriever.listSucessfulRetrievals() + "\n"
+                             + retriever.listFailedTransfers() + "\n"
+                             + helper.listSucessfulDeployments() + "\n"
+                             + helper.listFailedDeployments() + "\n" );
 
             }
         }
