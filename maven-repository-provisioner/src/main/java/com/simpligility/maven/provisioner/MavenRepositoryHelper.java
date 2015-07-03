@@ -5,6 +5,7 @@
 package com.simpligility.maven.provisioner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -18,6 +19,13 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -80,93 +88,146 @@ public class MavenRepositoryHelper
 
             Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
 
-            // only interested in files using the artifactId-version* pattern
-            // don't bother with .sha1 files
-            IOFileFilter fileFilter =
-                new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
-                                   new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
-            Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
-
-            Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password ).build();
-
-            RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
-                    .setAuthentication( auth ).build();
-
-            DeployRequest deployRequest = new DeployRequest();
-            deployRequest.setRepository( distRepo );
-            for ( File file : artifacts )
+            boolean pomInTarget = checkIfPomInTarget( targetUrl, gav );
+            
+            if ( pomInTarget ) 
             {
-                String extension;
-                if ( file.getName().endsWith( "tar.gz" ) )
-                {
-                    extension = "tar.gz";
-                }
-                else
-                {
-                    extension = FilenameUtils.getExtension( file.getName() );
-                }
-
-                String baseFileName = gav.getFilenameStart() + "." + extension;
-                String fileName = file.getName();
-                String g = gav.getGroupdId();
-                String a = gav.getArtifactId();
-                String v = gav.getVersion();
-
-                Artifact artifact = null;
-                if ( gav.getPomFilename().equals( fileName ) )
-                {
-                    artifact = new DefaultArtifact( g, a, "pom", v );
-                }
-                else if ( gav.getJarFilename().equals( fileName ) )
-                {
-                    artifact = new DefaultArtifact( g, a, "jar", v );
-                }
-                else if ( gav.getSourceFilename().equals( fileName ) )
-                {
-                    artifact = new DefaultArtifact( g, a, "sources", "jar", v );
-                }
-                else if ( gav.getJavadocFilename().equals( fileName ) )
-                {
-                    artifact = new DefaultArtifact( g, a, "javadoc", "jar", v );
-                }
-                else if ( baseFileName.equals( fileName ) )
-                {
-                    artifact = new DefaultArtifact( g, a, extension, v );
-                }
-                else
-                {
-                    String classifier =
-                        file.getName().substring( gav.getFilenameStart().length() + 1,
-                                                  file.getName().length() - ( "." + extension ).length() );
-                    artifact = new DefaultArtifact( g, a, classifier, extension, v );
-                }
-
-                if ( artifact != null )
-                {
-                    artifact = artifact.setFile( file );
-                    deployRequest.addArtifact( artifact );
-                }
-
-            }
-
-            try
+                // log for validation that file is already in remote
+            } 
+            else
             {
-                system.deploy( session, deployRequest );
-                for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                // deploytoremote ... check if validation only is set as a flag (tbd)
+
+                // only interested in files using the artifactId-version* pattern
+                // don't bother with .sha1 files
+                IOFileFilter fileFilter =
+                    new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
+                                       new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+                Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
+
+                Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
+                                .build();
+
+                RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
+                        .setAuthentication( auth ).build();
+
+                DeployRequest deployRequest = new DeployRequest();
+                deployRequest.setRepository( distRepo );
+                for ( File file : artifacts )
                 {
-                    successfulDeploys.add( artifact.toString() );
-                }
-            }
-            catch ( Exception e )
-            {
-                logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
-                for ( Artifact artifact : deployRequest.getArtifacts() ) 
-                {
-                    failedDeploys.add( artifact.toString() );
+                    String extension;
+                    if ( file.getName().endsWith( "tar.gz" ) )
+                    {
+                        extension = "tar.gz";
+                    }
+                    else
+                    {
+                        extension = FilenameUtils.getExtension( file.getName() );
+                    }
+
+                    String baseFileName = gav.getFilenameStart() + "." + extension;
+                    String fileName = file.getName();
+                    String g = gav.getGroupdId();
+                    String a = gav.getArtifactId();
+                    String v = gav.getVersion();
+                    
+                    Artifact artifact = null;
+                    if ( gav.getPomFilename().equals( fileName ) )
+                    {
+                        artifact = new DefaultArtifact( g, a, "pom", v );
+                    }
+                    else if ( gav.getJarFilename().equals( fileName ) )
+                    {
+                        artifact = new DefaultArtifact( g, a, "jar", v );
+                    }
+                    else if ( gav.getSourceFilename().equals( fileName ) )
+                    {
+                        artifact = new DefaultArtifact( g, a, "sources", "jar", v );
+                    }
+                    else if ( gav.getJavadocFilename().equals( fileName ) )
+                    {
+                        artifact = new DefaultArtifact( g, a, "javadoc", "jar", v );
+                    }
+                    else if ( baseFileName.equals( fileName ) )
+                    {
+                        artifact = new DefaultArtifact( g, a, extension, v );
+                    }
+                    else
+                    {
+                        String classifier =
+                            file.getName().substring( gav.getFilenameStart().length() + 1,
+                                                      file.getName().length() - ( "." + extension ).length() );
+                        artifact = new DefaultArtifact( g, a, classifier, extension, v );
+                    }
+
+                    if ( artifact != null )
+                    {
+                        artifact = artifact.setFile( file );
+                        deployRequest.addArtifact( artifact );
+                    }
+
                 }
 
+                try
+                {
+                    system.deploy( session, deployRequest );
+                    for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                    {
+                        successfulDeploys.add( artifact.toString() );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
+                    for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                    {
+                        failedDeploys.add( artifact.toString() );
+                    }
+                }
             }
         }
+    }
+
+    private boolean checkIfPomInTarget( String targetUrl, Gav gav )
+    {
+        boolean alreadyInTarget = false;
+        
+        String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
+        logger.debug( "Headers for " +  artifactUrl );
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpHead httphead = new HttpHead( targetUrl );
+        try 
+        {
+          HttpResponse response = httpclient.execute( httphead );
+          Header [] headers = response.getAllHeaders();
+          for ( Header header : headers ) 
+          {
+              logger.debug( header.getName() + ":" + header.getValue() );
+          }
+          logger.debug( "\n\nResponse : " );
+          if ( response.getEntity() != null ) 
+          {
+              logger.debug( EntityUtils.toString( response.getEntity() ) );
+          }
+          else
+          {   
+              logger.debug( "No response for HEAD request - we are a go" );
+              alreadyInTarget = true;
+          }
+        } 
+        catch ( ClientProtocolException cpe ) 
+        {
+          cpe.printStackTrace();
+        } 
+        catch ( IOException ioe ) 
+        {
+          ioe.printStackTrace();
+        } 
+        finally 
+        {
+           httpclient.getConnectionManager().shutdown();
+        }
+        return alreadyInTarget;
     }
 
     /**

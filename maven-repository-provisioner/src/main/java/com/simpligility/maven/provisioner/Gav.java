@@ -58,4 +58,11 @@ public final class Gav
     {
         return getFilenameStart() + "-javadoc.jar";
     }
+    
+    public String getRepositoryURLPath()
+    {
+        return groupdId.replace( ".", "/" ) + "/" + artifactId + "/" + version 
+                        + "/";
+    }
+    
 }
