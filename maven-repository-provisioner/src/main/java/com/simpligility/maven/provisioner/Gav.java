@@ -64,5 +64,10 @@ public final class Gav
         return groupdId.replace( ".", "/" ) + "/" + artifactId + "/" + version 
                         + "/";
     }
-    
+
+    @Override
+    public String toString()
+    {
+        return groupdId + ":" + artifactId + ":" + version;
+    }
 }
