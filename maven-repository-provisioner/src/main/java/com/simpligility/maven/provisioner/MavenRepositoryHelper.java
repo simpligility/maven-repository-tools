@@ -6,6 +6,7 @@ package com.simpligility.maven.provisioner;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -19,13 +20,11 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -51,6 +50,8 @@ public class MavenRepositoryHelper
 
     private final TreeSet<String> failedDeploys = new TreeSet<String>();
 
+    private final TreeSet<String> skippedDeploys = new TreeSet<String>();
+    
     public MavenRepositoryHelper( File repositoryPath )
     {
         this.repositoryPath = repositoryPath;
@@ -76,7 +77,6 @@ public class MavenRepositoryHelper
         {
             if ( isLeafVersionDirectory( subDirectory ) )
             {
-
                 leafDirectories.add( subDirectory );
             }
         }
@@ -92,7 +92,8 @@ public class MavenRepositoryHelper
             
             if ( pomInTarget ) 
             {
-                // log for validation that file is already in remote
+                logger.info( "Found POM for " + gav + " already in target. Skipping deployment." );
+                skippedDeploys.add( gav.toString() );
             } 
             else
             {
@@ -188,6 +189,13 @@ public class MavenRepositoryHelper
         }
     }
 
+    /**
+     * Check if POM file for provided gav can be found in target. Just does
+     * a HTTP get of the header and verifies http status OK 200.
+     * @param targetUrl
+     * @param gav
+     * @return
+     */
     private boolean checkIfPomInTarget( String targetUrl, Gav gav )
     {
         boolean alreadyInTarget = false;
@@ -195,23 +203,12 @@ public class MavenRepositoryHelper
         String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
         logger.debug( "Headers for " +  artifactUrl );
         HttpClient httpclient = HttpClientBuilder.create().build();
-        HttpHead httphead = new HttpHead( targetUrl );
+        HttpHead httphead = new HttpHead( artifactUrl );
         try 
         {
           HttpResponse response = httpclient.execute( httphead );
-          Header [] headers = response.getAllHeaders();
-          for ( Header header : headers ) 
+          if ( response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK )
           {
-              logger.debug( header.getName() + ":" + header.getValue() );
-          }
-          logger.debug( "\n\nResponse : " );
-          if ( response.getEntity() != null ) 
-          {
-              logger.debug( EntityUtils.toString( response.getEntity() ) );
-          }
-          else
-          {   
-              logger.debug( "No response for HEAD request - we are a go" );
               alreadyInTarget = true;
           }
         } 
@@ -269,5 +266,18 @@ public class MavenRepositoryHelper
 
         return builder.toString();
     }
+    
+    public String listSkippedDeployment()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "Skipped Deployments (POM already in target):\n\n" );
+        for ( String artifact : skippedDeploys )
+        {
+            builder.append( artifact + "\n" );
+        }
+
+        return builder.toString();
+    }
+    
 
 }
