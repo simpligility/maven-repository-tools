@@ -15,19 +15,24 @@ public class Configuration
     @Parameter( names = { "-h", "-help" }, help = true, description = "Display the help information." )
     private boolean help;
 
-    @Parameter( names = { "-s", "-sourceUrl" }, description = "URL for the source repository from which artifacts "
-        + "are resolved, defaults to https://repo1.maven.org/maven2, example for a Nexus isntall is "
-        + "http://localhost:8081/content/groups/public  " )
+    @Parameter( names = { "-s", "-sourceUrl" }, 
+                description = 
+                "URL for the source repository from which artifacts are resolved, "
+              + "example for a Nexus install is http://localhost:8081/content/groups/public" )
     private String sourceUrl = "https://repo1.maven.org/maven2";
 
-    @Parameter( names = { "-t", "-targetUrl" }, description = "Folder or URL for the target repository e.g. dist-repo "
-        + "or http://localhost:8081/content/repositories/release", required = true )
+    @Parameter( names = { "-t", "-targetUrl" }, 
+                description = "Folder or URL for the target repository e.g. dist-repo or "
+                            + " http://localhost:8081/content/repositories/release", 
+                required = true )
     private String targetUrl;
 
-    @Parameter( names = { "-a", "-artifactCoordinates" }, description = "GAV coordinates of the desired artifacts in "
-        + "the syntax groupId:artifactId[:extension][:classifier]:version|groupId:artifactId[:extension][:classifier]"
-        + ":version e.g. org.apache.commons:commons-lang3:3.3.2|com.simpligility.maven:progressive-organization-pom:"
-        + "pom:2.3.0|com.google.inject:guice:jar:no_aop:3.0", required = true )
+    @Parameter( names = { "-a", "-artifactCoordinates" }, 
+                description = "GroupId/ArtifactId/Version (GAV) coordinates of the desired artifacts using the "
+                    + "syntax (values in [] are optional): "
+                    + "g:a[:extension][:classifier]:v|g:a[:extension][:classifier]:v "
+                    + " e.g. org.apache.commons:commons-lang3:3.3.2|com.google.inject:guice:jar:no_aop:3.0", 
+                required = true )
     private String artifactCoordinate;
 
     @Parameter( names = { "-u", "-username" }, description = "Username for the deployment, if required." )
@@ -36,24 +41,21 @@ public class Configuration
     @Parameter( names = { "-p", "-password" }, description = "Password for the deployment, if required." )
     private String password;
 
-    @Parameter( names = { "-is",
-        "-includeSources" }, description = "Flag to enable/disable download of sources artifacts. Defaults to true.",
-        arity = 1 )
+    @Parameter( names = { "-is", "-includeSources" }, 
+                description = "Flag to enable/disable download of sources artifacts.", arity = 1 )
     private Boolean includeSources = true;
 
-    @Parameter( names = { "-ij",
-        "-includeJavadoc" }, description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.",
-        arity = 1 )
+    @Parameter( names = { "-ij", "-includeJavadoc" }, 
+                description = "Flag to enable/disable download of javadoc artifacts.", arity = 1 )
     private Boolean includeJavadoc = true;
 
-    @Parameter( names = { "-cd",
-        "-cacheDirectory" }, description = "Local directory used as a cache between resolving and deploying, default is"
-            + " local-cache," )
+    @Parameter( names = { "-cd", "-cacheDirectory" }, 
+                description = "Local directory used as a cache between resolving and deploying" )
     private String cacheDirectory = "local-cache";
 
-    @Parameter( names = { "-ct",
-        "-checkTarget" }, description = "Check target repository before deploying, if target GAV pom exists no "
-            + "deployment will be attempted, default is true" )
+    @Parameter( names = { "-ct", "-checkTarget" }, 
+                description = "Check target repository before deploying, if target GAV pom exists no deployment will be"
+                    + " attempted" )
     private Boolean checkTarget = true;
 
     public void setSourceUrl( String sourceUrl )

@@ -59,6 +59,10 @@ public class MavenRepositoryProvisioner
             if ( config.getHelp() )
             {
                 logger.info( usage.toString() );
+                logger.info( "\nIf you need to access the source repository via a proxy server," );
+                logger.info( "you can configure the standard Java proxy parameters http.proxyHost, " );
+                logger.info( "http.proxyPort, http.proxyUser and http.proxyPassword. More at " );
+                logger.info( "https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html" );
             }
             else
             {
