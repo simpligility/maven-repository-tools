@@ -64,7 +64,7 @@ public class MavenRepositoryHelper
         session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
 
-    public void deployToRemote( String targetUrl, String username, String password )
+    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget )
     {
         // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
         // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
@@ -88,7 +88,11 @@ public class MavenRepositoryHelper
 
             Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
 
-            boolean pomInTarget = checkIfPomInTarget( targetUrl, gav );
+            boolean pomInTarget = false;
+            if ( checkTarget ) 
+            {
+                pomInTarget = checkIfPomInTarget( targetUrl, gav );
+            }
             
             if ( pomInTarget ) 
             {
@@ -97,8 +101,6 @@ public class MavenRepositoryHelper
             } 
             else
             {
-                // deploytoremote ... check if validation only is set as a flag (tbd)
-
                 // only interested in files using the artifactId-version* pattern
                 // don't bother with .sha1 files
                 IOFileFilter fileFilter =

@@ -27,8 +27,7 @@ public class Configuration
     @Parameter( names = { "-a", "-artifactCoordinates" }, description = "GAV coordinates of the desired artifacts in "
         + "the syntax groupId:artifactId[:extension][:classifier]:version|groupId:artifactId[:extension][:classifier]"
         + ":version e.g. org.apache.commons:commons-lang3:3.3.2|com.simpligility.maven:progressive-organization-pom:"
-        + "pom:2.3.0|com.google.inject:guice:jar:no_aop:3.0"
-        , required = true )
+        + "pom:2.3.0|com.google.inject:guice:jar:no_aop:3.0", required = true )
     private String artifactCoordinate;
 
     @Parameter( names = { "-u", "-username" }, description = "Username for the deployment, if required." )
@@ -37,21 +36,26 @@ public class Configuration
     @Parameter( names = { "-p", "-password" }, description = "Password for the deployment, if required." )
     private String password;
 
-    @Parameter( names = { "-is", "-includeSources" }, 
-                description = "Flag to enable/disable download of sources artifacts. Defaults to true.", 
-                arity = 1 )
+    @Parameter( names = { "-is",
+        "-includeSources" }, description = "Flag to enable/disable download of sources artifacts. Defaults to true.",
+        arity = 1 )
     private Boolean includeSources = true;
 
-    @Parameter( names = { "-ij", "-includeJavadoc" }, 
-                description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.", 
-                arity = 1 )
+    @Parameter( names = { "-ij",
+        "-includeJavadoc" }, description = "Flag to enable/disable download of javadoc artifacts. Defaults to true.",
+        arity = 1 )
     private Boolean includeJavadoc = true;
 
-    @Parameter( names = { "-cd", "-cacheDirectory" },
-                description = "Local directory used as a cache between resolving and deploying, default is local-cache,"
-                )
+    @Parameter( names = { "-cd",
+        "-cacheDirectory" }, description = "Local directory used as a cache between resolving and deploying, default is"
+            + " local-cache," )
     private String cacheDirectory = "local-cache";
-    
+
+    @Parameter( names = { "-ct",
+        "-checkTarget" }, description = "Check target repository before deploying, if target GAV pom exists no "
+            + "deployment will be attempted, default is true" )
+    private Boolean checkTarget = true;
+
     public void setSourceUrl( String sourceUrl )
     {
         this.sourceUrl = sourceUrl;
@@ -86,10 +90,15 @@ public class Configuration
     {
         this.includeJavadoc = includeJavadoc;
     }
-    
+
     public void setCacheDirectory( String cacheDirectory )
     {
         this.cacheDirectory = cacheDirectory;
+    }
+
+    public void setCheckTarget( Boolean checkTarget )
+    {
+        this.checkTarget = checkTarget;
     }
 
     public boolean getHelp()
@@ -140,13 +149,16 @@ public class Configuration
     {
         return includeJavadoc;
     }
-    
 
     public String getCacheDirectory()
     {
         return cacheDirectory;
     }
 
+    public Boolean getCheckTarget()
+    {
+        return checkTarget;
+    }
 
     public List<String> getArtifactCoordinates()
     {

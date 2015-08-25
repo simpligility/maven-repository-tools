@@ -98,7 +98,8 @@ public class MavenRepositoryProvisioner
                 logger.info( "Artifact retrieval completed." );
 
                 MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
-                helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword() );
+                helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword(), 
+                                       config.getCheckTarget() );
                 logger.info( "Artifact deployment completed." );
 
                 logger.info( "Processing Completed." );
