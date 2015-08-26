@@ -6,22 +6,25 @@ package com.simpligility.maven.provisioner;
 
 public final class Gav
 {
-    private final String groupdId;
+    private final String groupId;
 
     private final String artifactId;
 
     private final String version;
+    
+    private final String packaging;
 
-    public Gav( String groupId, String artifactId, String version )
+    public Gav( String groupId, String artifactId, String version, String packaging )
     {
-        this.groupdId = groupId;
+        this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+        this.packaging = packaging;
     }
 
-    public String getGroupdId()
+    public String getGroupId()
     {
-        return groupdId;
+        return groupId;
     }
 
     public String getArtifactId()
@@ -32,6 +35,11 @@ public final class Gav
     public String getVersion()
     {
         return version;
+    }
+
+    public String getPackaging()
+    {
+        return packaging;
     }
 
     public String getPomFilename()
@@ -61,13 +69,13 @@ public final class Gav
     
     public String getRepositoryURLPath()
     {
-        return groupdId.replace( ".", "/" ) + "/" + artifactId + "/" + version 
+        return groupId.replace( ".", "/" ) + "/" + artifactId + "/" + version 
                         + "/";
     }
 
     @Override
     public String toString()
     {
-        return groupdId + ":" + artifactId + ":" + version;
+        return groupId + ":" + artifactId + ":" + version;
     }
 }

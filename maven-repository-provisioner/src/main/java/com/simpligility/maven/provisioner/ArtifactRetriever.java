@@ -6,6 +6,7 @@ package com.simpligility.maven.provisioner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -29,22 +30,16 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.simpligility.maven.MavenConstants;
+
 /**
- * ArtifactRetriever can resolve a depenedencies and all transitive dependencies and upstream parent pom's 
+ * ArtifactRetriever can resolve a dependencies and all transitive dependencies and upstream parent pom's 
  * for a given GAV coordinate and fill a directory with the respective Maven repository containing those components.
  * 
  * @author Manfred Moser <manfred@simpligility.com>
  */
 public class ArtifactRetriever
 {
-
-    private static final String JAVADOC = "javadoc";
-
-    private static final String SOURCES = "sources";
-
-    private static final String POM = "pom";
-
-    private static final String JAR = "jar";
 
     private static Logger logger = LoggerFactory.getLogger( "ArtifactRetriever" );
 
@@ -80,86 +75,9 @@ public class ArtifactRetriever
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         sourceRepository = builder.build();
 
-        List<ArtifactResult> artifactResults = getArtifactResults( artifactCoordinates );
+        getArtifactResults( artifactCoordinates );
 
-        if ( includeSources )
-        {
-            getSources( artifactResults );
-        }
-        if ( includeJavadoc )
-        {
-            getJavadoc( artifactResults );
-        }
-
-    }
-
-    private void getSources( List<ArtifactResult> artifactResults )
-    {
-        getArtifactsWithClassifier( artifactResults, SOURCES );
-    }
-
-    private void getJavadoc( List<ArtifactResult> artifactResults )
-    {
-        getArtifactsWithClassifier( artifactResults, JAVADOC );
-    }
-
-    private void getArtifactsWithClassifier( List<ArtifactResult> artifactResults, String classifier )
-    {
-        if ( artifactResults != null && StringUtils.isNotBlank( classifier ) )
-        {
-            for ( ArtifactResult artifactResult : artifactResults )
-            {
-                Artifact mainArtifact = artifactResult.getArtifact();
-                if ( isValidRequest( mainArtifact, classifier ) )
-                {
-                    Artifact classifierArtifact =
-                        new DefaultArtifact( mainArtifact.getGroupId(), mainArtifact.getArtifactId(), classifier, JAR,
-                                             mainArtifact.getVersion() );
-
-                    ArtifactRequest classifierRequest = new ArtifactRequest();
-                    classifierRequest.setArtifact( classifierArtifact );
-                    classifierRequest.addRepository( sourceRepository );
-
-                    try
-                    {
-                        ArtifactResult classifierResult = system.resolveArtifact( session, classifierRequest );
-                        logger.info( "Retrieved " + classifierResult.getArtifact().getFile() );
-                        
-                        successfulRetrievals.add( classifierArtifact.toString() );
-                    }
-                    catch ( ArtifactResolutionException e )
-                    {
-                        logger.info( "ArtifactResolutionException when retrieving " + classifier );
-                        failedRetrievals.add( e.getMessage() );
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Determine if a request for a classifier artifact is valid. E.g. javadoc and source for extension pom is deemed 
-     * not valid, but default is valid.
-     * @param mainArtifact
-     * @param classifier
-     * @return
-     */
-    private boolean isValidRequest( Artifact mainArtifact, String classifier )
-    {
-        boolean isValidRequest = true;
-        String extension = mainArtifact.getExtension();
-        
-        if ( POM.equalsIgnoreCase( extension ) && classifier.endsWith( JAVADOC ) )
-        {
-            isValidRequest = false;
-            logger.info( "Skipping retrieval of javadoc for pom extension" );
-        } 
-        else if ( POM.equalsIgnoreCase( extension ) && classifier.endsWith( SOURCES ) )
-        {
-            isValidRequest = false;
-            logger.info( "Skipping retrieval of sources for pom extension" );
-        }
-        return isValidRequest;
+        getAdditionalArtifacts( includeSources, includeJavadoc );
     }
 
     private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates )
@@ -190,8 +108,6 @@ public class ArtifactRetriever
                 {
                     successfulRetrievals.add( result.toString() );
                 }
-            
-            
             }
             catch ( DependencyResolutionException e )
             {
@@ -206,6 +122,65 @@ public class ArtifactRetriever
         }
 
         return artifactResults;
+    }
+
+    private void getAdditionalArtifacts( boolean includeSources, boolean includeJavadoc )
+    {
+        Collection<File> pomFiles = MavenRepositoryHelper.getPomFiles( repositoryPath );
+        for ( File pomFile : pomFiles )
+        {
+            logger.info( "Processing POM file " + pomFile.getAbsolutePath() );
+            Gav gav = null;
+            try
+            {
+                gav = MavenRepositoryHelper.getCoordinates( pomFile );
+            }
+            catch ( Exception e )
+            {
+                logger.info( "Failed to retrieve gav from " + pomFile.getAbsolutePath() );
+            }
+
+            if ( !"pom".equals( gav.getPackaging() ) )
+            {
+                getMainArtifact( gav );
+                if ( includeSources )
+                {
+                    getArtifact( gav, MavenConstants.SOURCES );
+                }
+                if ( includeJavadoc )
+                {
+                    getArtifact( gav, MavenConstants.JAVADOC );
+                }
+            }
+        }
+    }
+
+    private void getMainArtifact( Gav gav )
+    {
+        getArtifact( gav, null );
+    }
+
+    private void getArtifact( Gav gav, String classifier )
+    {
+        Artifact artifact = new DefaultArtifact( gav.getGroupId(), gav.getArtifactId(), classifier, gav.getPackaging(),
+                                                 gav.getVersion() );
+        // avoid download if we got it locally already? or not bother and just get it again? 
+        ArtifactRequest artifactRequest = new ArtifactRequest();
+        artifactRequest.setArtifact( artifact );
+        artifactRequest.addRepository( sourceRepository );
+
+        try
+        {
+            ArtifactResult artifactResult = system.resolveArtifact( session, artifactRequest );
+            logger.info( "Retrieved " + artifactResult.getArtifact().getFile() );
+
+            successfulRetrievals.add( artifact.toString() );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            logger.info( "ArtifactResolutionException when retrieving " + classifier );
+            failedRetrievals.add( e.getMessage() );
+        }
     }
 
     public String listSucessfulRetrievals()

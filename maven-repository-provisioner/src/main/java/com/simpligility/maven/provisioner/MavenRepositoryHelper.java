@@ -4,7 +4,9 @@
  */
 package com.simpligility.maven.provisioner;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -20,11 +22,14 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -34,6 +39,9 @@ import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.LoggerFactory;
+
+import com.simpligility.maven.MavenConstants;
+
 import org.slf4j.Logger;
 
 public class MavenRepositoryHelper
@@ -63,14 +71,14 @@ public class MavenRepositoryHelper
         system = RepositoryHandler.getRepositorySystem();
         session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
-
-    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget )
+    
+    public static Collection<File> getLeafDirectories( File repoPath ) 
     {
         // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
         // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
         // not yet though..
        Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( repositoryPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
+            FileUtils.listFilesAndDirs( repoPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
                                         TrueFileFilter.INSTANCE );
         Collection<File> leafDirectories = new ArrayList<File>();
         for ( File subDirectory : subDirectories )
@@ -80,6 +88,44 @@ public class MavenRepositoryHelper
                 leafDirectories.add( subDirectory );
             }
         }
+        return leafDirectories;
+    }
+    
+    /**
+     * Determine if it is a leaf directory with artifacts in it. Criteria used is that there is no subdirectory.
+     * 
+     * @param subDirectory
+     * @return
+     */
+    private static boolean isLeafVersionDirectory( File subDirectory )
+    {
+        boolean isLeafVersionDirectory;
+        Collection<File> subDirectories =
+            FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
+                                        TrueFileFilter.INSTANCE );
+        // it finds at least itself so have to check for > 1
+        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
+        return isLeafVersionDirectory;
+    }
+    
+    public static Collection<File> getPomFiles( File repoPath )
+    {
+        Collection<File> pomFiles = new ArrayList<File>();
+        Collection<File> leafDirectories = getLeafDirectories( repoPath );
+        for ( File leafDirectory : leafDirectories )
+        {
+            IOFileFilter fileFilter = new AndFileFilter( new WildcardFileFilter( "*.pom" ),
+                                               new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+            pomFiles.addAll( FileUtils.listFiles( leafDirectory, fileFilter, null ) );
+        }
+        return pomFiles;
+    }
+
+
+    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget )
+    {
+        Collection<File> leafDirectories = getLeafDirectories( repositoryPath );
+
         for ( File leafDirectory : leafDirectories )
         {
             String leafAbsolutePath = leafDirectory.getAbsoluteFile().toString();
@@ -130,26 +176,26 @@ public class MavenRepositoryHelper
 
                     String baseFileName = gav.getFilenameStart() + "." + extension;
                     String fileName = file.getName();
-                    String g = gav.getGroupdId();
+                    String g = gav.getGroupId();
                     String a = gav.getArtifactId();
                     String v = gav.getVersion();
                     
                     Artifact artifact = null;
                     if ( gav.getPomFilename().equals( fileName ) )
                     {
-                        artifact = new DefaultArtifact( g, a, "pom", v );
+                        artifact = new DefaultArtifact( g, a, MavenConstants.POM, v );
                     }
                     else if ( gav.getJarFilename().equals( fileName ) )
                     {
-                        artifact = new DefaultArtifact( g, a, "jar", v );
+                        artifact = new DefaultArtifact( g, a, MavenConstants.JAR, v );
                     }
                     else if ( gav.getSourceFilename().equals( fileName ) )
                     {
-                        artifact = new DefaultArtifact( g, a, "sources", "jar", v );
+                        artifact = new DefaultArtifact( g, a, MavenConstants.SOURCES, MavenConstants.JAR, v );
                     }
                     else if ( gav.getJavadocFilename().equals( fileName ) )
                     {
-                        artifact = new DefaultArtifact( g, a, "javadoc", "jar", v );
+                        artifact = new DefaultArtifact( g, a, MavenConstants.JAVADOC, MavenConstants.JAR, v );
                     }
                     else if ( baseFileName.equals( fileName ) )
                     {
@@ -168,7 +214,6 @@ public class MavenRepositoryHelper
                         artifact = artifact.setFile( file );
                         deployRequest.addArtifact( artifact );
                     }
-
                 }
 
                 try
@@ -229,22 +274,6 @@ public class MavenRepositoryHelper
         return alreadyInTarget;
     }
 
-    /**
-     * Determine if it is a leaf directory with artifacts in it. Criteria used is that there is no subdirectory.
-     * 
-     * @param subDirectory
-     * @return
-     */
-    private boolean isLeafVersionDirectory( File subDirectory )
-    {
-        boolean isLeafVersionDirectory;
-        Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
-                                        TrueFileFilter.INSTANCE );
-        // it finds at least itself so have to check for > 1
-        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
-        return isLeafVersionDirectory;
-    }
 
     public String listSucessfulDeployments()
     {
@@ -280,6 +309,34 @@ public class MavenRepositoryHelper
 
         return builder.toString();
     }
-    
 
+    public static Gav getCoordinates ( File pomFile ) throws Exception
+    {
+        BufferedReader in = new BufferedReader( new FileReader( pomFile ) );
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read( in );
+        // get coordinates and take care of inheritance and default
+        String g = model.getGroupId();
+        if ( StringUtils.isEmpty( g ) ) 
+        {
+            g = model.getParent().getGroupId();
+        }
+        String a = model.getArtifactId();
+        if ( StringUtils.isEmpty( a ) ) 
+        {
+            a = model.getParent().getArtifactId();
+        }
+        String v = model.getVersion();
+        if ( StringUtils.isEmpty( v ) ) 
+        {
+            v = model.getParent().getVersion();
+        }
+        String p = model.getPackaging();
+        if ( StringUtils.isEmpty( p ) ) 
+        {
+            p = MavenConstants.JAR;
+        }
+        Gav gav = new Gav( g, a, v, p );
+        return gav;
+    }
 }

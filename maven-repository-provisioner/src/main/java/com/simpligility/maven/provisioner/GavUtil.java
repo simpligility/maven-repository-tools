@@ -22,7 +22,7 @@ public class GavUtil
         String gPath = gaPath.substring( 0, gaStartSlash );
         String groupId = gPath.replace( File.separator, "." );
 
-        return new Gav( groupId, artifactId, version );
+        return new Gav( groupId, artifactId, version, null );
     }
     
 
