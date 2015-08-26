@@ -28,7 +28,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 
-class DemoAetherModule
+class AetherModule
     extends AbstractModule
 {
 

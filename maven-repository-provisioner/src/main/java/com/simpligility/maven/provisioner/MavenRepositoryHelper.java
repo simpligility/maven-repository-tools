@@ -40,6 +40,8 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.LoggerFactory;
 
+import com.simpligility.maven.Gav;
+import com.simpligility.maven.GavUtil;
 import com.simpligility.maven.MavenConstants;
 
 import org.slf4j.Logger;

@@ -17,6 +17,8 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.repository.LocalRepository;
 
+import com.google.inject.Guice;
+
 /**
  * A helper to boot the repository system and a repository system session.
  */
@@ -41,7 +43,7 @@ public class RepositoryHandler
     
     private static RepositorySystem newRepositorySystem()
     {
-        return GuiceRepositorySystemFactory.newRepositorySystem();
+        return Guice.createInjector( new AetherModule() ).getInstance( RepositorySystem.class );
     }
     
     public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system, 

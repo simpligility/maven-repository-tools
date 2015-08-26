@@ -2,7 +2,7 @@
  * Copyright simpligility technologies inc. http://www.simpligility.com
  * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
  */
-package com.simpligility.maven.provisioner;
+package com.simpligility.maven;
 
 public final class Gav
 {

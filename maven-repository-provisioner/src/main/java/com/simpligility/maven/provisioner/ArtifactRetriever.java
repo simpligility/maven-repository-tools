@@ -29,6 +29,7 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.simpligility.maven.Gav;
 import com.simpligility.maven.MavenConstants;
 
 /**
