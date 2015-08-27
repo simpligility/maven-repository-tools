@@ -66,4 +66,5 @@ spelling fix in the readme or anything else really is a welcome help.
 - Jason van Zyl https://github.com/jvanzyl - Maven and Aether help
 - Igor Fedorenko https://github.com/ifedorenko - Maven and Aether help
 - Ian Williams - initial discussion around concept
+- More details on github - https://github.com/simpligility/maven-repository-tools/network/members[members] and https://github.com/simpligility/maven-repository-tools/graphs/contributors[contributors]
 
