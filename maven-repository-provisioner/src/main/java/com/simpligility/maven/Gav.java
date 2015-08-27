@@ -44,12 +44,12 @@ public final class Gav
 
     public String getPomFilename()
     {
-        return getFilenameStart() + ".pom";
+        return getFilenameStart() + "." + MavenConstants.POM;
     }
 
     public String getJarFilename()
     {
-        return getFilenameStart() + ".jar";
+        return getFilenameStart() + "." + MavenConstants.JAR;
     }
 
     public String getFilenameStart()
@@ -59,18 +59,17 @@ public final class Gav
 
     public String getSourceFilename()
     {
-        return getFilenameStart() + "-sources.jar";
+        return getFilenameStart() + MavenConstants.SOURCES_JAR;
     }
 
     public String getJavadocFilename()
     {
-        return getFilenameStart() + "-javadoc.jar";
+        return getFilenameStart() + MavenConstants.JAVADOC_JAR;
     }
     
     public String getRepositoryURLPath()
     {
-        return groupId.replace( ".", "/" ) + "/" + artifactId + "/" + version 
-                        + "/";
+        return groupId.replace( ".", "/" ) + "/" + artifactId + "/" + version + "/";
     }
 
     @Override
