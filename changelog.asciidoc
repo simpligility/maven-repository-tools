@@ -4,11 +4,26 @@ A list of the releases and their changes follows below. Check out the
 https://github.com/simpligility/maven-repository-tools/commits/master[commit
 history] for a detailed list of changes.
 
-Unless otherwise noted all changed are done by Manfred Moser
+Unless otherwise noted all changed are done by Manfred Moser from http://www.simpligility.com[simpligility]
+
 
 == Maven Repository Tools 0.x.y - upcoming
 
 * your contributions could be here
+
+== Maven Repository Tools 0.4.0 - released 2015-08-27
+
+* feature to check for existence of artifacts in target repo, skip deployment and report on it
+** fixes https://github.com/simpligility/maven-repository-tools/issues/24 
+** fixes https://github.com/simpligility/maven-repository-tools/issues/8
+* refactored retrieval to allow easy expansion and loading of main artifact even if request is for qualifier artifact
+** fixes https://github.com/simpligility/maven-repository-tools/issues/15
+* documented proxy support
+** fixes https://github.com/simpligility/maven-repository-tools/issues/22
+* NPE fix
+** see https://github.com/simpligility/maven-repository-tools/issues/23
+* dependency updates
+* minor code cleanups
 
 == Maven Repository Tools 0.3.0 - released 2015-06-16
 
