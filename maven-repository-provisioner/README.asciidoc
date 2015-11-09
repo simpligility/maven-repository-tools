@@ -63,7 +63,7 @@ java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -s "http://localhost:8081/nexus/content/groups/public/"
 ----
 
-See the +test.sh+ script for a number of further examples.
+See the +test.sh+ script for a number of further examples. Syntax for artifact (-a) or lists of artifacts is "g:a[:extension][:classifier]:v|g:a[:extension][:classifier]:v". 
 
 If you need to access the source repository via a proxy server, you can configure the standard Java
 proxy parameters:
