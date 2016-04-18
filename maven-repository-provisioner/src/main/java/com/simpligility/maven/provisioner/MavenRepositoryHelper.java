@@ -342,11 +342,13 @@ public class MavenRepositoryHelper
         return gav;
     }
 
-    public boolean hasFailure() {
+    public boolean hasFailure() 
+    {
       return failedDeploys.size() > 0;
     }
 
-    public String getFailureMessage() {
+    public String getFailureMessage() 
+    {
       return "Failed to deploy some artifacts.";
     }
 }

@@ -50,7 +50,8 @@ public class Configuration
     private Boolean includeJavadoc = true;
 
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
-                description = "Local directory used as a cache between resolving and deploying or as the source repository that should be transferred." )
+                description = "Local directory used as a cache between resolving and deploying or as the "
+                    + "source repository that should be transferred." )
     private String cacheDirectory = "local-cache";
 
     @Parameter( names = { "-ct", "-checkTarget" }, 

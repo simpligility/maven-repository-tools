@@ -59,15 +59,15 @@ public class RepositoryHandler
     private static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
                                                                              File localRepoPath )
     {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        DefaultRepositorySystemSession newSession = MavenRepositorySystemUtils.newSession();
 
         LocalRepository localRepo = new LocalRepository( localRepoPath );
-        session.setLocalRepositoryManager( system.newLocalRepositoryManager( session, localRepo ) );
+        newSession.setLocalRepositoryManager( system.newLocalRepositoryManager( newSession, localRepo ) );
 
-        session.setTransferListener( getTransferListener() );
-        session.setRepositoryListener( repositoryListener );
+        newSession.setTransferListener( getTransferListener() );
+        newSession.setRepositoryListener( repositoryListener );
 
-        return session;
+        return newSession;
     }
 
     public static LoggingTransferListener getTransferListener()
