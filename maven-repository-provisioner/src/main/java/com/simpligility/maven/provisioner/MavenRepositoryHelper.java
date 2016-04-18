@@ -85,7 +85,7 @@ public class MavenRepositoryHelper
         Collection<File> leafDirectories = new ArrayList<File>();
         for ( File subDirectory : subDirectories )
         {
-            if ( isLeafVersionDirectory( subDirectory ) )
+            if ( isLeafVersionDirectory( subDirectory ) && subDirectory != repoPath )
             {
                 leafDirectories.add( subDirectory );
             }
