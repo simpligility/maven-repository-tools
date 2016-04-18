@@ -30,7 +30,6 @@ public class MavenRepositoryProvisioner
 
     public static void main( String[] args )
     {
-
         JCommander jcommander = null;
         Boolean validConfig = false;
         logger.info( DASH_LINE );
@@ -58,12 +57,7 @@ public class MavenRepositoryProvisioner
         {
             if ( config.getHelp() )
             {
-                logger.info( usage.toString() );
-                logger.info( "\nIf you need to access the source repository via a proxy server," );
-                logger.info( "you can configure the standard Java proxy parameters http.proxyHost, " );
-                logger.info( "http.proxyPort, http.proxyUser and http.proxyPassword. More at " );
-                logger.info( "https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html" );
-                exitFailure( "Invalid configuration." );
+              exitWithHelpMessage( usage.toString() );
             }
             else
             {
@@ -84,10 +78,11 @@ public class MavenRepositoryProvisioner
                
                 logger.info( "Local cache or source repository directory: " + config.getCacheDirectory() );
                 cacheDirectory = new File( config.getCacheDirectory() );
+                logger.info( " Absolute path: " + cacheDirectory.getAbsolutePath() );
                 if ( cacheDirectory.exists() && cacheDirectory.isDirectory() ) 
                 {
                   logger.info( "Detected local cache directory '" + config.getCacheDirectory() + "'." );
-                  if ( config.getArtifactCoordinate().isEmpty() )
+                  if ( !config.hasArtifactsCoordinates() )
                   {
                     logger.info( "No artifact coordinates specified - using cache directory as source." );
                   } 
@@ -106,10 +101,16 @@ public class MavenRepositoryProvisioner
                         exitFailure( "Failed to delete stale cache directory." );
                     }
                     cacheDirectory = new File( config.getCacheDirectory() );
+                    cacheDirectory.mkdirs();
                   }
                 }
+                else
+                {
+                  cacheDirectory = new File( config.getCacheDirectory() );
+                  cacheDirectory.mkdirs();
+                }
                 ArtifactRetriever retriever = null;
-                if ( !config.getArtifactCoordinate().isEmpty() ) 
+                if ( config.hasArtifactsCoordinates() ) 
                 {
                   logger.info( "Artifact retrieval starting." );
                   retriever = new ArtifactRetriever( cacheDirectory );
@@ -140,11 +141,11 @@ public class MavenRepositoryProvisioner
                   if ( retriever.hasFailures() ) 
                   {
                     provisioningSuccess = false;
-                    provisioningSuccessMessage.append( retriever.getFailureMessage() );
+                    provisioningSuccessMessage.append( retriever.getFailureMessage() ).append( "\n" );
                   }
                   else 
                   {
-                    provisioningSuccessMessage.append( "Retrieval completed successfully." );
+                    provisioningSuccessMessage.append( "Retrieval completed successfully.\n" );
                   }
                 }
                 
@@ -154,11 +155,11 @@ public class MavenRepositoryProvisioner
                 if ( helper.hasFailure() )
                 {
                   provisioningSuccess = false;
-                  provisioningSuccessMessage.append( helper.getFailureMessage() ); 
+                  provisioningSuccessMessage.append( helper.getFailureMessage() ).append( "\n" ); 
                 }
                 else 
                 {
-                  provisioningSuccessMessage.append( "Deployment completed successfully." );
+                  provisioningSuccessMessage.append( "Deployment completed successfully.\n" );
                 }
                 
                 logger.info( summary.toString() );
@@ -174,15 +175,25 @@ public class MavenRepositoryProvisioner
         }
     }
 
+    private static void exitWithHelpMessage( String helpText ) 
+    {
+      logger.info( helpText );
+      logger.info( "\nIf you need to access the source repository via a proxy server," );
+      logger.info( "you can configure the standard Java proxy parameters http.proxyHost, " );
+      logger.info( "http.proxyPort, http.proxyUser and http.proxyPassword. More at " );
+      logger.info( "https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html" );
+      exitFailure( "Invalid configuration." );
+    }
+
     private static void exitSuccess( String message ) 
     {
-      logger.info( "Exiting: " + message );
+      logger.info( "Exiting: SUCCESS \n" + message );
       System.exit( 0 );   
     }
 
     private static void exitFailure( String message ) 
     {
-      logger.info( "Exiting: " + message );
+      logger.info( "Exiting: FAILURE \n" + message );
       System.exit( 1 );
     }
 }
