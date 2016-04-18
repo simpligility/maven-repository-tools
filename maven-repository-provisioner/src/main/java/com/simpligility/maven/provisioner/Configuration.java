@@ -32,7 +32,7 @@ public class Configuration
                     + "syntax (values in [] are optional): "
                     + "g:a[:extension][:classifier]:v|g:a[:extension][:classifier]:v "
                     + " e.g. org.apache.commons:commons-lang3:3.3.2|com.google.inject:guice:jar:no_aop:3.0", 
-                required = true )
+                required = false )
     private String artifactCoordinate;
 
     @Parameter( names = { "-u", "-username" }, description = "Username for the deployment, if required." )
@@ -50,7 +50,7 @@ public class Configuration
     private Boolean includeJavadoc = true;
 
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
-                description = "Local directory used as a cache between resolving and deploying" )
+                description = "Local directory used as a cache between resolving and deploying or as the source repository that should be transferred." )
     private String cacheDirectory = "local-cache";
 
     @Parameter( names = { "-ct", "-checkTarget" }, 
