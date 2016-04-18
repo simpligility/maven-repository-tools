@@ -341,4 +341,12 @@ public class MavenRepositoryHelper
         Gav gav = new Gav( g, a, v, p );
         return gav;
     }
+
+    public boolean hasFailure() {
+      return failedDeploys.size() > 0;
+    }
+
+    public String getFailureMessage() {
+      return "Failed to deploy some artifacts.";
+    }
 }

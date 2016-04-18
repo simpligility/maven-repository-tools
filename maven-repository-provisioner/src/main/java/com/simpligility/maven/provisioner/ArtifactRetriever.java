@@ -204,4 +204,12 @@ public class ArtifactRetriever
         }
         return builder.toString();
     }
+
+    public boolean hasFailures() {
+      return failedRetrievals.size() > 0;
+    }
+
+    public String getFailureMessage() {
+      return "Failed to retrieve some artifacts.";
+    }
 }
