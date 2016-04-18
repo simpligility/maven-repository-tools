@@ -168,4 +168,9 @@ public class Configuration
         List<String> coords = Arrays.asList( artifactCoordinate.split( "\\|" ) );
         return coords;
     }
+
+    public boolean hasArtifactsCoordinates()
+    {
+      return artifactCoordinate != null && !artifactCoordinate.isEmpty();
+    }
 }
