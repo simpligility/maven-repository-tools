@@ -18,15 +18,8 @@ Unless otherwise noted all changed are done by Manfred Moser from http://www.sim
 * upgraded com.beust:jcommander  1.48 -> 1.55
 * upgraded commons-io:commons-io  2.4 -> 2.5
 * upgraded org.apache.httpcomponents:httpclient  4.5 -> 4.5.2
-
+* upgraded all aether dependencies 1.0.0.v20140518 -> 1.1.0
 [INFO]   org.apache.maven:maven-aether-provider ................ 3.1.0 -> 3.3.9
-[INFO]   org.eclipse.aether:aether-api ............... 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-connector-basic ... 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-impl .............. 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-spi ............... 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-transport-file .... 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-transport-http .... 1.0.0.v20140518 -> 1.1.0
-[INFO]   org.eclipse.aether:aether-util .............. 1.0.0.v20140518 -> 1.1.0
 
 
 == Maven Repository Tools 0.4.0 - released 2015-08-27

@@ -38,7 +38,7 @@
   </issueManagement>
 
   <properties>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <aetherVersion>1.1.0</aetherVersion>
     <mavenVersion>3.1.0</mavenVersion>
     <java.version>1.8</java.version>
   </properties>
