@@ -6,6 +6,9 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.0.1 or higher- upcoming
+
+* updated Maven wrapper config to use 3.3.9
 
 == Maven Repository Tools 1.0.0 - released 2016-04-19
 
