@@ -48,6 +48,12 @@ Run
 mvn clean install
 ----
 
+Verify full build for release with
+
+----
+mvn clean deploy -P release
+----
+
 Release with the usual 
 
 ----
