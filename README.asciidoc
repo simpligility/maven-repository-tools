@@ -15,7 +15,7 @@ task - to be done.
 
 == Requirememts
 
-All tools require Java 7 or higher. 
+All tools require Java 8 or higher.
 
 == Download
 

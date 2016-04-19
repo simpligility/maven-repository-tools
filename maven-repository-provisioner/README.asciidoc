@@ -8,7 +8,10 @@ A command line tool and library from
 https://github.com/simpligility/maven-repository-tools[the Maven
 Repository Tools project] to provision a component and all its transitive
 dependencies from a source Maven repository to a target Maven
-repository.
+repository. Both are access via HTTP/HTTPS using the normal Maven interactions.
+
+It can also be used to deploy a local, file-system directory using the Maven
+repository format to a repository manager.
 
 == Use Cases
 
@@ -35,6 +38,8 @@ repository.
 * Temporary cache directory on local disk for inspection `local-cache`
 * Logging to stdout as well as log file
   `maven-repository-provisioner.log`
+* Exit codes to signal success or failure
+* Strict adherence to Maven repository format specs in terms of file names
 
 == Download
 
@@ -43,7 +48,7 @@ http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisione
 
 == Usage
 
-Java 7 or higher is required.
+Java 8 or higher is required.
 
 The command 
 
@@ -61,6 +66,17 @@ java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -u admin
      -p admin123
      -s "http://localhost:8081/nexus/content/groups/public/"
+----
+
+To provision an exiting Maven repository from the filesystem into a target repository, simply
+specify the path to the folder as the local cache and omit the artifact coordinates:
+
+----
+java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
+     -cd "/opt/maven-repo"
+     -t "http://localhost:8081/nexus/content/repositories/test"
+     -u admin
+     -p admin123
 ----
 
 See the +test.sh+ script for a number of further examples. Syntax for artifact (-a) or lists of artifacts is "g:a[:extension][:classifier]:v|g:a[:extension][:classifier]:v". 

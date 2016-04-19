@@ -4,13 +4,16 @@ A list of the releases and their changes follows below. Check out the
 https://github.com/simpligility/maven-repository-tools/commits/master[commit
 history] for a detailed list of changes.
 
-Unless otherwise noted all changed are done by Manfred Moser from http://www.simpligility.com[simpligility]
+Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
 
-== Maven Repository Tools 0.x.y - upcoming
+== Maven Repository Tools 1.0.0 - released 2016-04-19
+
+Earlier versions have been used in production for quite a while now and its stable as it stands. So releasing 1.0.0.
 
 * added exit status for execution of provisioner so that it can be used as failure/success indicator in scripts and so on
 * added support to deploy a local folder without specifying artifact coordinates for initial download
+** fixes https://github.com/simpligility/maven-repository-tools/issues/12
 * upgraded org.codehaus.plexus:plexus-utils  3.0.21 -> 3.0.22
 * upgraded org.slf4j:slf4j-api  1.6.2 -> 1.7.21
 * upgraded ch.qos.logback:logback-classic  1.1.2 -> 1.1.7
