@@ -16,8 +16,8 @@ Unless otherwise noted all changed are done by Manfred Moser from http://www.sim
 * upgraded ch.qos.logback:logback-classic  1.1.2 -> 1.1.7
 * upgraded minimal required Java version for compile and runtime to 1.8
 * upgraded com.beust:jcommander  1.48 -> 1.55
-[INFO]   com.google.inject:guice ................................... 3.0 -> 4.0
-[INFO]   commons-io:commons-io ..................................... 2.4 -> 2.5
+* upgraded commons-io:commons-io ..................................... 2.4 -> 2.5
+
 [INFO]   org.apache.httpcomponents:httpclient .................... 4.5 -> 4.5.2
 [INFO]   org.apache.maven:maven-aether-provider ................ 3.1.0 -> 3.3.9
 [INFO]   org.eclipse.aether:aether-api ............... 1.0.0.v20140518 -> 1.1.0
