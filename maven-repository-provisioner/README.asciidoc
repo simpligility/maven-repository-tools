@@ -68,7 +68,7 @@ java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -s "http://localhost:8081/nexus/content/groups/public/"
 ----
 
-To provision an exiting Maven repository from the filesystem into a target repository, simply
+To provision an existing Maven repository from the filesystem into a target repository, simply
 specify the path to the folder as the local cache and omit the artifact coordinates:
 
 ----
