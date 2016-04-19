@@ -16,7 +16,7 @@ import com.beust.jcommander.JCommander;
 /**
  * MavenRepositoryProvisioner
  * 
- * @author Manfred Moser <manfred@simpligility.com>
+ * @author Manfred Moser - manfred@simpligility.com
  */
 public class MavenRepositoryProvisioner
 {

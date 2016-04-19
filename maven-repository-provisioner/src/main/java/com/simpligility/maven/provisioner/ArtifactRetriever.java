@@ -36,7 +36,7 @@ import com.simpligility.maven.MavenConstants;
  * ArtifactRetriever can resolve a dependencies and all transitive dependencies and upstream parent pom's 
  * for a given GAV coordinate and fill a directory with the respective Maven repository containing those components.
  * 
- * @author Manfred Moser <manfred@simpligility.com>
+ * @author Manfred Moser - manfred@simpligility.com
  */
 public class ArtifactRetriever
 {

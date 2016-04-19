@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A simplistic transfer listener that logs uploads/downloads to the log.
  * 
- * @author Manfred Moser <manfred@simpligility.com>
+ * @author Manfred Moser - manfred@simpligility.com
  */
 public class LoggingTransferListener
     extends AbstractTransferListener
