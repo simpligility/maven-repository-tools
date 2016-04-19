@@ -9,7 +9,25 @@ Unless otherwise noted all changed are done by Manfred Moser from http://www.sim
 
 == Maven Repository Tools 0.x.y - upcoming
 
-* your contributions could be here
+* added exit status for execution of provisioner so that it can be used as failure/success indicator in scripts and so on
+* added support to deploy a local folder without specifying artifact coordinates for initial download
+* upgraded org.codehaus.plexus:plexus-utils  3.0.21 -> 3.0.22
+* upgraded org.slf4j:slf4j-api  1.6.2 -> 1.7.21
+* upgraded ch.qos.logback:logback-classic  1.1.2 -> 1.1.7
+* upgraded minimal required Java version for compile and runtime to 1.8
+* upgraded com.beust:jcommander  1.48 -> 1.55
+[INFO]   com.google.inject:guice ................................... 3.0 -> 4.0
+[INFO]   commons-io:commons-io ..................................... 2.4 -> 2.5
+[INFO]   org.apache.httpcomponents:httpclient .................... 4.5 -> 4.5.2
+[INFO]   org.apache.maven:maven-aether-provider ................ 3.1.0 -> 3.3.9
+[INFO]   org.eclipse.aether:aether-api ............... 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-connector-basic ... 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-impl .............. 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-spi ............... 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-transport-file .... 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-transport-http .... 1.0.0.v20140518 -> 1.1.0
+[INFO]   org.eclipse.aether:aether-util .............. 1.0.0.v20140518 -> 1.1.0
+
 
 == Maven Repository Tools 0.4.0 - released 2015-08-27
 

@@ -19,18 +19,18 @@ function deploy {
   fi
 }
 
-# deploy "junit:junit:4.11|org.testng:testng:6.9.10|com.squareup.assertj:assertj-android:aar:1.0.0"
+#deploy "junit:junit:4.11|org.testng:testng:6.9.10|com.squareup.assertj:assertj-android:aar:1.0.0"
 
 # deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
 
-# deploy "org.apache.commons:commons-lang3:jar:3.3.2"
+deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 
-# deploy "com.google.inject:guice:no_aop:jar:3.0"
+deploy "com.google.inject:guice:no_aop:jar:3.0"
 
 # deploy "org.apache.commons:commons-lang3:jar:3.3.2|junit:junit:4.11|com.squareup.assertj:assertj-android:aar:1.0.0"
 
-# deploy "com.simpligility.maven:progressive-organization-pom:pom:4.1.0"
+deploy "com.simpligility.maven:progressive-organization-pom:pom:4.1.0"
 
 # testing repo folder transfer only
-deploy ""
+#deploy ""
 
