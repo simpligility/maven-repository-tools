@@ -59,6 +59,11 @@ public class Configuration
                     + " attempted" )
     private Boolean checkTarget = true;
 
+    @Parameter( names = { "-vo", "-verifyOnly" },
+        description = "Verify which artifacts would be deployed only, deployment is skipped and  potential "
+            + "deployments of a second execution are logged." )
+    private Boolean verifyOnly = false;
+
     public void setSourceUrl( String sourceUrl )
     {
         this.sourceUrl = sourceUrl;
@@ -102,6 +107,11 @@ public class Configuration
     public void setCheckTarget( Boolean checkTarget )
     {
         this.checkTarget = checkTarget;
+    }
+
+    public void setVerifyOnly ( Boolean verifyOnly )
+    {
+        this.verifyOnly = verifyOnly;
     }
 
     public boolean getHelp()
@@ -163,6 +173,11 @@ public class Configuration
         return checkTarget;
     }
 
+    public Boolean getVerifyOnly()
+    {
+      return verifyOnly;
+    }
+
     public List<String> getArtifactCoordinates()
     {
         List<String> coords = Arrays.asList( artifactCoordinate.split( "\\|" ) );
@@ -172,5 +187,24 @@ public class Configuration
     public boolean hasArtifactsCoordinates()
     {
       return artifactCoordinate != null && !artifactCoordinate.isEmpty();
+    }
+
+    public String getConfigSummary() 
+    {
+      StringBuilder builder = new StringBuilder();
+      builder.append( "\nProvisioning artifacts: " + this.getArtifactCoordinate() + "\n" )
+        .append( "Source: " + this.getSourceUrl() + "\n" )
+        .append( "Target: " + this.getTargetUrl() + "\n" )
+        .append( "Username: " + this.getUsername() + "\n" );
+      if ( this.getPassword() != null ) 
+      {
+          builder.append( "Password: " + this.getPassword().replaceAll( ".", "***" ) + "\n" );
+      }
+      builder.append( "IncludeSources: " + this.getIncludeSources() + "\n" )
+        .append( "IncludeJavadoc: " + this.getIncludeJavadoc() + "\n" )
+        .append( "Check target: " + this.getCheckTarget() + "\n" )
+        .append( "Verify only: " + this.getVerifyOnly() + "\n" )
+        .append( "Local cache or source repository directory: " + this.getCacheDirectory() + "\n\n" );
+      return builder.toString();
     }
 }
