@@ -40,6 +40,8 @@ repository format to a repository manager.
   `maven-repository-provisioner.log`
 * Exit codes to signal success or failure
 * Strict adherence to Maven repository format specs in terms of file names
+* Check target repository for POM file and skips repeated deployments
+* Verify only mode allowing to download and report on potential deployments after checking target repository
 
 == Download
 
