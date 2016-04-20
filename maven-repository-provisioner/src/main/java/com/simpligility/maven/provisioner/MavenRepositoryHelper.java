@@ -62,6 +62,8 @@ public class MavenRepositoryHelper
 
     private final TreeSet<String> skippedDeploys = new TreeSet<String>();
     
+    private final TreeSet<String> potentialDeploys = new TreeSet<String>();
+
     public MavenRepositoryHelper( File repositoryPath )
     {
         this.repositoryPath = repositoryPath;
@@ -124,7 +126,8 @@ public class MavenRepositoryHelper
     }
 
 
-    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget )
+    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget,
+        Boolean verifyOnly )
     {
         Collection<File> leafDirectories = getLeafDirectories( repositoryPath );
 
@@ -220,10 +223,20 @@ public class MavenRepositoryHelper
 
                 try
                 {
-                    system.deploy( session, deployRequest );
-                    for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                    if ( verifyOnly )
                     {
-                        successfulDeploys.add( artifact.toString() );
+                      for ( Artifact artifact : deployRequest.getArtifacts() )
+                      {
+                          potentialDeploys.add( artifact.toString() );
+                      }
+                    }
+                    else
+                    {
+                      system.deploy( session, deployRequest );
+                      for ( Artifact artifact : deployRequest.getArtifacts() )
+                      {
+                          successfulDeploys.add( artifact.toString() );
+                      }
                     }
                 }
                 catch ( Exception e )
@@ -305,6 +318,18 @@ public class MavenRepositoryHelper
         StringBuilder builder = new StringBuilder();
         builder.append( "Skipped Deployments (POM already in target):\n\n" );
         for ( String artifact : skippedDeploys )
+        {
+            builder.append( artifact + "\n" );
+        }
+
+        return builder.toString();
+    }
+
+    public String listPotentialDeployment()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append( "Potential Deployments :\n\n" );
+        for ( String artifact : potentialDeploys )
         {
             builder.append( artifact + "\n" );
         }

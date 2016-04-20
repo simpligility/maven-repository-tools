@@ -65,18 +65,8 @@ public class MavenRepositoryProvisioner
                 // use this as default and set to false below as applicable
                 boolean provisioningSuccess = true;
                 StringBuilder provisioningSuccessMessage = new StringBuilder();
-                logger.info( "Provisioning: " + config.getArtifactCoordinate() );
-                logger.info( "Source: " + config.getSourceUrl() );
-                logger.info( "Target: " + config.getTargetUrl() );
-                logger.info( "Username: " + config.getUsername() );
-                if ( config.getPassword() != null ) 
-                {
-                    logger.info( "Password: " + config.getPassword().replaceAll( ".", "***" ) );
-                }
-                logger.info( "IncludeSources:" + config.getIncludeSources() );
-                logger.info( "IncludeJavadoc:" + config.getIncludeJavadoc() );
-               
-                logger.info( "Local cache or source repository directory: " + config.getCacheDirectory() );
+                logger.info( config.getConfigSummary() );
+
                 cacheDirectory = new File( config.getCacheDirectory() );
                 logger.info( " Absolute path: " + cacheDirectory.getAbsolutePath() );
                 if ( cacheDirectory.exists() && cacheDirectory.isDirectory() ) 
@@ -127,12 +117,13 @@ public class MavenRepositoryProvisioner
                 logger.info( "Artifact deployment starting." );
                 MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
                 helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword(), 
-                                       config.getCheckTarget() );
+                                       config.getCheckTarget(), config.getVerifyOnly() );
                 logger.info( "Artifact deployment completed." );
 
                 logger.info( "Processing Completed." );
                 StringBuilder summary = new StringBuilder();
                 summary.append( "\nProcessing Summary\n" ).append( DASH_LINE ).append( "\n" );
+                summary.append( "Configuration:\n" ).append( config.getConfigSummary() );
                 if ( retriever != null )
                 {
                   summary.append( retriever.listSucessfulRetrievals() ).append( "\n" )
@@ -151,7 +142,9 @@ public class MavenRepositoryProvisioner
                 
                 summary.append( helper.listSucessfulDeployments() ).append( "\n" )
                   .append( helper.listFailedDeployments() ).append( "\n" )
-                  .append( helper.listSkippedDeployment() ).append( "\n" );
+                  .append( helper.listSkippedDeployment() ).append( "\n" )
+                  .append( helper.listPotentialDeployment() ).append( "\n" );
+
                 if ( helper.hasFailure() )
                 {
                   provisioningSuccess = false;
