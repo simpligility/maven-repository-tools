@@ -56,12 +56,12 @@ public class Configuration
 
     @Parameter( names = { "-ct", "-checkTarget" }, 
                 description = "Check target repository before deploying, if target GAV pom exists no deployment will be"
-                    + " attempted" )
+                    + " attempted", arity = 1 )
     private Boolean checkTarget = true;
 
     @Parameter( names = { "-vo", "-verifyOnly" },
         description = "Verify which artifacts would be deployed only, deployment is skipped and  potential "
-            + "deployments of a second execution are logged." )
+            + "deployments of a second execution are logged.", arity = 1  )
     private Boolean verifyOnly = false;
 
     public void setSourceUrl( String sourceUrl )
