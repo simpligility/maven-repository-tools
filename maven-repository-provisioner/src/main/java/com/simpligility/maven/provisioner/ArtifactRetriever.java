@@ -126,14 +126,14 @@ public class ArtifactRetriever
 
     private void getAdditionalArtifacts( boolean includeSources, boolean includeJavadoc )
     {
-        Collection<File> pomFiles = MavenRepositoryHelper.getPomFiles( repositoryPath );
+        Collection<File> pomFiles = MavenRepositoryDeployer.getPomFiles( repositoryPath );
         for ( File pomFile : pomFiles )
         {
             logger.info( "Processing POM file " + pomFile.getAbsolutePath() );
             Gav gav = null;
             try
             {
-                gav = MavenRepositoryHelper.getCoordinates( pomFile );
+                gav = MavenRepositoryDeployer.getCoordinates( pomFile );
             }
             catch ( Exception e )
             {

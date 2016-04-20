@@ -46,7 +46,7 @@ import com.simpligility.maven.MavenConstants;
 
 import org.slf4j.Logger;
 
-public class MavenRepositoryHelper
+public class MavenRepositoryDeployer
 {
     private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryHelper" );
 
@@ -64,7 +64,7 @@ public class MavenRepositoryHelper
     
     private final TreeSet<String> potentialDeploys = new TreeSet<String>();
 
-    public MavenRepositoryHelper( File repositoryPath )
+    public MavenRepositoryDeployer( File repositoryPath )
     {
         this.repositoryPath = repositoryPath;
         initialize();

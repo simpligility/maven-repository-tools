@@ -115,7 +115,7 @@ public class MavenRepositoryProvisioner
                 }
 
                 logger.info( "Artifact deployment starting." );
-                MavenRepositoryHelper helper = new MavenRepositoryHelper( cacheDirectory );
+                MavenRepositoryDeployer helper = new MavenRepositoryDeployer( cacheDirectory );
                 helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword(), 
                                        config.getCheckTarget(), config.getVerifyOnly() );
                 logger.info( "Artifact deployment completed." );
