@@ -26,7 +26,7 @@ function deploy {
 
 # deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
 
-#deploy "org.apache.commons:commons-lang3:jar:3.3.2"
+deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 
 #deploy "com.google.inject:guice:no_aop:jar:3.0"
 
@@ -38,4 +38,4 @@ function deploy {
 #deploy ""
 
 
-java -jar target/maven-repository-provisioner-*-jar-with-dependencies.jar  -cd "local-cache" -t $target $creds
+#java -jar target/maven-repository-provisioner-*-jar-with-dependencies.jar  -cd "local-cache" -t $target $creds
