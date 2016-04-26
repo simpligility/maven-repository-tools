@@ -74,6 +74,13 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>io.takari.maven.plugins</groupId>
+          <artifactId>takari-lifecycle-plugin</artifactId>
+          <configuration>
+            <compilerId>jdt</compilerId>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
