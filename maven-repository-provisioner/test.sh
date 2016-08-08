@@ -5,11 +5,11 @@ set -e
 set -u
 
 # for my local Nexus
-#source=http://localhost:8081/nexus/content/groups/public
-#target=http://localhost:8081/nexus/content/repositories/test
+source=http://localhost:8081/nexus/content/groups/public
+target=http://localhost:8081/nexus/content/repositories/test
 # for my local Nexus 3
-source=http://localhost:8081/repository/maven-public
-target=http://localhost:8081/repository/tmp
+#source=http://localhost:8081/repository/maven-public
+#target=http://localhost:8081/repository/tmp
 
 creds="-u admin -p admin123"
 
@@ -26,7 +26,9 @@ function deploy {
 
 # deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
 
-deploy "org.apache.commons:commons-lang3:jar:3.3.2"
+#deploy "org.apache.commons:commons-lang3:jar:3.3.2"
+
+deploy "org.apache.abdera:abdera-bundle:1.1.3" 
 
 #deploy "com.google.inject:guice:no_aop:jar:3.0"
 
