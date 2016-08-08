@@ -6,6 +6,16 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.1.2 - released 2016-08-08
+
+* modify target URL if required by adding /
+** fixes https://github.com/simpligility/maven-repository-tools/issues/26
+* plexus-utils upgrade
+
+== Maven Repository Tools 1.1.1 - released 2016-04-20
+
+* fixed boolean parameter setup and docs
+
 == Maven Repository Tools 1.1.0 - released 2016-04-19
 
 * updated Maven wrapper config to use 3.3.9
