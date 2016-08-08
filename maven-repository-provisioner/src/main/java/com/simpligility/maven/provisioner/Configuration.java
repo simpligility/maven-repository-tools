@@ -126,16 +126,25 @@ public class Configuration
 
     public String getTargetUrl()
     {
-
+        String result;
         if ( !targetUrl.startsWith( "http" ) )
         {
             // if url does not start with http (or https..) we assume it is a file path and convert it with
-            return new File( targetUrl ).toURI().toString();
+            result = new File( targetUrl ).toURI().toString();
         }
         else
         {
-            return targetUrl;
+            // URL needs to end in / so that assembling target urls is correct
+            if ( !targetUrl.endsWith( "/" ) )
+            {
+                result = targetUrl + "/";
+            }
+            else
+            {
+                result = targetUrl;
+            }
         }
+        return result;
     }
 
     public String getArtifactCoordinate()
