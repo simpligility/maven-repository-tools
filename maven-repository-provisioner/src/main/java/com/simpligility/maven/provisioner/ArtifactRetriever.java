@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -142,14 +143,18 @@ public class ArtifactRetriever
 
             if ( !"pom".equals( gav.getPackaging() ) )
             {
+                // this gets e.g. a .hpi file in addition to a .jar
+                // but also causes failed retrievals for files where the packaging is NOT used for extension
+                // an example is bundle packaging, there is no .bundle file, just  the .jar
+                // these failures are false warnings since at this stage the main artifact as jar is already retrieved
                 getMainArtifact( gav );
                 if ( includeSources )
                 {
-                    getArtifact( gav, MavenConstants.SOURCES );
+                    getSourcesJar( gav );
                 }
                 if ( includeJavadoc )
                 {
-                    getArtifact( gav, MavenConstants.JAVADOC );
+                    getJavadocJar( gav );
                 }
             }
         }
@@ -157,12 +162,31 @@ public class ArtifactRetriever
 
     private void getMainArtifact( Gav gav )
     {
-        getArtifact( gav, null );
+        getArtifact( gav, null, null );
     }
 
-    private void getArtifact( Gav gav, String classifier )
+    private void getSourcesJar( Gav gav )
     {
-        Artifact artifact = new DefaultArtifact( gav.getGroupId(), gav.getArtifactId(), classifier, gav.getPackaging(),
+        getArtifact( gav, MavenConstants.JAR, MavenConstants.SOURCES );
+    }
+
+    private void getJavadocJar( Gav gav )
+    {
+      getArtifact( gav, MavenConstants.JAR, MavenConstants.JAVADOC );
+    }
+
+    private void getArtifact( Gav gav, String packagingOverride, String classifier )
+    {
+        String packaging;
+        if ( StringUtils.isNotEmpty( packagingOverride ) )
+        {
+          packaging = packagingOverride;
+        }
+        else
+        {
+          packaging = gav.getPackaging();
+        }
+        Artifact artifact = new DefaultArtifact( gav.getGroupId(), gav.getArtifactId(), classifier, packaging,
                                                  gav.getVersion() );
         // avoid download if we got it locally already? or not bother and just get it again? 
         ArtifactRequest artifactRequest = new ArtifactRequest();
