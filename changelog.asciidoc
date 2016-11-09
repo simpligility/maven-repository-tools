@@ -6,6 +6,10 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.2.1 or higher - upcoming
+
+* your suggested or implemented features could be here
+
 == Maven Repository Tools 1.2.0 - released 2016-11-09
 
 * Correct javadoc and sources jar retrieval for non-jar packaging
