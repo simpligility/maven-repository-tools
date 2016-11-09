@@ -75,18 +75,19 @@ public class ArtifactRetriever
     }
 
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
-                          boolean includeJavadoc, boolean includeProvided )
+                          boolean includeJavadoc, boolean includeProvidedScope, boolean includeTestScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         sourceRepository = builder.build();
 
-        getArtifactResults( artifactCoordinates, includeProvided );
+        getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope );
 
         getAdditionalArtifacts( includeSources, includeJavadoc );
     }
 
-    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeProvided )
+    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeProvidedScope,
+        boolean includeTestScope )
     {
 
         List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -100,19 +101,29 @@ public class ArtifactRetriever
             DependencyFilterUtils.classpathFilter( JavaScopes.TEST );
         
         Collection<String> includes = new ArrayList<String>();
+        // we always include compile scope, not doing that makes no sense
         includes.add( JavaScopes.COMPILE );
         
         Collection<String> excludes = new ArrayList<String>();
+        // always exclude system scope since it is machine specific and wont work in 99% of cases
         excludes.add( JavaScopes.SYSTEM );
-        excludes.add( JavaScopes.TEST );
-        
-        if ( includeProvided )
+
+        if ( includeProvidedScope )
         {
             includes.add( JavaScopes.PROVIDED );
         }
         else 
         {
             excludes.add( JavaScopes.PROVIDED ); 
+        }
+        
+        if ( includeTestScope ) 
+        {
+            includes.add( JavaScopes.TEST );
+        }
+        else
+        {
+            excludes.add( JavaScopes.TEST );
         }
         
         DependencySelector selector =
