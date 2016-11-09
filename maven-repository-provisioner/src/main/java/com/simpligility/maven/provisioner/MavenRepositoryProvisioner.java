@@ -105,7 +105,8 @@ public class MavenRepositoryProvisioner
                   logger.info( "Artifact retrieval starting." );
                   retriever = new ArtifactRetriever( cacheDirectory );
                   retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), 
-                      config.getIncludeSources(), config.getIncludeJavadoc() );
+                      config.getIncludeSources(), config.getIncludeJavadoc(), 
+                      config.getIncludeProvidedScope(), config.getIncludeTestScope() );
 
                   logger.info( "Artifact retrieval completed." );
                 } 

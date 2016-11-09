@@ -41,13 +41,21 @@ public class Configuration
     @Parameter( names = { "-p", "-password" }, description = "Password for the deployment, if required." )
     private String password;
 
-    @Parameter( names = { "-is", "-includeSources" }, 
+    @Parameter( names = { "-is", "-includeSources" },
                 description = "Flag to enable/disable download of sources artifacts.", arity = 1 )
     private Boolean includeSources = true;
 
-    @Parameter( names = { "-ij", "-includeJavadoc" }, 
+    @Parameter( names = { "-ij", "-includeJavadoc" },
                 description = "Flag to enable/disable download of javadoc artifacts.", arity = 1 )
     private Boolean includeJavadoc = true;
+    
+    @Parameter( names = { "-ip", "-includeProvidedScope" },
+                description = "Flag to include/exclude provisioning of dependencies with provided scope.", arity = 1 )
+    private Boolean includeProvidedScope = false;
+
+    @Parameter( names = { "-it", "-includeTestScope" },
+        description = "Flag to include/exclude provisioning of dependencies with test scope.", arity = 1 )
+    private Boolean includeTestScope = false;
 
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
                 description = "Local directory used as a cache between resolving and deploying or as the "
@@ -97,6 +105,16 @@ public class Configuration
     public void setIncludeJavadoc( Boolean includeJavadoc )
     {
         this.includeJavadoc = includeJavadoc;
+    }
+
+    public void setIncludeProvidedScope( Boolean includeProvidedScope )
+    {
+      this.includeProvidedScope = includeProvidedScope;
+    }
+
+    public void setIncludeTestScope( Boolean includeTestScope )
+    {
+      this.includeTestScope = includeTestScope;
     }
 
     public void setCacheDirectory( String cacheDirectory )
@@ -172,6 +190,16 @@ public class Configuration
         return includeJavadoc;
     }
 
+    public Boolean getIncludeProvidedScope()
+    {
+        return includeProvidedScope;
+    }
+    
+    public Boolean getIncludeTestScope()
+    {
+        return includeTestScope;
+    }
+
     public String getCacheDirectory()
     {
         return cacheDirectory;
@@ -202,18 +230,20 @@ public class Configuration
     {
       StringBuilder builder = new StringBuilder();
       builder.append( "\nProvisioning artifacts: " + this.getArtifactCoordinate() + "\n" )
-        .append( "Source: " + this.getSourceUrl() + "\n" )
-        .append( "Target: " + this.getTargetUrl() + "\n" )
-        .append( "Username: " + this.getUsername() + "\n" );
+        .append( "Source: " + getSourceUrl() + "\n" )
+        .append( "Target: " + getTargetUrl() + "\n" )
+        .append( "Username: " + getUsername() + "\n" );
       if ( this.getPassword() != null ) 
       {
-          builder.append( "Password: " + this.getPassword().replaceAll( ".", "***" ) + "\n" );
+          builder.append( "Password: " + getPassword().replaceAll( ".", "***" ) + "\n" );
       }
-      builder.append( "IncludeSources: " + this.getIncludeSources() + "\n" )
-        .append( "IncludeJavadoc: " + this.getIncludeJavadoc() + "\n" )
-        .append( "Check target: " + this.getCheckTarget() + "\n" )
-        .append( "Verify only: " + this.getVerifyOnly() + "\n" )
-        .append( "Local cache or source repository directory: " + this.getCacheDirectory() + "\n\n" );
+      builder.append( "IncludeSources: " + getIncludeSources() + "\n" )
+        .append( "IncludeJavadoc: " + getIncludeJavadoc() + "\n" )
+        .append( "IncludeProvidedScope: " + getIncludeProvidedScope() + "\n" )
+        .append( "IncludeTestScope: " + getIncludeTestScope() + "\n" )
+        .append( "Check target: " + getCheckTarget() + "\n" )
+        .append( "Verify only: " + getVerifyOnly() + "\n" )
+        .append( "Local cache or source repository directory: " + getCacheDirectory() + "\n\n" );
       return builder.toString();
     }
 }

@@ -10,6 +10,11 @@ Unless otherwise noted all changes are done by Manfred Moser from http://www.sim
 
 * Correct javadoc and sources jar retrieval for non-jar packaging
 ** fixes https://github.com/simpligility/maven-repository-tools/issues/28
+* Upgraded commons-lang3
+* Added feature to include dependencies with scope provided
+** To preserve current behavior this is off by default
+** See inline help for more details
+** fixes https://github.com/simpligility/maven-repository-tools/issues/27
 
 == Maven Repository Tools 1.1.2 - released 2016-08-08
 

@@ -16,6 +16,7 @@ import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -27,6 +28,10 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,18 +75,19 @@ public class ArtifactRetriever
     }
 
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
-                          boolean includeJavadoc )
+                          boolean includeJavadoc, boolean includeProvidedScope, boolean includeTestScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         sourceRepository = builder.build();
 
-        getArtifactResults( artifactCoordinates );
+        getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope );
 
         getAdditionalArtifacts( includeSources, includeJavadoc );
     }
 
-    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates )
+    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeProvidedScope,
+        boolean includeTestScope )
     {
 
         List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -91,10 +97,45 @@ public class ArtifactRetriever
         }
 
         List<ArtifactResult> artifactResults = new ArrayList<ArtifactResult>();
+        DependencyFilter depFilter = 
+            DependencyFilterUtils.classpathFilter( JavaScopes.TEST );
+        
+        Collection<String> includes = new ArrayList<String>();
+        // we always include compile scope, not doing that makes no sense
+        includes.add( JavaScopes.COMPILE );
+        
+        Collection<String> excludes = new ArrayList<String>();
+        // always exclude system scope since it is machine specific and wont work in 99% of cases
+        excludes.add( JavaScopes.SYSTEM );
+
+        if ( includeProvidedScope )
+        {
+            includes.add( JavaScopes.PROVIDED );
+        }
+        else 
+        {
+            excludes.add( JavaScopes.PROVIDED ); 
+        }
+        
+        if ( includeTestScope ) 
+        {
+            includes.add( JavaScopes.TEST );
+        }
+        else
+        {
+            excludes.add( JavaScopes.TEST );
+        }
+        
+        DependencySelector selector =
+            new AndDependencySelector(
+            new ScopeDependencySelector( includes, excludes ),
+            new OptionalDependencySelector(),
+            new ExclusionDependencySelector()
+        );
+        session.setDependencySelector( selector );
+
         for ( Artifact artifact : artifacts )
         {
-            DependencyFilter depFilter = DependencyFilterUtils.classpathFilter( JavaScopes.COMPILE );
-
             CollectRequest collectRequest = new CollectRequest();
             collectRequest.setRoot( new Dependency( artifact, JavaScopes.COMPILE ) );
             collectRequest.addRepository( sourceRepository );
