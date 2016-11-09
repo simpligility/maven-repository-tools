@@ -41,13 +41,17 @@ public class Configuration
     @Parameter( names = { "-p", "-password" }, description = "Password for the deployment, if required." )
     private String password;
 
-    @Parameter( names = { "-is", "-includeSources" }, 
+    @Parameter( names = { "-is", "-includeSources" },
                 description = "Flag to enable/disable download of sources artifacts.", arity = 1 )
     private Boolean includeSources = true;
 
-    @Parameter( names = { "-ij", "-includeJavadoc" }, 
+    @Parameter( names = { "-ij", "-includeJavadoc" },
                 description = "Flag to enable/disable download of javadoc artifacts.", arity = 1 )
     private Boolean includeJavadoc = true;
+    
+    @Parameter( names = { "-ip", "-includeProvided" },
+                description = "Flag to include/exclude provisioning of dependencies with provided scope.", arity = 1 )
+    private Boolean includeProvided = false;
 
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
                 description = "Local directory used as a cache between resolving and deploying or as the "
@@ -97,6 +101,11 @@ public class Configuration
     public void setIncludeJavadoc( Boolean includeJavadoc )
     {
         this.includeJavadoc = includeJavadoc;
+    }
+
+    public void setIncludeProvided( Boolean includeProvided )
+    {
+      this.includeProvided = includeProvided;
     }
 
     public void setCacheDirectory( String cacheDirectory )
@@ -172,6 +181,11 @@ public class Configuration
         return includeJavadoc;
     }
 
+    public Boolean getIncludeProvided()
+    {
+        return includeProvided;
+    }
+    
     public String getCacheDirectory()
     {
         return cacheDirectory;
@@ -211,6 +225,7 @@ public class Configuration
       }
       builder.append( "IncludeSources: " + this.getIncludeSources() + "\n" )
         .append( "IncludeJavadoc: " + this.getIncludeJavadoc() + "\n" )
+        .append( "IncludeProvided: " + this.getIncludeProvided() + "\n" )
         .append( "Check target: " + this.getCheckTarget() + "\n" )
         .append( "Verify only: " + this.getVerifyOnly() + "\n" )
         .append( "Local cache or source repository directory: " + this.getCacheDirectory() + "\n\n" );
