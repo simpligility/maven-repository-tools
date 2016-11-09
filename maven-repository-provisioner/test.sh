@@ -28,7 +28,7 @@ function deploy {
 
 #deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 
-deploy "org.apache.abdera:abdera-bundle:1.1.3" 
+# deploy "org.apache.abdera:abdera-bundle:1.1.3" 
 
 #deploy "com.google.inject:guice:no_aop:jar:3.0"
 
@@ -39,5 +39,11 @@ deploy "org.apache.abdera:abdera-bundle:1.1.3"
 # testing repo folder transfer only
 #deploy ""
 
+# testing OSGI bundle packaging and related .jar transfer
+# deploy org.apache.geronimo.specs:geronimo-ejb_3.1_spec:1.0.2
+
+
+# test for including provided scope
+deploy com.hazelcast:hazelcast:3.7.2
 
 #java -jar target/maven-repository-provisioner-*-jar-with-dependencies.jar  -cd "local-cache" -t $target $creds
