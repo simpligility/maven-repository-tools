@@ -8,7 +8,7 @@ A command line tool and library from
 https://github.com/simpligility/maven-repository-tools[the Maven
 Repository Tools project] to provision a component and all its transitive
 dependencies from a source Maven repository to a target Maven
-repository. Both are access via HTTP/HTTPS using the normal Maven interactions.
+repository. Both are accessed via HTTP/HTTPS using the normal Maven interactions.
 
 It can also be used to deploy a local, file-system directory using the Maven
 repository format to a repository manager.
@@ -30,7 +30,8 @@ repository format to a repository manager.
 * All coordinates can be used to specify component - groupId,
   artifactId, version, classifier, packaging/extension
 * Allows processing of multiple components in one run
-* Includes javadoc and sources jars to included 
+* Optionally includes javadoc and sources JAR files
+* Optionally include dependencies with scope provided 
 * Source repository defaults to the Central Repository, but can be
   configured 
 * Target repository can be a file location or a repository manager repository
