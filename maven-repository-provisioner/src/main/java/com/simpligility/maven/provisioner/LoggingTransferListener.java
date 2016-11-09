@@ -25,11 +25,9 @@ import org.slf4j.LoggerFactory;
 public class LoggingTransferListener
     extends AbstractTransferListener
 {
-
     private static Logger logger = LoggerFactory.getLogger( "LoggingTransferListener" );
 
     private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
-
 
     private int lastLength;
 
@@ -43,61 +41,6 @@ public class LoggingTransferListener
         String message = event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploading" : "Downloading";
 
         logger.info( message + ": " + event.getResource().getRepositoryUrl() + event.getResource().getResourceName() );
-    }
-
-    @Override
-    public void transferProgressed( TransferEvent event )
-    {
-        TransferResource resource = event.getResource();
-        downloads.put( resource, Long.valueOf( event.getTransferredBytes() ) );
-
-        StringBuilder buffer = new StringBuilder( 64 );
-
-        for ( Map.Entry<TransferResource, Long> entry : downloads.entrySet() )
-        {
-            long total = entry.getKey().getContentLength();
-            long complete = entry.getValue().longValue();
-
-            buffer.append( getStatus( complete, total ) ).append( "  " );
-        }
-
-        int pad = lastLength - buffer.length();
-        lastLength = buffer.length();
-        pad( buffer, pad );
-        buffer.append( '\r' );
-
-        logger.info( buffer.toString() );
-    }
-
-    private String getStatus( long complete, long total )
-    {
-        if ( total >= 1024 )
-        {
-            return toKB( complete ) + "/" + toKB( total ) + " KB ";
-        }
-        else if ( total >= 0 )
-        {
-            return complete + "/" + total + " B ";
-        }
-        else if ( complete >= 1024 )
-        {
-            return toKB( complete ) + " KB ";
-        }
-        else
-        {
-            return complete + " B ";
-        }
-    }
-
-    private void pad( StringBuilder buffer, int spaces )
-    {
-        String block = "                                        ";
-        while ( spaces > 0 )
-        {
-            int n = Math.min( spaces, block.length() );
-            buffer.append( block, 0, n );
-            spaces -= n;
-        }
     }
 
     @Override
@@ -141,11 +84,6 @@ public class LoggingTransferListener
     private void transferCompleted( TransferEvent event )
     {
         downloads.remove( event.getResource() );
-
-        StringBuilder buffer = new StringBuilder( 64 );
-        pad( buffer, lastLength );
-        buffer.append( '\r' );
-        logger.info( buffer.toString() );
     }
 
     public void transferCorrupted( TransferEvent event )
