@@ -153,8 +153,15 @@ public class ArtifactRetriever
             }
             catch ( DependencyResolutionException e )
             {
-                logger.info( "DependencyResolutionException ", e );
-                failedRetrievals.add( e.getMessage() );
+                if ( MavenConstants.BUNDLE.equals( artifact.getExtension() ) ) 
+                {
+                    logger.info( "Not reporting as failure due to " + artifact.getExtension() + " extension." );
+                }
+                else
+                {
+                  logger.info( "DependencyResolutionException ", e );
+                  failedRetrievals.add( e.getMessage() );
+                }
             }
             catch ( NullPointerException npe )
             {
@@ -181,14 +188,25 @@ public class ArtifactRetriever
             {
                 logger.info( "Failed to retrieve gav from " + pomFile.getAbsolutePath() );
             }
-
-            if ( !"pom".equals( gav.getPackaging() ) )
+            String packaging = gav.getPackaging();
+            
+            if ( !"pom".equals( packaging ) )
             {
                 // this gets e.g. a .hpi file in addition to a .jar
                 // but also causes failed retrievals for files where the packaging is NOT used for extension
                 // an example is bundle packaging, there is no .bundle file, just  the .jar
                 // these failures are false warnings since at this stage the main artifact as jar is already retrieved
-                getMainArtifact( gav );
+                
+                // force loading of jar for different packaging types instead of "main"
+                if ( MavenConstants.BUNDLE.equals( packaging ) )
+                {
+                    getJar( gav );
+                }
+                else
+                {
+                  getMainArtifact( gav );
+                }
+
                 if ( includeSources )
                 {
                     getSourcesJar( gav );
@@ -206,6 +224,11 @@ public class ArtifactRetriever
         getArtifact( gav, null, null );
     }
 
+    private void getJar( Gav gav )
+    {
+      getArtifact( gav, MavenConstants.JAR, null );
+    }
+    
     private void getSourcesJar( Gav gav )
     {
         getArtifact( gav, MavenConstants.JAR, MavenConstants.SOURCES );
@@ -227,24 +250,34 @@ public class ArtifactRetriever
         {
           packaging = gav.getPackaging();
         }
-        Artifact artifact = new DefaultArtifact( gav.getGroupId(), gav.getArtifactId(), classifier, packaging,
-                                                 gav.getVersion() );
-        // avoid download if we got it locally already? or not bother and just get it again? 
-        ArtifactRequest artifactRequest = new ArtifactRequest();
-        artifactRequest.setArtifact( artifact );
-        artifactRequest.addRepository( sourceRepository );
-
-        try
+        
+        // skip download and failure for packaging that do no have file with respective extension
+        if ( MavenConstants.BUNDLE.equals( packaging ) )
         {
-            ArtifactResult artifactResult = system.resolveArtifact( session, artifactRequest );
-            logger.info( "Retrieved " + artifactResult.getArtifact().getFile() );
-
-            successfulRetrievals.add( artifact.toString() );
+          logger.info( "Skipped retrieval attempt for non-existing extension " + packaging );
         }
-        catch ( ArtifactResolutionException e )
+        else 
         {
-            logger.info( "ArtifactResolutionException when retrieving " + classifier );
-            failedRetrievals.add( e.getMessage() );
+        
+          Artifact artifact = new DefaultArtifact( gav.getGroupId(), gav.getArtifactId(), classifier, packaging,
+                                                   gav.getVersion() );
+          // avoid download if we got it locally already? or not bother and just get it again? 
+          ArtifactRequest artifactRequest = new ArtifactRequest();
+          artifactRequest.setArtifact( artifact );
+          artifactRequest.addRepository( sourceRepository );
+  
+          try
+          {
+              ArtifactResult artifactResult = system.resolveArtifact( session, artifactRequest );
+              logger.info( "Retrieved " + artifactResult.getArtifact().getFile() );
+  
+              successfulRetrievals.add( artifact.toString() );
+          }
+          catch ( ArtifactResolutionException e )
+          {
+              logger.info( "ArtifactResolutionException when retrieving " + classifier );
+              failedRetrievals.add( e.getMessage() );
+          }
         }
     }
 

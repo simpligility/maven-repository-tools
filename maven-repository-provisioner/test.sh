@@ -31,6 +31,7 @@ function deploy {
 #deploy "junit:junit:4.11|org.testng:testng:6.9.10|com.squareup.assertj:assertj-android:aar:1.0.0"
 
 # deploy "org.apache.maven.plugins:maven-surefire-plugin:jar:2.18.1"
+deploy "org.apache.maven.plugins:maven-surefire-plugin:plugin:2.18.1"
 
 #deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 
@@ -47,7 +48,10 @@ function deploy {
 
 # testing OSGI bundle packaging and related .jar transfer
 #deploy org.apache.geronimo.specs:geronimo-ejb_3.1_spec:1.0.2
-deploy org.drools:drools-compiler:6.5.0.Final
+#deploy org.drools:drools-compiler:6.5.0.Final
+#deploy org.kie:kie-api:bundle:6.5.0.Final
+#deploy org.kie:kie-api:6.5.0.Final
+
 
 # test for including provided scope
 #deploy com.hazelcast:hazelcast:3.7.2
