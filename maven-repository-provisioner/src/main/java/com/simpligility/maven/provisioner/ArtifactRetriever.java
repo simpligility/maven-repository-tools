@@ -175,7 +175,14 @@ public class ArtifactRetriever
             catch ( NullPointerException npe )
             {
                 logger.info( "NullPointerException resolving dependencies ", npe );
-                failedRetrievals.add( npe.getMessage() );
+                if ( npe.getMessage() != null )
+                {
+                  failedRetrievals.add( npe.getMessage() );
+                }
+                else
+                {
+                  failedRetrievals.add( "NPE retrieving" + artifact );
+                }
             }
         }
 
