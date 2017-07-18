@@ -38,9 +38,8 @@
   </issueManagement>
 
   <properties>
-    <aetherVersion>1.1.0</aetherVersion>
-    <!-- Upgrade to 3.3.9 fails at runtime with NPE, need to investigate -->
-    <mavenVersion>3.1.0</mavenVersion>
+    <mavenResolverVersion>1.1.0</mavenResolverVersion>
+    <mavenVersion>3.5.0</mavenVersion>
     <java.version>1.8</java.version>
   </properties>
 
