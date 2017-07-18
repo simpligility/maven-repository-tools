@@ -33,7 +33,7 @@ function deploy {
 
 #deploy "junit:junit:4.11"
 #deploy "org.testng:testng:jar:6.9.10"
-deploy "org.apache.commons:commons-lang3:jar:3.3.2"
+#deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 #deploy "org.apache.abdera:abdera-bundle:1.1.3"
 #deploy "com.google.inject:guice:jar:no_aop:3.0"
 #deploy "org.apache.commons:commons-lang3:jar:3.3.2|junit:junit:4.11|com.squareup.assertj:assertj-android:aar:1.1.1"
@@ -57,7 +57,7 @@ deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 #deploy org.drools:drools-compiler:6.5.0.Final
 #deploy org.drools:drools-compiler:bundle:6.5.0.Final
 #deploy org.kie:kie-api:bundle:6.5.0.Final
-#deploy org.kie:kie-api:6.5.0.Final
+deploy org.kie:kie-api:6.5.0.Final
 
 # testing hpi packaging, both should get a hpi file and a jar file
 #deploy org.jenkins-ci.plugins:git:hpi:3.4.0
