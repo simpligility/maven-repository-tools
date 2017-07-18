@@ -83,7 +83,9 @@ public class ArtifactRetriever
 
         getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope );
 
-        getAdditionalArtifacts( includeSources, includeJavadoc );
+        getAdditionalArtifactsForRequest( artifactCoordinates );
+
+        getAdditionalArtifactsForArtifactsInCache( includeSources, includeJavadoc );
     }
 
     private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeProvidedScope,
@@ -154,8 +156,7 @@ public class ArtifactRetriever
             catch ( DependencyResolutionException e )
             {
                 String extension = artifact.getExtension();
-                if ( MavenConstants.BUNDLE.equals( extension )
-                    || MavenConstants.PLUGIN.equals( extension ) ) 
+                if ( MavenConstants.packagingUsesJarOnly( extension ) )
                 {
                     logger.info( "Not reporting as failure due to " + artifact.getExtension() + " extension." );
                 }
@@ -175,7 +176,31 @@ public class ArtifactRetriever
         return artifactResults;
     }
 
-    private void getAdditionalArtifacts( boolean includeSources, boolean includeJavadoc )
+    /**
+     * Iterate through the provided artifact coordinates to retrieve and pull additional artifact such as
+     * jar for bundle packaging, jar for aar packaging and so on as required. And get them even if not specified.
+     * @param artifactCoordinates
+     */
+    private void getAdditionalArtifactsForRequest( List<String> artifactCoordinates )
+    {
+      List<Artifact> artifacts = new ArrayList<Artifact>();
+      for ( String artifactCoordinate : artifactCoordinates )
+      {
+          artifacts.add( new DefaultArtifact( artifactCoordinate ) );
+      }
+      for ( Artifact artifact : artifacts )
+      {
+        String extension = artifact.getExtension();
+        if ( MavenConstants.packagingUsesJar( extension ) )
+        {
+          Gav gav = new Gav( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+              artifact.getExtension() );
+          getJar( gav );
+        }
+      }
+    }
+
+    private void getAdditionalArtifactsForArtifactsInCache( boolean includeSources, boolean includeJavadoc )
     {
         Collection<File> pomFiles = MavenRepositoryDeployer.getPomFiles( repositoryPath );
         for ( File pomFile : pomFiles )
@@ -192,21 +217,19 @@ public class ArtifactRetriever
             }
             String packaging = gav.getPackaging();
             
-            if ( !"pom".equals( packaging ) )
+            if ( ! MavenConstants.POM.equals( packaging ) )
             {
-                // force loading of jar for some packaging types instead of "main"
-                if ( MavenConstants.BUNDLE.equals( packaging )
-                    || MavenConstants.PLUGIN.equals( packaging ) )
+                // get additional jar for various packaging
+                if ( MavenConstants.packagingUsesJar(  packaging ) )
                 {
-                    getJar( gav );
+                  getJar( gav );
                 }
-                else if ( MavenConstants.HPI.equals)
-                else
+                // get hpi or jpi or whatever even if parameter of request did not include packaging
+                // do not get for things such as plugin or bundle as there is none of that extension
+                if ( MavenConstants.packagingUsesAdditionalJar( packaging ) )
                 {
-                  // this gets e.g. a .hpi file in addition to a .jar retrieved in getArtifactResults
                   getMainArtifact( gav );
                 }
-
                 if ( includeSources )
                 {
                     getSourcesJar( gav );
@@ -267,7 +290,11 @@ public class ArtifactRetriever
         }
         catch ( ArtifactResolutionException e )
         {
-            logger.info( "ArtifactResolutionException when retrieving " + classifier );
+            if ( MavenConstants.BUNDLE.equals( packaging ) )
+            {
+              logger.info( "Ignoring failure to retrieve " + gav + " with " + packaging + " and " + classifier );
+            }
+            logger.info( "ArtifactResolutionException when retrieving " + gav + " with " + classifier );
             failedRetrievals.add( e.getMessage() );
         }
     }
