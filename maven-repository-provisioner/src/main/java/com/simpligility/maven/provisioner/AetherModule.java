@@ -17,7 +17,7 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.maven.repository.internal.MavenAetherModule;
+import org.apache.maven.repository.internal.MavenResolverModule;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
@@ -35,7 +35,7 @@ class AetherModule
     @Override
     protected void configure()
     {
-        install( new MavenAetherModule() );
+        install( new MavenResolverModule() );
         // alternatively, use the Guice Multibindings extensions
         bind( RepositoryConnectorFactory.class ).annotatedWith( Names.named( "basic" ) )
             .to( BasicRepositoryConnectorFactory.class );
