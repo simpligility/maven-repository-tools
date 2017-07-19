@@ -6,9 +6,12 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
-== Maven Repository Tools 1.2.1 or higher - upcoming
 
-* your suggested or implemented features could be here
+== Maven Repository Tools 1.2.1 - released 2017-07-19
+
+* Updated retrieval logic
+** better support for additional artifacts and main artifact download (hpi and jar)
+** avoid failure when packaging and extension differ (maven-plugin and jar)
 
 == Maven Repository Tools 1.2.0 - released 2016-11-09
 
