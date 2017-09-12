@@ -27,8 +27,7 @@ repository format to a repository manager.
 * Command line tool with built-in help
 * Resolves specified component including transitive dependencies and parent
   pom's required
-* All coordinates can be used to specify component - groupId,
-  artifactId, version, classifier, packaging/extension
+* All coordinates can be used to specify component - `groupId:artifactId:packaging:classifier:version`
 * Allows processing of multiple components in one run
 * Optionally includes javadoc and sources JAR files
 * Optionally include dependencies with scope provided 
