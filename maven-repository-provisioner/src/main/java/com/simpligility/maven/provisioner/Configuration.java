@@ -57,6 +57,10 @@ public class Configuration
         description = "Flag to include/exclude provisioning of dependencies with test scope.", arity = 1 )
     private Boolean includeTestScope = false;
 
+    @Parameter( names = { "-ir", "-includeRuntimeScope" },
+            description = "Flag to include/exclude provisioning of dependencies with runtime scope.", arity = 1 )
+    private Boolean includeRuntimeScope = false;
+
     @Parameter( names = { "-cd", "-cacheDirectory" }, 
                 description = "Local directory used as a cache between resolving and deploying or as the "
                     + "source repository that should be transferred." )
@@ -200,6 +204,11 @@ public class Configuration
         return includeTestScope;
     }
 
+    public Boolean getIncludeRuntimeScope()
+    {
+        return includeRuntimeScope;
+    }
+
     public String getCacheDirectory()
     {
         return cacheDirectory;
@@ -241,6 +250,7 @@ public class Configuration
         .append( "IncludeJavadoc: " + getIncludeJavadoc() + "\n" )
         .append( "IncludeProvidedScope: " + getIncludeProvidedScope() + "\n" )
         .append( "IncludeTestScope: " + getIncludeTestScope() + "\n" )
+        .append( "IncludeRuntimeScope: " + getIncludeRuntimeScope() + "\n" )
         .append( "Check target: " + getCheckTarget() + "\n" )
         .append( "Verify only: " + getVerifyOnly() + "\n" )
         .append( "Local cache or source repository directory: " + getCacheDirectory() + "\n\n" );

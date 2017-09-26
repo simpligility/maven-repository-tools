@@ -75,21 +75,22 @@ public class ArtifactRetriever
     }
 
     public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
-                          boolean includeJavadoc, boolean includeProvidedScope, boolean includeTestScope )
+                         boolean includeJavadoc, boolean includeProvidedScope,
+                         boolean includeTestScope, boolean includeRuntimeScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         sourceRepository = builder.build();
 
-        getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope );
+        getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope, includeRuntimeScope );
 
         getAdditionalArtifactsForRequest( artifactCoordinates );
 
         getAdditionalArtifactsForArtifactsInCache( includeSources, includeJavadoc );
     }
 
-    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean includeProvidedScope,
-        boolean includeTestScope )
+    private List<ArtifactResult> getArtifactResults( List<String> artifactCoordinates, boolean
+            includeProvidedScope, boolean includeTestScope, boolean includeRuntimeScope )
     {
 
         List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -126,6 +127,11 @@ public class ArtifactRetriever
         else
         {
             excludes.add( JavaScopes.TEST );
+        }
+
+        if ( includeRuntimeScope )
+        {
+            includes.add( JavaScopes.RUNTIME );
         }
         
         DependencySelector selector =
