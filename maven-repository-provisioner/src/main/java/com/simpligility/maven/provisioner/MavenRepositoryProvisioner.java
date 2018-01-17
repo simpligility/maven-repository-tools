@@ -61,111 +61,150 @@ public class MavenRepositoryProvisioner
             }
             else
             {
-                // overall success of operation, previously was not used so always successful so now we 
-                // use this as default and set to false below as applicable
-                boolean provisioningSuccess = true;
-                StringBuilder provisioningSuccessMessage = new StringBuilder();
-                logger.info( config.getConfigSummary() );
+                executeCommand();
 
-                cacheDirectory = new File( config.getCacheDirectory() );
-                logger.info( " Absolute path: " + cacheDirectory.getAbsolutePath() );
-                if ( cacheDirectory.exists() && cacheDirectory.isDirectory() ) 
-                {
-                  logger.info( "Detected local cache directory '" + config.getCacheDirectory() + "'." );
-                  if ( !config.hasArtifactsCoordinates() )
-                  {
-                    logger.info( "No artifact coordinates specified - using cache directory as source." );
-                  } 
-                  else
-                  {
-                    logger.info( "Artifact coordinates specified "
-                        + "- removing stale cache directory from prior execution." );
-                    try
-                    {
-                        FileUtils.deleteDirectory( cacheDirectory );
-                        logger.info( config.getCacheDirectory() + " deleted." );
-                    }
-                    catch ( IOException e )
-                    {
-                        logger.info( config.getCacheDirectory() + " deletion failed" );
-                        exitFailure( "Failed to delete stale cache directory." );
-                    }
-                    cacheDirectory = new File( config.getCacheDirectory() );
-                    cacheDirectory.mkdirs();
-                  }
-                }
-                else
-                {
-                  cacheDirectory = new File( config.getCacheDirectory() );
-                  cacheDirectory.mkdirs();
-                }
-                ArtifactRetriever retriever = null;
-                if ( config.hasArtifactsCoordinates() ) 
-                {
-                  logger.info( "Artifact retrieval starting." );
-                  retriever = new ArtifactRetriever( cacheDirectory );
-                  retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(), 
-                      config.getIncludeSources(), config.getIncludeJavadoc(), 
-                      config.getIncludeProvidedScope(), config.getIncludeTestScope(), config.getIncludeRuntimeScope() );
-
-                  logger.info( "Artifact retrieval completed." );
-                } 
-                else 
-                {
-                  logger.info( "Artifact retrieval skipped. " );
-                }
-
-                logger.info( "Artifact deployment starting." );
-                MavenRepositoryDeployer helper = new MavenRepositoryDeployer( cacheDirectory );
-                helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword(), 
-                                       config.getCheckTarget(), config.getVerifyOnly() );
-                logger.info( "Artifact deployment completed." );
-
-                logger.info( "Processing Completed." );
-                StringBuilder summary = new StringBuilder();
-                summary.append( "\nProcessing Summary\n" ).append( DASH_LINE ).append( "\n" );
-                summary.append( "Configuration:\n" ).append( config.getConfigSummary() );
-                if ( retriever != null )
-                {
-                  summary.append( retriever.listSucessfulRetrievals() ).append( "\n" )
-                    .append( retriever.listFailedTransfers() ).append( "\n" );
-
-                  if ( retriever.hasFailures() ) 
-                  {
-                    provisioningSuccess = false;
-                    provisioningSuccessMessage.append( retriever.getFailureMessage() ).append( "\n" );
-                  }
-                  else 
-                  {
-                    provisioningSuccessMessage.append( "Retrieval completed successfully.\n" );
-                  }
-                }
-                
-                summary.append( helper.listSucessfulDeployments() ).append( "\n" )
-                  .append( helper.listFailedDeployments() ).append( "\n" )
-                  .append( helper.listSkippedDeployment() ).append( "\n" )
-                  .append( helper.listPotentialDeployment() ).append( "\n" );
-
-                if ( helper.hasFailure() )
-                {
-                  provisioningSuccess = false;
-                  provisioningSuccessMessage.append( helper.getFailureMessage() ).append( "\n" ); 
-                }
-                else 
-                {
-                  provisioningSuccessMessage.append( "Deployment completed successfully.\n" );
-                }
-                
-                logger.info( summary.toString() );
-                if ( provisioningSuccess ) 
-                {
-                  exitSuccess( provisioningSuccessMessage.toString() );
-                }
-                else
-                {
-                  exitFailure( provisioningSuccessMessage.toString() );
-                }
             }
+        }
+    }
+
+    private static void executeCommand() {
+        // overall success of operation, previously was not used so always successful so now we
+        // use this as default and set to false below as applicable
+        boolean provisioningSuccess = true;
+        StringBuilder provisioningSuccessMessage = new StringBuilder();
+        logger.info( config.getConfigSummary() );
+
+        cacheDirectory = new File( config.getCacheDirectory() );
+        logger.info( " Absolute path: " + cacheDirectory.getAbsolutePath() );
+        if ( cacheDirectory.exists() && cacheDirectory.isDirectory() )
+        {
+            prepareCacheDirectory();
+        }
+        else
+        {
+          cacheDirectory = new File( config.getCacheDirectory() );
+          cacheDirectory.mkdirs();
+        }
+        retrieveArtifacts(provisioningSuccess, provisioningSuccessMessage);
+    }
+
+    private static void retrieveArtifacts(boolean provisioningSuccess, StringBuilder provisioningSuccessMessage) {
+        ArtifactRetriever retriever = checkGivenArtifactsCoordinates();
+
+        MavenRepositoryDeployer helper = deployArtifacts();
+
+        provisioningSuccess = logSummary(provisioningSuccess, provisioningSuccessMessage, retriever, helper);
+
+        doExitMessage(provisioningSuccess, provisioningSuccessMessage, helper);
+    }
+
+    private static void doExitMessage(boolean provisioningSuccess, StringBuilder provisioningSuccessMessage, MavenRepositoryDeployer helper) {
+        if ( helper.hasFailure() )
+        {
+          provisioningSuccess = false;
+          provisioningSuccessMessage.append( helper.getFailureMessage() ).append( "\n" );
+        }
+        else
+        {
+          provisioningSuccessMessage.append( "Deployment completed successfully.\n" );
+        }
+
+
+        if ( provisioningSuccess )
+        {
+          exitSuccess( provisioningSuccessMessage.toString() );
+        }
+        else
+        {
+          exitFailure( provisioningSuccessMessage.toString() );
+        }
+    }
+
+    private static boolean logSummary(boolean provisioningSuccess, StringBuilder provisioningSuccessMessage, ArtifactRetriever retriever, MavenRepositoryDeployer helper) {
+        logger.info( "Processing Completed." );
+        StringBuilder summary = new StringBuilder();
+        provisioningSuccess = createSummary(provisioningSuccess, provisioningSuccessMessage, retriever, summary);
+
+        summary.append( helper.listSucessfulDeployments() ).append( "\n" )
+          .append( helper.listFailedDeployments() ).append( "\n" )
+          .append( helper.listSkippedDeployment() ).append( "\n" )
+          .append( helper.listPotentialDeployment() ).append( "\n" );
+
+        logger.info( summary.toString() );
+        return provisioningSuccess;
+    }
+
+    private static boolean createSummary(boolean provisioningSuccess, StringBuilder provisioningSuccessMessage, ArtifactRetriever retriever, StringBuilder summary) {
+        summary.append( "\nProcessing Summary\n" ).append( DASH_LINE ).append( "\n" );
+        summary.append( "Configuration:\n" ).append( config.getConfigSummary() );
+        if ( retriever != null )
+        {
+          summary.append( retriever.listSucessfulRetrievals() ).append( "\n" )
+            .append( retriever.listFailedTransfers() ).append( "\n" );
+
+          if ( retriever.hasFailures() )
+          {
+            provisioningSuccess = false;
+            provisioningSuccessMessage.append( retriever.getFailureMessage() ).append( "\n" );
+          }
+          else
+          {
+            provisioningSuccessMessage.append( "Retrieval completed successfully.\n" );
+          }
+        }
+        return provisioningSuccess;
+    }
+
+    private static MavenRepositoryDeployer deployArtifacts() {
+        logger.info( "Artifact deployment starting." );
+        MavenRepositoryDeployer helper = new MavenRepositoryDeployer( cacheDirectory );
+        helper.deployToRemote( config.getTargetUrl(), config.getUsername(), config.getPassword(),
+                               config.getCheckTarget(), config.getVerifyOnly() );
+        logger.info( "Artifact deployment completed." );
+        return helper;
+    }
+
+    private static ArtifactRetriever checkGivenArtifactsCoordinates() {
+        ArtifactRetriever retriever = null;
+        if ( config.hasArtifactsCoordinates() )
+        {
+          logger.info( "Artifact retrieval starting." );
+          retriever = new ArtifactRetriever( cacheDirectory );
+          retriever.retrieve( config.getArtifactCoordinates(), config.getSourceUrl(),
+              config.getIncludeSources(), config.getIncludeJavadoc(),
+              config.getIncludeProvidedScope(), config.getIncludeTestScope(), config.getIncludeRuntimeScope() );
+
+          logger.info( "Artifact retrieval completed." );
+        }
+        else
+        {
+          logger.info( "Artifact retrieval skipped. " );
+        }
+        return retriever;
+    }
+
+    private static void prepareCacheDirectory() {
+        logger.info( "Detected local cache directory '" + config.getCacheDirectory() + "'." );
+        if ( !config.hasArtifactsCoordinates() )
+        {
+          logger.info( "No artifact coordinates specified - using cache directory as source." );
+        }
+        else
+        {
+          logger.info( "Artifact coordinates specified "
+              + "- removing stale cache directory from prior execution." );
+          try
+          {
+              FileUtils.deleteDirectory( cacheDirectory );
+              logger.info( config.getCacheDirectory() + " deleted." );
+          }
+          catch ( IOException e )
+          {
+              logger.info( config.getCacheDirectory() + " deletion failed" );
+              exitFailure( "Failed to delete stale cache directory." );
+          }
+          cacheDirectory = new File( config.getCacheDirectory() );
+          cacheDirectory.mkdirs();
         }
     }
 
