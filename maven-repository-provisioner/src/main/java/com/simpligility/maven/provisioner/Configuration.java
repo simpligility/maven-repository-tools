@@ -41,6 +41,12 @@ public class Configuration
     @Parameter( names = { "-p", "-password" }, description = "Password for the deployment, if required." )
     private String password;
 
+    @Parameter( names = { "-su", "-sourceUsername" }, description = "Username for the source repository, if required." )
+    private String sourceUsername;
+    
+    @Parameter( names = { "-sp", "-sourcePassword" }, description = "Password for the source repository, if required." )
+    private String sourcePassword;
+
     @Parameter( names = { "-is", "-includeSources" },
                 description = "Flag to enable/disable download of sources artifacts.", arity = 1 )
     private Boolean includeSources = true;
@@ -101,6 +107,16 @@ public class Configuration
         this.password = password;
     }
 
+    public void setSourceUsername( String sourceUsername )
+    {
+        this.sourceUsername = sourceUsername;
+    }
+    
+    public void seSourcetPassword( String sourcePassword )
+    {
+        this.sourcePassword = sourcePassword;
+    }
+    
     public void setIncludeSources( Boolean includeSources )
     {
         this.includeSources = includeSources;
@@ -184,6 +200,16 @@ public class Configuration
         return password;
     }
 
+    public String getSourceUsername()
+    {
+        return sourceUsername;
+    }
+    
+    public String getSourcePassword()
+    {
+        return sourcePassword;
+    }
+    
     public Boolean getIncludeSources()
     {
         return includeSources;

@@ -19,6 +19,7 @@ import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -32,6 +33,7 @@ import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
 import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,13 +76,17 @@ public class ArtifactRetriever
         session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
 
-    public void retrieve( List<String> artifactCoordinates, String sourceUrl, boolean includeSources,
+    public void retrieve( List<String> artifactCoordinates, String sourceUrl, String username, 
+                         String password, boolean includeSources,
                          boolean includeJavadoc, boolean includeProvidedScope,
                          boolean includeTestScope, boolean includeRuntimeScope )
     {
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
-        sourceRepository = builder.build();
+        
+        Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
+                .build();
+        sourceRepository = builder.setAuthentication( auth ).build();
 
         getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope, includeRuntimeScope );
 
