@@ -34,7 +34,7 @@ repository format to a repository manager.
 * Source repository defaults to the Central Repository, but can be
   configured 
 * Target repository can be a file location or a repository manager repository
-* Authentication for repository manager deployment can be configured
+* Authentication for repository manager deployment or source repository can be configured
 * Temporary cache directory on local disk for inspection `local-cache`
 * Logging to stdout as well as log file
   `maven-repository-provisioner.log`
@@ -54,6 +54,7 @@ Java 8 or higher is required.
 
 The command 
 
+
 ----
 java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
 ----
@@ -68,6 +69,8 @@ java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -u admin
      -p admin123
      -s "http://localhost:8081/nexus/content/groups/public/"
+     -su admin
+     -sp admin123
 ----
 
 To provision an existing Maven repository from the filesystem into a target repository, simply
