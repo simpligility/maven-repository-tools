@@ -12,6 +12,12 @@ Unless otherwise noted all changes are done by Manfred Moser from http://www.sim
 * Added support for runtime scope as option
 ** see https://github.com/simpligility/maven-repository-tools/pull/32
 ** contributed by Alessio Bianchi https://github.com/venator85
+* Added support for authorization to source repository
+** see https://github.com/simpligility/maven-repository-tools/pull/38/files
+** contributed by Slavomír Varchula https://github.com/boulik
+* Upgrade to use Maven 3.5.2 and Maven Resolver 1.1.1
+** replaces usage of Eclipse Aether
+** see https://github.com/simpligility/maven-repository-tools/pull/31
 
 == Maven Repository Tools 1.2.1 - released 2017-07-19
 

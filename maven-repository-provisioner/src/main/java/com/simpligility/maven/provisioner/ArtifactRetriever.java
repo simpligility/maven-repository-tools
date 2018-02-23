@@ -84,9 +84,13 @@ public class ArtifactRetriever
         RemoteRepository.Builder builder = new RemoteRepository.Builder( "central", "default", sourceUrl );
         builder.setProxy( ProxyHelper.getProxy( sourceUrl ) );
         
-        Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
-                .build();
-        sourceRepository = builder.setAuthentication( auth ).build();
+        Authentication auth = new AuthenticationBuilder()
+            .addUsername( username )
+            .addPassword( password )
+            .build();
+        builder.setAuthentication( auth );
+
+        sourceRepository = builder.build();
 
         getArtifactResults( artifactCoordinates, includeProvidedScope, includeTestScope, includeRuntimeScope );
 
