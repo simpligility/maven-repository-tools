@@ -20,7 +20,6 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -82,8 +81,8 @@ public class MavenRepositoryDeployer
         // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
         // not yet though..
        Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( repoPath, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
-                                        TrueFileFilter.INSTANCE );
+            FileUtils.listFilesAndDirs( repoPath, DirectoryFileFilter.DIRECTORY,
+                VisibleDirectoryFileFilter.DIRECTORY );
         Collection<File> leafDirectories = new ArrayList<File>();
         for ( File subDirectory : subDirectories )
         {
@@ -105,8 +104,9 @@ public class MavenRepositoryDeployer
     {
         boolean isLeafVersionDirectory;
         Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( subDirectory, (IOFileFilter) DirectoryFileFilter.DIRECTORY,
-                                        TrueFileFilter.INSTANCE );
+            FileUtils.listFilesAndDirs( subDirectory,
+                (IOFileFilter) VisibleDirectoryFileFilter.DIRECTORY,
+                (IOFileFilter) VisibleDirectoryFileFilter.DIRECTORY );
         // it finds at least itself so have to check for > 1
         isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
         return isLeafVersionDirectory;
