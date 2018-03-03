@@ -61,64 +61,72 @@ public class MavenRepositoryProvisioner
             }
             else
             {
-                // overall success of operation, previously was not used so always successful so now we 
-                // use this as default and set to false below as applicable
-                boolean provisioningSuccess = true;
-                StringBuilder provisioningSuccessMessage = new StringBuilder();
                 logger.info( config.getConfigSummary() );
 
                 prepareCacheDirectory();
 
                 ArtifactRetriever retriever = retrieveArtifacts();
 
-                MavenRepositoryDeployer helper = deployArtifacts();
+                MavenRepositoryDeployer deployer = deployArtifacts();
 
-                logger.info( "Processing Completed." );
-                StringBuilder summary = new StringBuilder();
-                summary.append( "\nProcessing Summary\n" ).append( DASH_LINE ).append( "\n" );
-                summary.append( "Configuration:\n" ).append( config.getConfigSummary() );
-                if ( retriever != null )
-                {
-                  summary.append( retriever.listSucessfulRetrievals() ).append( "\n" )
-                    .append( retriever.listFailedTransfers() ).append( "\n" );
+                reportResults( retriever, deployer );
 
-                  if ( retriever.hasFailures() ) 
-                  {
-                    provisioningSuccess = false;
-                    provisioningSuccessMessage.append( retriever.getFailureMessage() ).append( "\n" );
-                  }
-                  else 
-                  {
-                    provisioningSuccessMessage.append( "Retrieval completed successfully.\n" );
-                  }
-                }
-                
-                summary.append( helper.listSucessfulDeployments() ).append( "\n" )
-                  .append( helper.listFailedDeployments() ).append( "\n" )
-                  .append( helper.listSkippedDeployment() ).append( "\n" )
-                  .append( helper.listPotentialDeployment() ).append( "\n" );
-
-                if ( helper.hasFailure() )
-                {
-                  provisioningSuccess = false;
-                  provisioningSuccessMessage.append( helper.getFailureMessage() ).append( "\n" ); 
-                }
-                else 
-                {
-                  provisioningSuccessMessage.append( "Deployment completed successfully.\n" );
-                }
-                
-                logger.info( summary.toString() );
-                if ( provisioningSuccess ) 
-                {
-                  exitSuccess( provisioningSuccessMessage.toString() );
-                }
-                else
-                {
-                  exitFailure( provisioningSuccessMessage.toString() );
-                }
             }
         }
+    }
+
+    private static void reportResults(
+        ArtifactRetriever retriever, MavenRepositoryDeployer deployer )
+    {
+      boolean provisioningSuccess;
+      StringBuilder provisioningSuccessMessage = new StringBuilder();
+
+      logger.info( "Processing Completed." );
+      StringBuilder summary = new StringBuilder();
+      summary.append( "\nProcessing Summary\n" ).append( DASH_LINE ).append( "\n" );
+      summary.append( "Configuration:\n" ).append( config.getConfigSummary() );
+      if ( retriever != null )
+      {
+        summary.append( retriever.listSucessfulRetrievals() ).append( "\n" )
+          .append( retriever.listFailedTransfers() ).append( "\n" );
+
+        if ( retriever.hasFailures() )
+        {
+          provisioningSuccess = false;
+          provisioningSuccessMessage.append( retriever.getFailureMessage() ).append( "\n" );
+        }
+        else
+        {
+          provisioningSuccess = true;
+          provisioningSuccessMessage.append( "Retrieval completed successfully.\n" );
+        }
+      }
+
+      summary.append( deployer.listSucessfulDeployments() ).append( "\n" );
+      summary.append( deployer.listFailedDeployments() ).append( "\n" );
+      summary.append( deployer.listSkippedDeployment() ).append( "\n" );
+      summary.append( deployer.listPotentialDeployment() ).append( "\n" );
+
+      if ( deployer.hasFailure() )
+      {
+        provisioningSuccess = false;
+        provisioningSuccessMessage.append( deployer.getFailureMessage() ).append( "\n" );
+      }
+      else
+      {
+        provisioningSuccess = true;
+        provisioningSuccessMessage.append( "Deployment completed successfully.\n" );
+      }
+      logger.info( summary.toString() );
+
+      if ( provisioningSuccess )
+      {
+        exitSuccess( provisioningSuccessMessage.toString() );
+      }
+      else
+      {
+        exitFailure( provisioningSuccessMessage.toString() );
+      }
     }
 
     private static MavenRepositoryDeployer deployArtifacts()
