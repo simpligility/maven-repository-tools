@@ -6,7 +6,7 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
-== Maven Repository Tools 1.3.0 - upcoming
+== Maven Repository Tools 1.3.0 - released 2018-03-07
 
 * jcommander upgrade to 1.72
 * Added support for runtime scope as option
@@ -14,10 +14,15 @@ Unless otherwise noted all changes are done by Manfred Moser from http://www.sim
 ** contributed by Alessio Bianchi https://github.com/venator85
 * Added support for authorization to source repository
 ** see https://github.com/simpligility/maven-repository-tools/pull/38/files
+** fixes https://github.com/simpligility/maven-repository-tools/issues/21
 ** contributed by Slavomír Varchula https://github.com/boulik
 * Upgrade to use Maven 3.5.2 and Maven Resolver 1.1.1
 ** replaces usage of Eclipse Aether
 ** see https://github.com/simpligility/maven-repository-tools/pull/31
+* Ignore directories in source repo on disk that start with .
+** allows import of local repo with index
+** or import of Nexus 2 on disk repo
+** fixes https://github.com/simpligility/maven-repository-tools/issues/36
 
 == Maven Repository Tools 1.2.1 - released 2017-07-19
 
