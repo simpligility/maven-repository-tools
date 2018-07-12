@@ -6,14 +6,14 @@ import java.io.Serializable;
 import org.apache.commons.io.filefilter.AbstractFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 
-public class VisibleDirectoryFileFilter extends AbstractFileFilter implements Serializable 
+public class VisibleDirectoryFileFilter extends AbstractFileFilter implements Serializable
 {
   private static final long serialVersionUID = -2364729562384525732L;
-  
+
   public static final IOFileFilter DIRECTORY = new VisibleDirectoryFileFilter();
-  
+
   public static final IOFileFilter INSTANCE = DIRECTORY;
-  
+
   protected VisibleDirectoryFileFilter()
   {
   }
@@ -28,7 +28,7 @@ public class VisibleDirectoryFileFilter extends AbstractFileFilter implements Se
   public boolean accept( final File file )
   {
       boolean startsWithDot = !file.getName().isEmpty() && file.getName().startsWith( "." );
-      boolean isVisible = !file.isHidden() || !startsWithDot;
+      boolean isVisible = !file.isHidden() && !startsWithDot;
       return file.isDirectory() && isVisible;
   }
 
