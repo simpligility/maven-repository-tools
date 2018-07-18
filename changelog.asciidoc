@@ -6,6 +6,12 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.3.1 - released 2018-07-17
+
+* Fixed logic for avoiding hidden file and directory inclusion
+** see https://github.com/simpligility/maven-repository-tools/pull/39
+** contributed by William Whittle https://github.com/whittlec
+
 == Maven Repository Tools 1.3.0 - released 2018-03-07
 
 * jcommander upgrade to 1.72
