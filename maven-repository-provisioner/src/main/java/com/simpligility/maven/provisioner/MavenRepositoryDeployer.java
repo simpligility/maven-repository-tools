@@ -23,9 +23,8 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -254,9 +253,9 @@ public class MavenRepositoryDeployer
     /**
      * Check if POM file for provided gav can be found in target. Just does
      * a HTTP get of the header and verifies http status OK 200.
-     * @param targetUrl
-     * @param gav
-     * @return
+     * @param targetUrl url of the target repository
+     * @param gav group artifact version string
+     * @return {@code true} if the pom.xml already exists in the target repository
      */
     private boolean checkIfPomInTarget( String targetUrl, String username, String password, Gav gav )
     {
@@ -264,17 +263,18 @@ public class MavenRepositoryDeployer
         
         String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
         logger.debug( "Headers for {}", artifactUrl );
-        HttpClient httpclient = HttpClientBuilder.create().build();
+
         HttpHead httphead = new HttpHead( artifactUrl );
 
-        if(!StringUtils.isEmpty(username) && ! StringUtils.isEmpty(password)) {
-          String encoding = java.util.Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
-          httphead.setHeader("Authorization", "Basic " + encoding);
+        if ( !StringUtils.isEmpty( username ) && ! StringUtils.isEmpty( password ) )
+        {
+          String encoding = java.util.Base64.getEncoder().encodeToString( ( username + ":" + password ).getBytes() );
+          httphead.setHeader( "Authorization", "Basic " + encoding );
         }
 
-        try 
+        try ( CloseableHttpClient httpClient = HttpClientBuilder.create().build() )
         {
-          HttpResponse response = httpclient.execute( httphead );
+          HttpResponse response = httpClient.execute( httphead );
           int statusCode = response.getStatusLine().getStatusCode();
           if ( statusCode == HttpURLConnection.HTTP_OK )
           {
@@ -282,20 +282,12 @@ public class MavenRepositoryDeployer
           }
           else
           {
-              logger.debug("Headers not found HTTP: {}", statusCode);
+              logger.debug( "Headers not found HTTP: {}", statusCode );
           }
         } 
-        catch ( ClientProtocolException cpe ) 
+        catch ( IOException ioe )
         {
-          cpe.printStackTrace();
-        } 
-        catch ( IOException ioe ) 
-        {
-          ioe.printStackTrace();
-        } 
-        finally 
-        {
-           httpclient.getConnectionManager().shutdown();
+          logger.warn( "Could not check target repository for already existing pom.xml.", ioe );
         }
         return alreadyInTarget;
     }
