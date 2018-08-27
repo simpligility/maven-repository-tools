@@ -142,7 +142,7 @@ public class MavenRepositoryDeployer
             boolean pomInTarget = false;
             if ( checkTarget ) 
             {
-                pomInTarget = checkIfPomInTarget( targetUrl, gav );
+                pomInTarget = checkIfPomInTarget( targetUrl, username, password, gav );
             }
             
             if ( pomInTarget ) 
@@ -258,20 +258,31 @@ public class MavenRepositoryDeployer
      * @param gav
      * @return
      */
-    private boolean checkIfPomInTarget( String targetUrl, Gav gav )
+    private boolean checkIfPomInTarget( String targetUrl, String username, String password, Gav gav )
     {
         boolean alreadyInTarget = false;
         
         String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
-        logger.debug( "Headers for " +  artifactUrl );
+        logger.debug( "Headers for {}", artifactUrl );
         HttpClient httpclient = HttpClientBuilder.create().build();
         HttpHead httphead = new HttpHead( artifactUrl );
+
+        if(!StringUtils.isEmpty(username) && ! StringUtils.isEmpty(password)) {
+          String encoding = java.util.Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+          httphead.setHeader("Authorization", "Basic " + encoding);
+        }
+
         try 
         {
           HttpResponse response = httpclient.execute( httphead );
-          if ( response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK )
+          int statusCode = response.getStatusLine().getStatusCode();
+          if ( statusCode == HttpURLConnection.HTTP_OK )
           {
               alreadyInTarget = true;
+          }
+          else
+          {
+              logger.debug("Headers not found HTTP: {}", statusCode);
           }
         } 
         catch ( ClientProtocolException cpe ) 
