@@ -7,8 +7,11 @@ history] for a detailed list of changes.
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
 == Maven Repository Tools 1.3.2 - unreleased
+
 * Fixed authorization for header-requests on target repository (checkTarget option)
 ** contributed by Daniel Geißler https://github.com/dgeissl
+* Support for zip archives, avoid NPE
+** fixes https://github.com/simpligility/maven-repository-tools/issues/40
 
 == Maven Repository Tools 1.3.1 - released 2018-07-17
 
