@@ -237,6 +237,7 @@ public class ArtifactRetriever
             catch ( Exception e )
             {
                 logger.info( "Failed to retrieve gav from " + pomFile.getAbsolutePath() );
+                return;
             }
             String packaging = gav.getPackaging();
             

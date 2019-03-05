@@ -47,7 +47,7 @@ public final class MavenConstants
       if ( HPI.equals( packaging )
           || JPI.equals( packaging )
           || AAR.equals( packaging )
-          || ZIP.equals( packaging) )
+          || ZIP.equals( packaging ) )
       {
         result = true;
       }
