@@ -39,7 +39,7 @@
 
   <properties>
     <mavenResolverVersion>1.1.1</mavenResolverVersion>
-    <mavenVersion>3.5.2</mavenVersion>
+    <mavenVersion>3.6.0</mavenVersion>
     <java.version>1.8</java.version>
   </properties>
 
