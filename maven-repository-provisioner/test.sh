@@ -14,8 +14,8 @@ target=http://localhost:8081/content/repositories/test
 #source=http://localhost:8081/nexus/content/groups/public
 #target=http://localhost:8081/nexus/content/repositories/test
 # for my local Nexus 3
-#source=http://localhost:8081/repository/maven-public
-#target=http://localhost:8081/repository/tmp
+source=http://localhost:8081/repository/maven-public
+target=http://localhost:8081/repository/test
 
 creds="-u admin -p admin123"
 #options=""
