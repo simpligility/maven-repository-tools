@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.simpligility.maven</groupId>
     <artifactId>progressive-organization-pom</artifactId>
-    <version>5.0.0</version>
+    <version>7.0.0</version>
   </parent>
 
   <artifactId>maven-repository-tools</artifactId>
@@ -38,8 +38,8 @@
   </issueManagement>
 
   <properties>
-    <mavenResolverVersion>1.1.1</mavenResolverVersion>
-    <mavenVersion>3.5.2</mavenVersion>
+    <mavenResolverVersion>1.3.2</mavenResolverVersion>
+    <mavenVersion>3.6.0</mavenVersion>
     <java.version>1.8</java.version>
   </properties>
 
