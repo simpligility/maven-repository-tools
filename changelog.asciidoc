@@ -6,7 +6,7 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
-== Maven Repository Tools 1.4.0 - unreleased
+== Maven Repository Tools 1.4.0 - released 2019-03-29
 
 * Fixed authorization for header-requests on target repository (checkTarget option)
 ** contributed by Daniel Geißler https://github.com/dgeissl
