@@ -14,11 +14,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>3.0.24</version>
-      </dependency>
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>1.7.21</version>
@@ -67,10 +62,6 @@
       <artifactId>maven-resolver-provider</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.codehaus.plexus</groupId> -->
-<!--       <artifactId>plexus-utils</artifactId> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-api</artifactId>
