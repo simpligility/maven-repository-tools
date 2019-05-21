@@ -6,6 +6,13 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.4.1 - released 2019-05-20
+
+* Proxy support for destination repository
+** see https://github.com/simpligility/maven-repository-tools/pull/46
+** fixes https://github.com/simpligility/maven-repository-tools/issues/45
+** contributed by https://github.com/sellersj
+
 == Maven Repository Tools 1.4.0 - released 2019-03-29
 
 * Fixed authorization for header-requests on target repository (checkTarget option)
