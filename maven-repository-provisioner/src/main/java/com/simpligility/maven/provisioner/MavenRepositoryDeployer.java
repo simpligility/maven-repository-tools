@@ -162,6 +162,7 @@ public class MavenRepositoryDeployer
                                 .build();
 
                 RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
+                        .setProxy( ProxyHelper.getProxy( targetUrl ) )
                         .setAuthentication( auth ).build();
 
                 DeployRequest deployRequest = new DeployRequest();
