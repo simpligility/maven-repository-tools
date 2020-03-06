@@ -6,6 +6,15 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
+== Maven Repository Tools 1.4.2 or higher - upcoming
+
+* Support for non-proxy hosts
+** fixes https://github.com/simpligility/maven-repository-tools/issues/49
+* Update Maven wrapper and Maven used for build
+* Update Maven deps to 3.6.3
+* Update Maven Resolver deps to 1.4.1
+
+
 == Maven Repository Tools 1.4.1 - released 2019-05-20
 
 * Proxy support for destination repository
