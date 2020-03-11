@@ -46,7 +46,7 @@ repository format to a repository manager.
 == Download
 
 Get the `*-jar-with-dependencies.jar` of the latest version available from
-http://repo1.maven.org/maven2/com/simpligility/maven/maven-repository-provisioner/
+https://repo.maven.apache.org/maven2/com/simpligility/maven/maven-repository-provisioner/
 
 == Usage
 
