@@ -265,7 +265,16 @@ public class MavenRepositoryDeployer
         String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
         logger.debug( "Headers for {}", artifactUrl );
 
-        HttpHead httphead = new HttpHead( artifactUrl );
+        HttpHead httphead;
+        try
+        {
+            httphead = new HttpHead( artifactUrl );
+        }
+        catch ( Exception e )
+        {
+            logger.error( "Skipped : {}", artifactUrl, e );
+            return true;
+        }
 
         if ( !StringUtils.isEmpty( username ) && ! StringUtils.isEmpty( password ) )
         {
