@@ -43,7 +43,7 @@ public class RepositoryHandler
     
     private static RepositorySystem newRepositorySystem()
     {
-        return Guice.createInjector( new AetherModule() ).getInstance( RepositorySystem.class );
+        return Guice.createInjector( new ApplicationModule() ).getInstance( RepositorySystem.class );
     }
     
     public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system, 

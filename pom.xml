@@ -38,8 +38,8 @@
   </issueManagement>
 
   <properties>
-    <mavenResolverVersion>1.4.1</mavenResolverVersion>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenResolverVersion>1.8.0</mavenResolverVersion>
+    <mavenVersion>3.8.5</mavenVersion>
     <java.version>1.8</java.version>
   </properties>
 
