@@ -37,6 +37,11 @@ public final class Gav
         return version;
     }
 
+    public String getVersionWithoutSnapshot()
+    {
+        return version.replace( "-SNAPSHOT", "" );
+    }
+
     public String getPackaging()
     {
         return packaging;

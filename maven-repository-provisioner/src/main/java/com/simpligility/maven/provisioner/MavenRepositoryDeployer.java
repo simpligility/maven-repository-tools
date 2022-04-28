@@ -19,6 +19,7 @@ import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -118,7 +119,9 @@ public class MavenRepositoryDeployer
         for ( File leafDirectory : leafDirectories )
         {
             IOFileFilter fileFilter = new AndFileFilter( new WildcardFileFilter( "*.pom" ),
-                                               new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+                                               new NotFileFilter( new OrFileFilter(
+                                                       new SuffixFileFilter( "sha1" ),
+                                                       new SuffixFileFilter( "md5" ) ) ) );
             pomFiles.addAll( FileUtils.listFiles( leafDirectory, fileFilter, null ) );
         }
         return pomFiles;
@@ -152,10 +155,13 @@ public class MavenRepositoryDeployer
             else
             {
                 // only interested in files using the artifactId-version* pattern
-                // don't bother with .sha1 files
+                // don't bother with .sha1 / .md5 files
                 IOFileFilter fileFilter =
-                    new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
-                                       new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+                    new AndFileFilter(
+                            new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersionWithoutSnapshot() + "*" ),
+                                       new NotFileFilter( new OrFileFilter(
+                                               new SuffixFileFilter( "sha1" ),
+                                               new SuffixFileFilter( "md5" ) ) ) );
                 Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
 
                 Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
