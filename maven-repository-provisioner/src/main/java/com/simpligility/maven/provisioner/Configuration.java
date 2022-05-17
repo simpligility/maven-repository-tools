@@ -19,7 +19,7 @@ public class Configuration
                 description = 
                 "URL for the source repository from which artifacts are resolved, "
               + "example for a Nexus install is http://localhost:8081/content/groups/public" )
-    private String sourceUrl = "https://repo1.maven.org/maven2";
+    private String sourceUrl = "https://repo.maven.apache.org/maven2";
 
     @Parameter( names = { "-t", "-targetUrl" }, 
                 description = "Folder or URL for the target repository e.g. dist-repo or "

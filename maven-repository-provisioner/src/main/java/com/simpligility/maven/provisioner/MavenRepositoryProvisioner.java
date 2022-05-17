@@ -43,7 +43,7 @@ public class MavenRepositoryProvisioner
         try
         {
             jcommander = new JCommander( config );
-            jcommander.usage( usage );
+            jcommander.getUsageFormatter().usage( usage );
             jcommander.parse( args );
             validConfig = true;
         }
