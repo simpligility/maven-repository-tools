@@ -12,41 +12,58 @@ package com.simpligility.maven.provisioner;
 
 import java.io.File;
 
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
 import org.eclipse.aether.repository.LocalRepository;
-
-import com.google.inject.Guice;
+import org.eclipse.sisu.bean.LifecycleModule;
+import org.eclipse.sisu.launch.Main;
+import org.eclipse.sisu.space.BeanScanning;
+import org.eclipse.sisu.wire.ParameterKeys;
 
 /**
  * A helper to boot the repository system and a repository system session.
  */
-public class RepositoryHandler
+public final class RepositoryHandler
 {
     private static RepositorySystem system;
 
-    private static DefaultRepositorySystemSession session; 
-    
+    private static DefaultRepositorySystemSession session;
+
     private static LoggingTransferListener transferListener = new LoggingTransferListener();
-    
+
     private static LoggingRepositoryListener repositoryListener = new LoggingRepositoryListener();
-    
+
     public static RepositorySystem getRepositorySystem()
     {
-        if ( system == null ) 
+        if ( system == null )
         {
             system = newRepositorySystem();
         }
         return system;
     }
-    
+
     private static RepositorySystem newRepositorySystem()
     {
-        return Guice.createInjector( new AetherModule() ).getInstance( RepositorySystem.class );
+        final Module app = Main.wire(
+                BeanScanning.INDEX,
+                new Module()
+                {
+                    public void configure( final Binder binder )
+                    {
+                        binder.install( new LifecycleModule() );
+                        binder.bind( ParameterKeys.PROPERTIES ).toInstance( System.getProperties() );
+                    }
+                }
+        );
+        return Guice.createInjector( app ).getInstance( DefaultRepositorySystem.class );
     }
-    
-    public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system, 
+
+    public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system,
                                                                              File localRepoPath )
     {
         if ( session == null )
@@ -56,8 +73,8 @@ public class RepositoryHandler
         return session;
     }
 
-    private static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system, 
-                                                                             File localRepoPath )
+    private static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system,
+                                                                              File localRepoPath )
     {
         DefaultRepositorySystemSession newSession = MavenRepositorySystemUtils.newSession();
 
