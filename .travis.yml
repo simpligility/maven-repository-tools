@@ -1,3 +1,0 @@
-jdk: openjdk8
-language: java
-script: ./mvnw clean install -B
