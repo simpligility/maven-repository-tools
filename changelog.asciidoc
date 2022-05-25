@@ -6,14 +6,21 @@ history] for a detailed list of changes.
 
 Unless otherwise noted all changes are done by Manfred Moser from http://www.simpligility.com[simpligility]
 
-== Maven Repository Tools 1.4.2 or higher - upcoming
+== Maven Repository Tools 1.5.0 - released 2022-05-24
 
 * Support for non-proxy hosts
 ** fixes https://github.com/simpligility/maven-repository-tools/issues/49
+* Add ability to skip an artifact if HttpHead throws an exception
+** see https://github.com/simpligility/maven-repository-tools/pull/52
+** contributed by https://github.com/pnrgitter
+* Update dependencies and code to better usage of Maven and SiSu, other misc improvements
+** https://github.com/simpligility/maven-repository-tools/pull/62
+** contributed by Tamas Cservenak https://github.com/cstamas
 * Update Maven wrapper and Maven used for build
-* Update Maven deps to 3.6.3
-* Update Maven Resolver deps to 1.4.1
-
+* Remove travis CI build
+* Add GitHub actions CI build
+* Require Java 11 for build and runtime
+* Add build to verify Java 17 builds
 
 == Maven Repository Tools 1.4.1 - released 2019-05-20
 
@@ -31,7 +38,7 @@ Unless otherwise noted all changes are done by Manfred Moser from http://www.sim
 * Update commons-io to 2.6
 * Update Maven resolver to 1.3.3
 * removed wrong classpath entry in executable JAR
-*
+
 
 == Maven Repository Tools 1.3.1 - released 2018-07-17
 

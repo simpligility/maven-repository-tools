@@ -8,8 +8,8 @@ set -u
 #source=https://repo1.maven.org/maven2/
 
 # for my local WaRM
-source=http://localhost:8081/content/groups/public
-target=http://localhost:8081/content/repositories/test
+#source=http://localhost:8081/content/groups/public
+#target=http://localhost:8081/content/repositories/test
 # for my local Nexus
 #source=http://localhost:8081/nexus/content/groups/public
 #target=http://localhost:8081/nexus/content/repositories/test
@@ -31,7 +31,7 @@ function deploy {
 
 # normal JAR
 
-#deploy "junit:junit:4.11"
+deploy "junit:junit:4.11"
 #deploy "org.testng:testng:jar:6.9.10"
 #deploy "org.apache.commons:commons-lang3:jar:3.3.2"
 #deploy "org.apache.abdera:abdera-bundle:1.1.3"
@@ -47,7 +47,7 @@ function deploy {
 #deploy "com.squareup.assertj:assertj-android:aar:1.1.1"
 # however this will NOT work since the pom file uses jar packaging so only jar
 # is downloaded - there is no way to tell this is actually an aar as well...
-# deploy "com.squareup.assertj:assertj-android:1.1.1"
+#deploy "com.squareup.assertj:assertj-android:1.1.1"
 
 
 # testing OSGI bundle packaging and related .jar transfer
@@ -57,7 +57,7 @@ function deploy {
 #deploy org.drools:drools-compiler:6.5.0.Final
 #deploy org.drools:drools-compiler:bundle:6.5.0.Final
 #deploy org.kie:kie-api:bundle:6.5.0.Final
-deploy org.kie:kie-api:6.5.0.Final
+#deploy org.kie:kie-api:6.5.0.Final
 
 # testing hpi packaging, both should get a hpi file and a jar file
 #deploy org.jenkins-ci.plugins:git:hpi:3.4.0
