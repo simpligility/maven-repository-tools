@@ -15,7 +15,7 @@ task - to be done.
 
 == Requirememts
 
-All tools require Java 8 or higher.
+All tools require Java 11 or higher.
 
 == Download
 
@@ -27,7 +27,7 @@ simpligility space:
 
 == Roadmap, Issues, Changes
 
-Please check out the
+Check out the
 https://github.com/simpligility/maven-repository-tools/issues[issues
 list] for upcoming changes, existing problems and so on.
 
@@ -39,10 +39,10 @@ well as the https://github.com/simpligility/maven-repository-tools/commits/maste
 Eclipse Public License - v 1.0
 
 For full text see the `LICENSE` file or https://www.eclipse.org/legal/epl-v10.html
- 
-== Building 
 
-Run 
+== Building
+
+Run
 
 ----
 mvn clean install
@@ -54,7 +54,7 @@ Verify full build for release with
 mvn clean deploy -P release
 ----
 
-Release with the usual 
+Release with the usual
 
 ----
 mvn release:prepare release:perform
@@ -62,8 +62,8 @@ mvn release:prepare release:perform
 
 == Contributions
 
-are very welcome. Send a pull request or report issues on GitHub. Even just a 
-spelling fix in the readme or anything else really is a welcome help. 
+are very welcome. Send a pull request or report issues on GitHub. Even just a
+spelling fix in the readme or anything else really is a welcome help.
 
 == Contributors
 

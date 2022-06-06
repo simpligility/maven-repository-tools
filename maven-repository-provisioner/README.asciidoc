@@ -1,4 +1,4 @@
-simpligility technologies inc. presents 
+simpligility technologies inc. presents
 
 = Maven Repository Provisioner
 
@@ -30,9 +30,9 @@ repository format to a repository manager.
 * All coordinates can be used to specify component - `groupId:artifactId:packaging:classifier:version`
 * Allows processing of multiple components in one run
 * Optionally includes javadoc and sources JAR files
-* Optionally include dependencies with scope provided 
+* Optionally include dependencies with scope provided
 * Source repository defaults to the Central Repository, but can be
-  configured 
+  configured
 * Target repository can be a file location or a repository manager repository
 * Authentication for repository manager deployment or source repository can be configured
 * Temporary cache directory on local disk for inspection `local-cache`
@@ -50,20 +50,18 @@ https://repo.maven.apache.org/maven2/com/simpligility/maven/maven-repository-pro
 
 == Usage
 
-Java 8 or higher is required.
+Java 11 or higher is required.
 
-The command 
-
-
-----
-java -jar maven-repository-provisioner-*-jar-with-dependencies.jar 
-----
-
-shows the documentation. A full example invocation
-could look like this:
+The command following shows the documentation:
 
 ----
-java - jar maven-repository-provisioner-*-jar-with-dependencies.jar 
+java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
+----
+
+A full example invocation can look like this:
+
+----
+java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -a "com.simpligility.maven:progressive-organization-pom:pom:2.3.0"
      -t "http://localhost:8081/nexus/content/repositories/test"
      -u admin
