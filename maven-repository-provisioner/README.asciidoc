@@ -61,7 +61,7 @@ java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
 A full example invocation can look like this:
 
 ----
-java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
+java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -a "com.simpligility.maven:progressive-organization-pom:pom:2.3.0"
      -t "http://localhost:8081/nexus/content/repositories/test"
      -u admin
@@ -75,7 +75,7 @@ To provision an existing Maven repository from the filesystem into a target repo
 specify the path to the folder as the local cache and omit the artifact coordinates:
 
 ----
-java - jar maven-repository-provisioner-*-jar-with-dependencies.jar
+java -jar maven-repository-provisioner-*-jar-with-dependencies.jar
      -cd "/opt/maven-repo"
      -t "http://localhost:8081/nexus/content/repositories/test"
      -u admin
