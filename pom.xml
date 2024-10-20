@@ -41,8 +41,8 @@
     <mavenResolverVersion>1.8.0</mavenResolverVersion>
     <mavenVersion>3.8.5</mavenVersion>
     <minimalMavenBuildVersion>3.8.5</minimalMavenBuildVersion>
-    <java.version>11</java.version>
-    <minimalJavaBuildVersion>11</minimalJavaBuildVersion>
+    <java.version>17</java.version>
+    <minimalJavaBuildVersion>17</minimalJavaBuildVersion>
     <!-- settings for takari lifecycle and others -->
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
