@@ -11,10 +11,13 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -30,9 +33,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.deployment.DeployRequest;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
@@ -48,23 +48,78 @@ public class MavenRepositoryDeployer
 {
     private static Logger logger = LoggerFactory.getLogger( "MavenRepositoryHelper" );
 
+    private static MavenRepositoryDeployer instance;
+
+    public static MavenRepositoryDeployer getInstance( File repositoryPath, Configuration configuration )
+    {
+        if ( instance == null )
+        {
+            instance = new MavenRepositoryDeployer( repositoryPath, configuration );
+        }
+        return instance;
+    }
+
     private File repositoryPath;
 
     private RepositorySystem system;
 
     private DefaultRepositorySystemSession session;
 
-    private final TreeSet<String> successfulDeploys = new TreeSet<String>();
+    private final String targetUrl;
+    private final String username;
+    private final String password;
+    private final Boolean checkTarget;
+    private final Boolean verifyOnly;
+    private final int threads;
 
-    private final TreeSet<String> failedDeploys = new TreeSet<String>();
+    public static class DeploymentResult
+    {
+        private final TreeSet<String> successfulDeploys = new TreeSet<String>();
+        private final TreeSet<String> failedDeploys = new TreeSet<String>();
+        private final TreeSet<String> potentialDeploys = new TreeSet<String>();
 
-    private final TreeSet<String> skippedDeploys = new TreeSet<String>();
+        public DeploymentResult( TreeSet<String> successfulDeploys,
+                                 TreeSet<String> failedDeploys,
+                                 TreeSet<String> potentialDeploys )
+        {
+            this.successfulDeploys.addAll( successfulDeploys );
+            this.failedDeploys.addAll( failedDeploys );
+            this.potentialDeploys.addAll( potentialDeploys );
+        }
 
-    private final TreeSet<String> potentialDeploys = new TreeSet<String>();
+        public TreeSet<String> getSuccessfulDeploys()
+        {
+            return successfulDeploys;
+        }
 
-    public MavenRepositoryDeployer( File repositoryPath )
+        public TreeSet<String> getFailedDeploys()
+        {
+            return failedDeploys;
+        }
+
+        public TreeSet<String> getPotentialDeploys()
+        {
+            return potentialDeploys;
+        }
+    }
+
+    private final TreeSet<String> successfulDeploys = new TreeSet<>();
+
+    private final TreeSet<String> failedDeploys = new TreeSet<>();
+
+    private final TreeSet<String> skippedDeploys = new TreeSet<>();
+
+    private final TreeSet<String> potentialDeploys = new TreeSet<>();
+
+    public MavenRepositoryDeployer( File repositoryPath, Configuration configuration )
     {
         this.repositoryPath = repositoryPath;
+        this.targetUrl = configuration.getTargetUrl();
+        this.username = configuration.getUsername();
+        this.password = configuration.getPassword();
+        this.checkTarget = configuration.getCheckTarget();
+        this.verifyOnly = configuration.getVerifyOnly();
+        this.threads = configuration.getDeployThreads();
         initialize();
     }
 
@@ -104,16 +159,16 @@ public class MavenRepositoryDeployer
         boolean isLeafVersionDirectory;
         Collection<File> subDirectories =
                 FileUtils.listFilesAndDirs( subDirectory,
-                                            ( IOFileFilter ) VisibleDirectoryFileFilter.DIRECTORY,
-                                            ( IOFileFilter ) VisibleDirectoryFileFilter.DIRECTORY );
+                                            VisibleDirectoryFileFilter.DIRECTORY,
+                                            VisibleDirectoryFileFilter.DIRECTORY );
         // it finds at least itself so have to check for > 1
-        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true;
+        isLeafVersionDirectory = subDirectories.size() <= 1;
         return isLeafVersionDirectory;
     }
 
     public static Collection<File> getPomFiles( File repoPath )
     {
-        Collection<File> pomFiles = new ArrayList<File>();
+        Collection<File> pomFiles = new ArrayList<>();
         Collection<File> leafDirectories = getLeafDirectories( repoPath );
         for ( File leafDirectory : leafDirectories )
         {
@@ -125,137 +180,96 @@ public class MavenRepositoryDeployer
     }
 
 
-    public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget,
-                                Boolean verifyOnly )
+    public void run()
     {
         Collection<File> leafDirectories = getLeafDirectories( repositoryPath );
-
-        for ( File leafDirectory : leafDirectories )
+        ExecutorService executorService = Executors.newFixedThreadPool( threads );
+        try
         {
-            String leafAbsolutePath = leafDirectory.getAbsoluteFile().toString();
-            int repoAbsolutePathLength = repositoryPath.getAbsoluteFile().toString().length();
-            String leafRepoPath = leafAbsolutePath.substring( repoAbsolutePathLength + 1, leafAbsolutePath.length() );
+            List<Future<DeploymentResult>> futures = new ArrayList<>();
 
-            Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
-
-            boolean pomInTarget = false;
-            if ( checkTarget )
+            for ( File leafDirectory : leafDirectories )
             {
-                pomInTarget = checkIfPomInTarget( targetUrl, username, password, gav );
-            }
+                String leafAbsolutePath = leafDirectory.getAbsoluteFile()
+                                                       .toString();
+                int repoAbsolutePathLength = repositoryPath.getAbsoluteFile()
+                                                           .toString()
+                                                           .length();
+                String leafRepoPath = leafAbsolutePath.substring( repoAbsolutePathLength + 1 );
 
-            if ( pomInTarget )
-            {
-                logger.info( "Found POM for " + gav + " already in target. Skipping deployment." );
-                skippedDeploys.add( gav.toString() );
-            }
-            else
-            {
-                // only interested in files using the artifactId-version* pattern
-                // don't bother with .sha1 files
-                IOFileFilter fileFilter =
-                        new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
-                                           new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
-                Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
+                Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
 
-                Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
-                                                                 .build();
-
-                RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
-                        .setProxy( ProxyHelper.getProxy( targetUrl ) )
-                        .setAuthentication( auth ).build();
-
-                DeployRequest deployRequest = new DeployRequest();
-                deployRequest.setRepository( distRepo );
-                for ( File file : artifacts )
+                boolean pomInTarget = false;
+                if ( checkTarget )
                 {
-                    String extension;
-                    if ( file.getName().endsWith( "tar.gz" ) )
-                    {
-                        extension = "tar.gz";
-                    }
-                    else
-                    {
-                        extension = FilenameUtils.getExtension( file.getName() );
-                    }
-
-                    String baseFileName = gav.getFilenameStart() + "." + extension;
-                    String fileName = file.getName();
-                    String g = gav.getGroupId();
-                    String a = gav.getArtifactId();
-                    String v = gav.getVersion();
-
-                    Artifact artifact = null;
-                    if ( gav.getPomFilename().equals( fileName ) )
-                    {
-                        artifact = new DefaultArtifact( g, a, MavenConstants.POM, v );
-                    }
-                    else if ( gav.getJarFilename().equals( fileName ) )
-                    {
-                        artifact = new DefaultArtifact( g, a, MavenConstants.JAR, v );
-                    }
-                    else if ( gav.getSourceFilename().equals( fileName ) )
-                    {
-                        artifact = new DefaultArtifact( g, a, MavenConstants.SOURCES, MavenConstants.JAR, v );
-                    }
-                    else if ( gav.getJavadocFilename().equals( fileName ) )
-                    {
-                        artifact = new DefaultArtifact( g, a, MavenConstants.JAVADOC, MavenConstants.JAR, v );
-                    }
-                    else if ( baseFileName.equals( fileName ) )
-                    {
-                        artifact = new DefaultArtifact( g, a, extension, v );
-                    }
-                    else
-                    {
-                        String classifier =
-                                file.getName().substring( gav.getFilenameStart().length() + 1,
-                                                          file.getName().length() - ( "." + extension ).length() );
-                        artifact = new DefaultArtifact( g, a, classifier, extension, v );
-                    }
-
-                    if ( artifact != null )
-                    {
-                        artifact = artifact.setFile( file );
-                        deployRequest.addArtifact( artifact );
-                    }
+                    pomInTarget = checkIfPomInTarget( targetUrl, username, password, gav );
                 }
 
+                if ( pomInTarget )
+                {
+                    logger.info( "Found POM for {} already in target. Skipping deployment.", gav );
+                    addSkippedDeploy( gav.toString() );
+                }
+                else
+                {
+                    IOFileFilter fileFilter = new AndFileFilter(
+                            new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
+                            new NotFileFilter( new SuffixFileFilter( "sha1" ) )
+                    );
+                    Collection<File> artifacts = FileUtils.listFiles(
+                            leafDirectory, fileFilter, null
+                    );
+
+                    Authentication auth = new AuthenticationBuilder()
+                            .addUsername( username )
+                            .addPassword( password )
+                            .build();
+
+                    RemoteRepository distRepo = new RemoteRepository.Builder(
+                            "repositoryIdentifier",
+                            "default",
+                            targetUrl )
+                            .setProxy( ProxyHelper.getProxy( targetUrl ) )
+                            .setAuthentication( auth )
+                            .build();
+
+                    MavenRepositoryDeploymentCallable deploymentCallable = new MavenRepositoryDeploymentCallable(
+                            gav, artifacts, distRepo, verifyOnly, system, session
+                    );
+                    futures.add( executorService.submit( deploymentCallable ) );
+                }
+            }
+
+            for ( Future<MavenRepositoryDeployer.DeploymentResult> future : futures )
+            {
                 try
                 {
-                    if ( verifyOnly )
+                    MavenRepositoryDeployer.DeploymentResult result = future.get();
+                    synchronized ( this )
                     {
-                        for ( Artifact artifact : deployRequest.getArtifacts() )
-                        {
-                            potentialDeploys.add( artifact.toString() );
-                        }
-                    }
-                    else
-                    {
-                        system.deploy( session, deployRequest );
-                        for ( Artifact artifact : deployRequest.getArtifacts() )
-                        {
-                            successfulDeploys.add( artifact.toString() );
-                        }
+                        successfulDeploys.addAll( result.getSuccessfulDeploys() );
+                        failedDeploys.addAll( result.getFailedDeploys() );
+                        potentialDeploys.addAll( result.getPotentialDeploys() );
                     }
                 }
                 catch ( Exception e )
                 {
-                    logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
-                    for ( Artifact artifact : deployRequest.getArtifacts() )
-                    {
-                        failedDeploys.add( artifact.toString() );
-                    }
+                    logger.error( "Error while getting deployment result", e );
                 }
             }
+        }
+        finally
+        {
+            executorService.shutdown();
         }
     }
 
     /**
      * Check if POM file for provided gav can be found in target. Just does
      * a HTTP get of the header and verifies http status OK 200.
+     *
      * @param targetUrl url of the target repository
-     * @param gav group artifact version string
+     * @param gav       group artifact version string
      * @return {@code true} if the pom.xml already exists in the target repository
      */
     private boolean checkIfPomInTarget( String targetUrl, String username, String password, Gav gav )
@@ -388,5 +402,19 @@ public class MavenRepositoryDeployer
     public String getFailureMessage()
     {
         return "Failed to deploy some artifacts.";
+    }
+
+    public void addSkippedDeploy( String artifact )
+    {
+        skippedDeploys.add( artifact );
+    }
+
+    public void summarize()
+    {
+        logger.info( "Summary of Deployment Results:" );
+        logger.info( "Successful Deployments {}: {}", successfulDeploys.size(), String.join( ",", successfulDeploys ) );
+        logger.info( "Failed Deployments {}: {}", failedDeploys.size(), String.join( ",", failedDeploys ) );
+        logger.info( "Skipped Deployments {}: {}", skippedDeploys.size(), String.join( ",", skippedDeploys ) );
+        logger.info( "Potential Deployments {}: {}", potentialDeploys.size(), String.join( ",", potentialDeploys ) );
     }
 }

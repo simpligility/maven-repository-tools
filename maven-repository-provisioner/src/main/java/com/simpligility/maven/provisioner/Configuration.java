@@ -82,6 +82,10 @@ public class Configuration
                               + "deployments of a second execution are logged.", arity = 1 )
     private Boolean verifyOnly = false;
 
+    @Parameter( names = {"-dt", "-deployThreads"},
+                description = "Number of threads to use for deploying artifacts. Defaults to 5." )
+    private int deployThreads = 5;
+
     public void setSourceUrl( String sourceUrl )
     {
         this.sourceUrl = sourceUrl;
@@ -248,6 +252,16 @@ public class Configuration
     public Boolean getVerifyOnly()
     {
         return verifyOnly;
+    }
+
+    public void setDeployThreads( int deployThreads )
+    {
+        this.deployThreads = deployThreads;
+    }
+
+    public int getDeployThreads()
+    {
+        return deployThreads;
     }
 
     public List<String> getArtifactCoordinates()

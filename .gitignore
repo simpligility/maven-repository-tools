@@ -10,3 +10,4 @@ release.properties
 local-cache
 maven-repository-provisioner.log
 .checkstyle
+**/*.iml
