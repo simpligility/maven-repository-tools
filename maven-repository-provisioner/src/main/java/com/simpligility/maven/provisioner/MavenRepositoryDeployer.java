@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright simpligility technologies inc. http://www.simpligility.com
  * Licensed under Eclipse Public License - v 1.0 http://www.eclipse.org/legal/epl-v10.html
  */
@@ -59,7 +59,7 @@ public class MavenRepositoryDeployer
     private final TreeSet<String> failedDeploys = new TreeSet<String>();
 
     private final TreeSet<String> skippedDeploys = new TreeSet<String>();
-    
+
     private final TreeSet<String> potentialDeploys = new TreeSet<String>();
 
     public MavenRepositoryDeployer( File repositoryPath )
@@ -67,21 +67,21 @@ public class MavenRepositoryDeployer
         this.repositoryPath = repositoryPath;
         initialize();
     }
-    
+
     private void initialize()
     {
         system = RepositoryHandler.getRepositorySystem();
         session = RepositoryHandler.getRepositorySystemSession( system, repositoryPath );
     }
-    
-    public static Collection<File> getLeafDirectories( File repoPath ) 
+
+    public static Collection<File> getLeafDirectories( File repoPath )
     {
         // Using commons-io, if performance or so is a problem it might be worth looking at the Java 8 streams API
         // e.g. http://blog.jooq.org/2014/01/24/java-8-friday-goodies-the-new-new-io-apis/
         // not yet though..
-       Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( repoPath, DirectoryFileFilter.DIRECTORY,
-                VisibleDirectoryFileFilter.DIRECTORY );
+        Collection<File> subDirectories =
+                FileUtils.listFilesAndDirs( repoPath, DirectoryFileFilter.DIRECTORY,
+                                            VisibleDirectoryFileFilter.DIRECTORY );
         Collection<File> leafDirectories = new ArrayList<File>();
         for ( File subDirectory : subDirectories )
         {
@@ -92,10 +92,10 @@ public class MavenRepositoryDeployer
         }
         return leafDirectories;
     }
-    
+
     /**
      * Determine if it is a leaf directory with artifacts in it. Criteria used is that there is no subdirectory.
-     * 
+     *
      * @param subDirectory
      * @return
      */
@@ -103,14 +103,14 @@ public class MavenRepositoryDeployer
     {
         boolean isLeafVersionDirectory;
         Collection<File> subDirectories =
-            FileUtils.listFilesAndDirs( subDirectory,
-                (IOFileFilter) VisibleDirectoryFileFilter.DIRECTORY,
-                (IOFileFilter) VisibleDirectoryFileFilter.DIRECTORY );
+                FileUtils.listFilesAndDirs( subDirectory,
+                                            ( IOFileFilter ) VisibleDirectoryFileFilter.DIRECTORY,
+                                            ( IOFileFilter ) VisibleDirectoryFileFilter.DIRECTORY );
         // it finds at least itself so have to check for > 1
-        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true; 
+        isLeafVersionDirectory = subDirectories.size() > 1 ? false : true;
         return isLeafVersionDirectory;
     }
-    
+
     public static Collection<File> getPomFiles( File repoPath )
     {
         Collection<File> pomFiles = new ArrayList<File>();
@@ -118,7 +118,7 @@ public class MavenRepositoryDeployer
         for ( File leafDirectory : leafDirectories )
         {
             IOFileFilter fileFilter = new AndFileFilter( new WildcardFileFilter( "*.pom" ),
-                                               new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+                                                         new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
             pomFiles.addAll( FileUtils.listFiles( leafDirectory, fileFilter, null ) );
         }
         return pomFiles;
@@ -126,7 +126,7 @@ public class MavenRepositoryDeployer
 
 
     public void deployToRemote( String targetUrl, String username, String password, Boolean checkTarget,
-        Boolean verifyOnly )
+                                Boolean verifyOnly )
     {
         Collection<File> leafDirectories = getLeafDirectories( repositoryPath );
 
@@ -139,27 +139,27 @@ public class MavenRepositoryDeployer
             Gav gav = GavUtil.getGavFromRepositoryPath( leafRepoPath );
 
             boolean pomInTarget = false;
-            if ( checkTarget ) 
+            if ( checkTarget )
             {
                 pomInTarget = checkIfPomInTarget( targetUrl, username, password, gav );
             }
-            
-            if ( pomInTarget ) 
+
+            if ( pomInTarget )
             {
                 logger.info( "Found POM for " + gav + " already in target. Skipping deployment." );
                 skippedDeploys.add( gav.toString() );
-            } 
+            }
             else
             {
                 // only interested in files using the artifactId-version* pattern
                 // don't bother with .sha1 files
                 IOFileFilter fileFilter =
-                    new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
-                                       new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
+                        new AndFileFilter( new WildcardFileFilter( gav.getArtifactId() + "-" + gav.getVersion() + "*" ),
+                                           new NotFileFilter( new SuffixFileFilter( "sha1" ) ) );
                 Collection<File> artifacts = FileUtils.listFiles( leafDirectory, fileFilter, null );
 
                 Authentication auth = new AuthenticationBuilder().addUsername( username ).addPassword( password )
-                                .build();
+                                                                 .build();
 
                 RemoteRepository distRepo = new RemoteRepository.Builder( "repositoryIdentifier", "default", targetUrl )
                         .setProxy( ProxyHelper.getProxy( targetUrl ) )
@@ -184,7 +184,7 @@ public class MavenRepositoryDeployer
                     String g = gav.getGroupId();
                     String a = gav.getArtifactId();
                     String v = gav.getVersion();
-                    
+
                     Artifact artifact = null;
                     if ( gav.getPomFilename().equals( fileName ) )
                     {
@@ -209,8 +209,8 @@ public class MavenRepositoryDeployer
                     else
                     {
                         String classifier =
-                            file.getName().substring( gav.getFilenameStart().length() + 1,
-                                                      file.getName().length() - ( "." + extension ).length() );
+                                file.getName().substring( gav.getFilenameStart().length() + 1,
+                                                          file.getName().length() - ( "." + extension ).length() );
                         artifact = new DefaultArtifact( g, a, classifier, extension, v );
                     }
 
@@ -225,24 +225,24 @@ public class MavenRepositoryDeployer
                 {
                     if ( verifyOnly )
                     {
-                      for ( Artifact artifact : deployRequest.getArtifacts() )
-                      {
-                          potentialDeploys.add( artifact.toString() );
-                      }
+                        for ( Artifact artifact : deployRequest.getArtifacts() )
+                        {
+                            potentialDeploys.add( artifact.toString() );
+                        }
                     }
                     else
                     {
-                      system.deploy( session, deployRequest );
-                      for ( Artifact artifact : deployRequest.getArtifacts() )
-                      {
-                          successfulDeploys.add( artifact.toString() );
-                      }
+                        system.deploy( session, deployRequest );
+                        for ( Artifact artifact : deployRequest.getArtifacts() )
+                        {
+                            successfulDeploys.add( artifact.toString() );
+                        }
                     }
                 }
                 catch ( Exception e )
                 {
                     logger.info( "Deployment failed with " + e.getMessage() + ", artifact might be deployed already." );
-                    for ( Artifact artifact : deployRequest.getArtifacts() ) 
+                    for ( Artifact artifact : deployRequest.getArtifacts() )
                     {
                         failedDeploys.add( artifact.toString() );
                     }
@@ -261,7 +261,7 @@ public class MavenRepositoryDeployer
     private boolean checkIfPomInTarget( String targetUrl, String username, String password, Gav gav )
     {
         boolean alreadyInTarget = false;
-        
+
         String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
         logger.debug( "Headers for {}", artifactUrl );
 
@@ -276,28 +276,28 @@ public class MavenRepositoryDeployer
             return true;
         }
 
-        if ( !StringUtils.isEmpty( username ) && ! StringUtils.isEmpty( password ) )
+        if ( !StringUtils.isEmpty( username ) && !StringUtils.isEmpty( password ) )
         {
-          String encoding = java.util.Base64.getEncoder().encodeToString( ( username + ":" + password ).getBytes() );
-          httphead.setHeader( "Authorization", "Basic " + encoding );
+            String encoding = java.util.Base64.getEncoder().encodeToString( ( username + ":" + password ).getBytes() );
+            httphead.setHeader( "Authorization", "Basic " + encoding );
         }
 
         try ( CloseableHttpClient httpClient = HttpClientBuilder.create().build() )
         {
-          HttpResponse response = httpClient.execute( httphead );
-          int statusCode = response.getStatusLine().getStatusCode();
-          if ( statusCode == HttpURLConnection.HTTP_OK )
-          {
-              alreadyInTarget = true;
-          }
-          else
-          {
-              logger.debug( "Headers not found HTTP: {}", statusCode );
-          }
-        } 
+            HttpResponse response = httpClient.execute( httphead );
+            int statusCode = response.getStatusLine().getStatusCode();
+            if ( statusCode == HttpURLConnection.HTTP_OK )
+            {
+                alreadyInTarget = true;
+            }
+            else
+            {
+                logger.debug( "Headers not found HTTP: {}", statusCode );
+            }
+        }
         catch ( IOException ioe )
         {
-          logger.warn( "Could not check target repository for already existing pom.xml.", ioe );
+            logger.warn( "Could not check target repository for already existing pom.xml.", ioe );
         }
         return alreadyInTarget;
     }
@@ -325,7 +325,7 @@ public class MavenRepositoryDeployer
 
         return builder.toString();
     }
-    
+
     public String listSkippedDeployment()
     {
         StringBuilder builder = new StringBuilder();
@@ -350,29 +350,29 @@ public class MavenRepositoryDeployer
         return builder.toString();
     }
 
-    public static Gav getCoordinates ( File pomFile ) throws Exception
+    public static Gav getCoordinates( File pomFile ) throws Exception
     {
         BufferedReader in = new BufferedReader( new FileReader( pomFile ) );
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read( in );
         // get coordinates and take care of inheritance and default
         String g = model.getGroupId();
-        if ( StringUtils.isEmpty( g ) ) 
+        if ( StringUtils.isEmpty( g ) )
         {
             g = model.getParent().getGroupId();
         }
         String a = model.getArtifactId();
-        if ( StringUtils.isEmpty( a ) ) 
+        if ( StringUtils.isEmpty( a ) )
         {
             a = model.getParent().getArtifactId();
         }
         String v = model.getVersion();
-        if ( StringUtils.isEmpty( v ) ) 
+        if ( StringUtils.isEmpty( v ) )
         {
             v = model.getParent().getVersion();
         }
         String p = model.getPackaging();
-        if ( StringUtils.isEmpty( p ) ) 
+        if ( StringUtils.isEmpty( p ) )
         {
             p = MavenConstants.JAR;
         }
@@ -380,13 +380,13 @@ public class MavenRepositoryDeployer
         return gav;
     }
 
-    public boolean hasFailure() 
+    public boolean hasFailure()
     {
-      return failedDeploys.size() > 0;
+        return failedDeploys.size() > 0;
     }
 
-    public String getFailureMessage() 
+    public String getFailureMessage()
     {
-      return "Failed to deploy some artifacts.";
+        return "Failed to deploy some artifacts.";
     }
 }
