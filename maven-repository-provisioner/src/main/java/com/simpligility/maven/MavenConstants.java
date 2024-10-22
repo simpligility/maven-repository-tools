@@ -1,7 +1,6 @@
 package com.simpligility.maven;
 
-public final class MavenConstants
-{
+public final class MavenConstants {
     public static final String JAVADOC = "javadoc";
     public static final String SOURCES = "sources";
     public static final String POM = "pom";
@@ -24,16 +23,12 @@ public final class MavenConstants
      * @param packaging
      * @return
      */
-    public static boolean packagingUsesJarOnly( String packaging )
-    {
-      boolean result = false;
-      if ( JAR.equals( packaging )
-          || BUNDLE.equals( packaging )
-          || MAVEN_PLUGIN.equals( packaging ) )
-      {
-        result = true;
-      }
-      return result;
+    public static boolean packagingUsesJarOnly(String packaging) {
+        boolean result = false;
+        if (JAR.equals(packaging) || BUNDLE.equals(packaging) || MAVEN_PLUGIN.equals(packaging)) {
+            result = true;
+        }
+        return result;
     }
 
     /**
@@ -41,17 +36,12 @@ public final class MavenConstants
      * @param packaging
      * @return
      */
-    public static boolean packagingUsesAdditionalJar( String packaging )
-    {
-      boolean result = false;
-      if ( HPI.equals( packaging )
-          || JPI.equals( packaging )
-          || AAR.equals( packaging )
-          || ZIP.equals( packaging ) )
-      {
-        result = true;
-      }
-      return result;
+    public static boolean packagingUsesAdditionalJar(String packaging) {
+        boolean result = false;
+        if (HPI.equals(packaging) || JPI.equals(packaging) || AAR.equals(packaging) || ZIP.equals(packaging)) {
+            result = true;
+        }
+        return result;
     }
 
     /**
@@ -59,8 +49,7 @@ public final class MavenConstants
      * @param packaging
      * @return
      */
-    public static boolean packagingUsesJar( String packaging )
-    {
-      return ( packagingUsesJarOnly( packaging ) || packagingUsesAdditionalJar( packaging ) );
+    public static boolean packagingUsesJar(String packaging) {
+        return (packagingUsesJarOnly(packaging) || packagingUsesAdditionalJar(packaging));
     }
 }
