@@ -28,8 +28,7 @@ import org.eclipse.sisu.wire.ParameterKeys;
 /**
  * A helper to boot the repository system and a repository system session.
  */
-public final class RepositoryHandler
-{
+public final class RepositoryHandler {
     private static RepositorySystem system;
 
     private static DefaultRepositorySystemSession session;
@@ -38,57 +37,45 @@ public final class RepositoryHandler
 
     private static LoggingRepositoryListener repositoryListener = new LoggingRepositoryListener();
 
-    public static RepositorySystem getRepositorySystem()
-    {
-        if ( system == null )
-        {
+    public static RepositorySystem getRepositorySystem() {
+        if (system == null) {
             system = newRepositorySystem();
         }
         return system;
     }
 
-    private static RepositorySystem newRepositorySystem()
-    {
-        final Module app = Main.wire(
-                BeanScanning.INDEX,
-                new Module()
-                {
-                    public void configure( final Binder binder )
-                    {
-                        binder.install( new LifecycleModule() );
-                        binder.bind( ParameterKeys.PROPERTIES ).toInstance( System.getProperties() );
-                    }
-                }
-        );
-        return Guice.createInjector( app ).getInstance( DefaultRepositorySystem.class );
+    private static RepositorySystem newRepositorySystem() {
+        final Module app = Main.wire(BeanScanning.INDEX, new Module() {
+            public void configure(final Binder binder) {
+                binder.install(new LifecycleModule());
+                binder.bind(ParameterKeys.PROPERTIES).toInstance(System.getProperties());
+            }
+        });
+        return Guice.createInjector(app).getInstance(DefaultRepositorySystem.class);
     }
 
-    public static DefaultRepositorySystemSession getRepositorySystemSession( RepositorySystem system,
-                                                                             File localRepoPath )
-    {
-        if ( session == null )
-        {
-            session = newRepositorySystemSession( system, localRepoPath );
+    public static DefaultRepositorySystemSession getRepositorySystemSession(
+            RepositorySystem system, File localRepoPath) {
+        if (session == null) {
+            session = newRepositorySystemSession(system, localRepoPath);
         }
         return session;
     }
 
-    private static DefaultRepositorySystemSession newRepositorySystemSession( RepositorySystem system,
-                                                                              File localRepoPath )
-    {
+    private static DefaultRepositorySystemSession newRepositorySystemSession(
+            RepositorySystem system, File localRepoPath) {
         DefaultRepositorySystemSession newSession = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository( localRepoPath );
-        newSession.setLocalRepositoryManager( system.newLocalRepositoryManager( newSession, localRepo ) );
+        LocalRepository localRepo = new LocalRepository(localRepoPath);
+        newSession.setLocalRepositoryManager(system.newLocalRepositoryManager(newSession, localRepo));
 
-        newSession.setTransferListener( getTransferListener() );
-        newSession.setRepositoryListener( repositoryListener );
+        newSession.setTransferListener(getTransferListener());
+        newSession.setRepositoryListener(repositoryListener);
 
         return newSession;
     }
 
-    public static LoggingTransferListener getTransferListener()
-    {
+    public static LoggingTransferListener getTransferListener() {
         return transferListener;
     }
 }
