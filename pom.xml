@@ -64,6 +64,30 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.43.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+                <goal>apply</goal>
+              </goals>
+              <phase>validate</phase>
+            </execution>
+          </executions>
+          <configuration>
+            <java>
+              <!-- same as in maven-parent:43 -->
+              <palantirJavaFormat />
+              <removeUnusedImports />
+              <importOrder>
+                <order>javax,java, ,\#</order>
+              </importOrder>
+            </java>
+          </configuration>
+        </plugin>
+        <plugin>
           <groupId>io.takari.maven.plugins</groupId>
           <artifactId>takari-lifecycle-plugin</artifactId>
           <configuration>
