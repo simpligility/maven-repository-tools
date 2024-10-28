@@ -59,14 +59,18 @@ public class MavenRepositoryDeployer {
 
     private final TreeSet<String> potentialDeploys = new TreeSet<String>();
 
-    public MavenRepositoryDeployer(File repositoryPath) {
+    public MavenRepositoryDeployer(File repositoryPath, Boolean parallelDeploy, int deployThreads) {
         this.repositoryPath = repositoryPath;
-        initialize();
+        initialize(parallelDeploy, deployThreads);
     }
 
-    private void initialize() {
+    private void initialize(Boolean parallelDeploy, int deployThreads) {
         system = RepositoryHandler.getRepositorySystem();
         session = RepositoryHandler.getRepositorySystemSession(system, repositoryPath);
+        if (parallelDeploy) {
+            session.setConfigProperty("aether.connector.basic.parallelPut", "true");
+            session.setConfigProperty("aether.connector.basic.threads", deployThreads);
+        }
     }
 
     public static Collection<File> getLeafDirectories(File repoPath) {
