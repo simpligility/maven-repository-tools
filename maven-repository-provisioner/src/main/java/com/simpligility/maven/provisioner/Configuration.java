@@ -121,6 +121,15 @@ public class Configuration {
                     "Number of threads to use for parallel deployment. Ignored if parallelDeploy is false. Defaults to 5.")
     private int deployThreads = 5;
 
+    @Parameter(
+            names = {"-df", "deployFilterFile"},
+            description = "File path to a filter file that specifies what is or isn't deployed remotely. "
+                    + "The file should contain GAV (groupId:artifactId:version:extension) patterns, one per line. "
+                    + "If a line starts with a '!', that GAV will NOT be deployed remotely. "
+                    + "By default, no filter file is specified, and everything in the local repository is deployed.",
+            arity = 1)
+    private String deployFilterFile;
+
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
     }
@@ -175,6 +184,10 @@ public class Configuration {
 
     public void setVerifyOnly(Boolean verifyOnly) {
         this.verifyOnly = verifyOnly;
+    }
+
+    public void setDeployFilterFile(String deployFilterFile) {
+        this.deployFilterFile = deployFilterFile;
     }
 
     public void setParallelDeploy(Boolean parallelDeploy) {
@@ -259,6 +272,10 @@ public class Configuration {
 
     public Boolean getVerifyOnly() {
         return verifyOnly;
+    }
+
+    public String getDeployFilterFile() {
+        return deployFilterFile;
     }
 
     public Boolean getParallelDeploy() {
