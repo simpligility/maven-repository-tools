@@ -109,6 +109,18 @@ public class Configuration {
             arity = 1)
     private Boolean verifyOnly = false;
 
+    @Parameter(
+            names = {"-pd", "-parallelDeploy"},
+            description = "Activate parallel deployment of artifacts. Defaults to false.",
+            arity = 1)
+    private Boolean parallelDeploy = false;
+
+    @Parameter(
+            names = {"-dt", "-deployThreads"},
+            description =
+                    "Number of threads to use for parallel deployment. Ignored if parallelDeploy is false. Defaults to 5.")
+    private int deployThreads = 5;
+
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
     }
@@ -163,6 +175,14 @@ public class Configuration {
 
     public void setVerifyOnly(Boolean verifyOnly) {
         this.verifyOnly = verifyOnly;
+    }
+
+    public void setParallelDeploy(Boolean parallelDeploy) {
+        this.parallelDeploy = parallelDeploy;
+    }
+
+    public void setDeployThreads(int deployThreads) {
+        this.deployThreads = deployThreads;
     }
 
     public boolean getHelp() {
@@ -239,6 +259,14 @@ public class Configuration {
 
     public Boolean getVerifyOnly() {
         return verifyOnly;
+    }
+
+    public Boolean getParallelDeploy() {
+        return parallelDeploy;
+    }
+
+    public int getDeployThreads() {
+        return deployThreads;
     }
 
     public List<String> getArtifactCoordinates() {

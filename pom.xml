@@ -38,7 +38,7 @@
   </issueManagement>
 
   <properties>
-    <mavenResolverVersion>1.8.0</mavenResolverVersion>
+    <mavenResolverVersion>1.9.22</mavenResolverVersion>
     <mavenVersion>3.8.5</mavenVersion>
     <minimalMavenBuildVersion>3.8.5</minimalMavenBuildVersion>
     <java.version>17</java.version>

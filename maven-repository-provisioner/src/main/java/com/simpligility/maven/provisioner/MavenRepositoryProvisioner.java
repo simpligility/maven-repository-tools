@@ -115,7 +115,8 @@ public class MavenRepositoryProvisioner {
 
     private static MavenRepositoryDeployer deployArtifacts() {
         logger.info("Artifact deployment starting.");
-        MavenRepositoryDeployer helper = new MavenRepositoryDeployer(cacheDirectory);
+        MavenRepositoryDeployer helper = new MavenRepositoryDeployer(cacheDirectory, config.getParallelDeploy(),
+                                                                     config.getDeployThreads());
         helper.deployToRemote(
                 config.getTargetUrl(),
                 config.getUsername(),
