@@ -51,6 +51,8 @@ public class MavenRepositoryDeployer {
 
     private DefaultRepositorySystemSession session;
 
+    private final Configuration config;
+
     private final TreeSet<String> successfulDeploys = new TreeSet<String>();
 
     private final TreeSet<String> failedDeploys = new TreeSet<String>();
@@ -59,17 +61,18 @@ public class MavenRepositoryDeployer {
 
     private final TreeSet<String> potentialDeploys = new TreeSet<String>();
 
-    public MavenRepositoryDeployer(File repositoryPath, Boolean parallelDeploy, int deployThreads) {
+    public MavenRepositoryDeployer(File repositoryPath, Configuration configuration) {
         this.repositoryPath = repositoryPath;
-        initialize(parallelDeploy, deployThreads);
+        this.config = configuration;
+        initialize();
     }
 
-    private void initialize(Boolean parallelDeploy, int deployThreads) {
+    private void initialize() {
         system = RepositoryHandler.getRepositorySystem();
         session = RepositoryHandler.getRepositorySystemSession(system, repositoryPath);
-        if (parallelDeploy) {
+        if (config.getParallelDeploy()) {
             session.setConfigProperty("aether.connector.basic.parallelPut", "true");
-            session.setConfigProperty("aether.connector.basic.threads", deployThreads);
+            session.setConfigProperty("aether.connector.basic.threads", config.getDeployThreads());
         }
     }
 
@@ -115,8 +118,7 @@ public class MavenRepositoryDeployer {
         return pomFiles;
     }
 
-    public void deployToRemote(
-            String targetUrl, String username, String password, Boolean checkTarget, Boolean verifyOnly) {
+    public void deployToRemote() {
         Collection<File> leafDirectories = getLeafDirectories(repositoryPath);
 
         for (File leafDirectory : leafDirectories) {
@@ -128,8 +130,8 @@ public class MavenRepositoryDeployer {
             Gav gav = GavUtil.getGavFromRepositoryPath(leafRepoPath);
 
             boolean pomInTarget = false;
-            if (checkTarget) {
-                pomInTarget = checkIfPomInTarget(targetUrl, username, password, gav);
+            if (config.getCheckTarget()) {
+                pomInTarget = checkIfPomInTarget(gav);
             }
 
             if (pomInTarget) {
@@ -144,12 +146,13 @@ public class MavenRepositoryDeployer {
                 Collection<File> artifacts = FileUtils.listFiles(leafDirectory, fileFilter, null);
 
                 Authentication auth = new AuthenticationBuilder()
-                        .addUsername(username)
-                        .addPassword(password)
+                        .addUsername(config.getUsername())
+                        .addPassword(config.getPassword())
                         .build();
 
-                RemoteRepository distRepo = new RemoteRepository.Builder("repositoryIdentifier", "default", targetUrl)
-                        .setProxy(ProxyHelper.getProxy(targetUrl))
+                RemoteRepository distRepo = new RemoteRepository.Builder(
+                                "repositoryIdentifier", "default", config.getTargetUrl())
+                        .setProxy(ProxyHelper.getProxy(config.getTargetUrl()))
                         .setAuthentication(auth)
                         .build();
 
@@ -195,7 +198,7 @@ public class MavenRepositoryDeployer {
                 }
 
                 try {
-                    if (verifyOnly) {
+                    if (config.getVerifyOnly()) {
                         for (Artifact artifact : deployRequest.getArtifacts()) {
                             potentialDeploys.add(artifact.toString());
                         }
@@ -218,14 +221,13 @@ public class MavenRepositoryDeployer {
     /**
      * Check if POM file for provided gav can be found in target. Just does
      * a HTTP get of the header and verifies http status OK 200.
-     * @param targetUrl url of the target repository
      * @param gav group artifact version string
      * @return {@code true} if the pom.xml already exists in the target repository
      */
-    private boolean checkIfPomInTarget(String targetUrl, String username, String password, Gav gav) {
+    private boolean checkIfPomInTarget(Gav gav) {
         boolean alreadyInTarget = false;
 
-        String artifactUrl = targetUrl + gav.getRepositoryURLPath() + gav.getPomFilename();
+        String artifactUrl = config.getTargetUrl() + gav.getRepositoryURLPath() + gav.getPomFilename();
         logger.debug("Headers for {}", artifactUrl);
 
         HttpHead httphead;
@@ -236,8 +238,9 @@ public class MavenRepositoryDeployer {
             return true;
         }
 
-        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-            String encoding = java.util.Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+        if (!StringUtils.isEmpty(config.getUsername()) && !StringUtils.isEmpty(config.getUsername())) {
+            String encoding = java.util.Base64.getEncoder()
+                    .encodeToString((config.getUsername() + ":" + config.getPassword()).getBytes());
             httphead.setHeader("Authorization", "Basic " + encoding);
         }
 
