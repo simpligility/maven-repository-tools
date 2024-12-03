@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.simpligility.maven</groupId>
     <artifactId>progressive-organization-pom</artifactId>
-    <version>7.0.0</version>
+    <version>8.0.0</version>
   </parent>
 
   <artifactId>maven-repository-tools</artifactId>
@@ -66,7 +66,6 @@
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
-          <version>2.43.0</version>
           <executions>
             <execution>
               <goals>
