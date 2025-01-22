@@ -136,7 +136,7 @@ public class MavenRepositoryDeployer {
         return pomFiles;
     }
 
-    public void deployToRemote() {
+    public DeploymentResult deployToRemote() {
         Collection<File> leafDirectories = getLeafDirectories(repositoryPath);
 
         for (File leafDirectory : leafDirectories) {
@@ -241,6 +241,7 @@ public class MavenRepositoryDeployer {
             }
         }
         summarize();
+        return new DeploymentResult(successfulDeploys, failedDeploys, skippedDeploys, potentialDeploys);
     }
 
     public void summarize() {
@@ -431,5 +432,39 @@ public class MavenRepositoryDeployer {
             logger.error("Error evaluating GAV {} against patterns", gav, e);
         }
         return false;
+    }
+
+    public static class DeploymentResult {
+        private final TreeSet<String> successfulDeploys;
+        private final TreeSet<String> failedDeploys;
+        private final TreeSet<String> skippedDeploys;
+        private final TreeSet<String> potentialDeploys;
+
+        public DeploymentResult(
+                TreeSet<String> successfulDeploys,
+                TreeSet<String> failedDeploys,
+                TreeSet<String> skippedDeploys,
+                TreeSet<String> potentialDeploys) {
+            this.successfulDeploys = successfulDeploys;
+            this.failedDeploys = failedDeploys;
+            this.skippedDeploys = skippedDeploys;
+            this.potentialDeploys = potentialDeploys;
+        }
+
+        public TreeSet<String> getSuccessfulDeploys() {
+            return successfulDeploys;
+        }
+
+        public TreeSet<String> getFailedDeploys() {
+            return failedDeploys;
+        }
+
+        public TreeSet<String> getSkippedDeploys() {
+            return skippedDeploys;
+        }
+
+        public TreeSet<String> getPotentialDeploys() {
+            return potentialDeploys;
+        }
     }
 }
